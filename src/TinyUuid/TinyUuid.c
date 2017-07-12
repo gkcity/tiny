@@ -24,6 +24,7 @@
     #include <ctype.h>
     #include <sys/stat.h>
   #endif
+  #include <errno.h>
 #endif
 
 /*-----------------------------------------------------------------------------
