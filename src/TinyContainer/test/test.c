@@ -84,7 +84,7 @@ static int test_add_head(TinyList *list)
             TinyList_AddHead(list, data);
         }
 
-        RETURN_VAL_IF_FAIL(TinyList_GetCount(list) == count, -1);
+        RETURN_VAL_IF_FAIL(TinyList_GetCount(list) == 0, -1);
     }
 
     TinyList_RemoveAll(list);

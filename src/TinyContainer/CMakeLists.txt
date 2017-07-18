@@ -32,4 +32,4 @@ SET_TARGET_PROPERTIES(tiny_container_static PROPERTIES LINKER_LANGUAGE C)
 #----------------------------------------------------------------------------
 # test
 #----------------------------------------------------------------------------
-ADD_SUBDIRECTORY(test)
+#ADD_SUBDIRECTORY(test)

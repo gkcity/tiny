@@ -37,6 +37,7 @@ NETTY_API TinyRet SocketChannel_SetBlock(Channel *thiz, bool block);
 NETTY_API TinyRet SocketChannel_Listen(Channel *thiz, int maxConnections);
 NETTY_API TinyRet SocketChannel_JoinGroup(Channel *thiz, const char *ip, const char *group);
 NETTY_API TinyRet SocketChannel_LeaveGroup(Channel *thiz);
+NETTY_API TinyRet SocketChannel_Connect(Channel *thiz, const char *ip, uint16_t port);
 
 // TODO: emdns需要非const数据
 //NETTY_API void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
@@ -45,6 +46,12 @@ NETTY_API void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, void
 NETTY_API void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, void *data, uint32_t len);
 NETTY_API void SocketChannel_StartWrite(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
 NETTY_API void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
+
+
+void SocketChannel_OnRemove(Channel *thiz);
+void SocketChannel_OnActive(Channel *thiz);
+TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector);
+
 
 
 TINY_END_DECLS

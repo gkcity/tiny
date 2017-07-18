@@ -16,6 +16,8 @@
 #define __SELECTOR_H__
 
 #include "tiny_base.h"
+#include <tiny_socket.h>
+
 
 TINY_BEGIN_DECLS
 

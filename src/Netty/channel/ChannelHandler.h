@@ -20,10 +20,9 @@
 #include <common/Netty_api.h>
 #include "Channel.h"
 
-TINY_BEGIN_DECLS
-
-
 #define CHANNEL_HANDLER_NAME_LEN    32
+
+TINY_BEGIN_DECLS
 
 typedef enum _ChannelDataType
 {

@@ -33,6 +33,8 @@ SET(Channel_Header
         channel/SocketChannel.h
         channel/stream/StreamServerChannel.h
         channel/stream/StreamServerChannelContext.h
+        channel/stream/StreamClientChannel.h
+        channel/stream/StreamClientChannelContext.h
         channel/multicast/MulticastChannel.h
         channel/multicast/MulticastChannelContext.h
         )
@@ -43,6 +45,8 @@ SET(Channel_Source
         channel/SocketChannel.c
         channel/stream/StreamServerChannel.c
         channel/stream/StreamServerChannelContext.c
+        channel/stream/StreamClientChannel.c
+        channel/stream/StreamClientChannelContext.c
         channel/multicast/MulticastChannel.c
         channel/multicast/MulticastChannelContext.c
     )
@@ -76,6 +80,17 @@ SET(Codec_http_Source
     )
 
 #-----------------------
+# ByteBuf
+#------------------------
+Set(ByteBuf_Header
+	ByteBuf/byte_buf.h
+)
+
+Set(ByteBuf_Source
+	ByteBuf/byte_buf.c
+)
+
+#-----------------------
 # bootstrap
 #-----------------------
 SET(Bootstrap_Header
@@ -99,6 +114,8 @@ SET(SRC
         ${Timer_Source}
         ${Codec_http_Header}
         ${Codec_http_Source}
+        ${ByteBuf_Header}
+        ${ByteBuf_Source}
         ${Bootstrap_Header}
         ${Bootstrap_Source}
     )
@@ -121,7 +138,7 @@ SET_TARGET_PROPERTIES(netty_static PROPERTIES LINKER_LANGUAGE C)
 #----------------------------------------------------------------------------
 # test
 #----------------------------------------------------------------------------
-ADD_SUBDIRECTORY(test)
+#ADD_SUBDIRECTORY(test)
 
 #----------------------------------------------------------------------------
 # example

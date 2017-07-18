@@ -11,6 +11,7 @@
  */
 
 #include "tiny_log_print.h"
+#include "tiny_time.h"
 
 #ifdef _WIN32
 #include <io.h>

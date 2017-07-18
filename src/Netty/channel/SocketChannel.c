@@ -17,12 +17,13 @@
 #include <tiny_socket.h>
 #include <tiny_inet.h>
 #include <tiny_snprintf.h>
+#include <errno.h>
 
 #include "SocketChannel.h"
 
 #define TAG     "SocketChannel"
 
-static void _OnChannelRemoved(void * data, void *ctx)
+static void _OnHandlerRemoved(void * data, void *ctx)
 {
     ChannelHandler *handler = (ChannelHandler *)data;
     handler->onRemove(handler);
@@ -198,12 +199,12 @@ static void SocketChannel_OnRegister(Channel *thiz, Selector *selector)
     Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
 }
 
-static void SocketChannel_OnRemove(Channel *thiz)
+void SocketChannel_OnRemove(Channel *thiz)
 {
     SocketChannel_Delete(thiz);
 }
 
-static void SocketChannel_OnActive(Channel *thiz)
+void SocketChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
@@ -261,10 +262,12 @@ static int64_t SocketChannel_NextTimeout(Channel *thiz, void *ctx)
     return 0;
 }
 
-static TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector)
+TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector)
 {
     char buf[1024];
     int ret = 0;
+    int error;
+    socklen_t len = sizeof (error);
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
@@ -307,7 +310,7 @@ static TinyRet SocketChannel_Construct(Channel *thiz)
             break;
         }
 
-        TinyList_SetDeleteListener(&thiz->handlers, _OnChannelRemoved, NULL);
+        TinyList_SetDeleteListener(&thiz->handlers, _OnHandlerRemoved, NULL);
 
         thiz->onRegister = SocketChannel_OnRegister;
         thiz->onRemove = SocketChannel_OnRemove;
@@ -473,6 +476,44 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port)
     } while (0);
 
     return ret;
+}
+
+TinyRet SocketChannel_Connect(Channel *thiz, const char *ip, uint16_t port)
+{
+	TinyRet ret = TINY_RET_OK;
+	int err = 0;
+	RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+	LOG_D(TAG, "SocketChannel_Connect: %s:%d", ip, port);
+	
+	do
+	{
+		struct sockaddr_in s_addr;
+    		memset(&s_addr, 0, sizeof (s_addr));
+   		s_addr.sin_family = AF_INET;
+    		s_addr.sin_port = htons(port);
+    		s_addr.sin_addr.s_addr = inet_addr(ip);
+		err = connect(thiz->fd, (struct sockaddr*)&s_addr, sizeof(struct sockaddr));
+		if (err < 0)
+		{
+			if (errno  != EINPROGRESS)
+			{
+				LOG_E(TAG, "connect failed! %d", errno);
+				ret = TINY_RET_E_INTERNAL;
+				break;
+			} 
+			else
+			{
+				LOG_I(TAG, "connect in progress! %d", errno);
+				ret = TINY_RET_E_SOCKET_CONNECTING;
+				break;
+			}
+		}
+		else
+		{
+			LOG_I(TAG, "connected immidiatelly!");
+		}
+	} while(0);
+	return ret;
 }
 
 TinyRet SocketChannel_SetBlock(Channel *thiz, bool block)
