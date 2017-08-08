@@ -74,7 +74,7 @@ static int test_add_head(TinyList *list)
 
     for (int j = 0; j < 100; ++j)
     {
-        //int count = (j + 1) * 100;
+        int count = (j + 1) * 100;
 
         for (int i = 0; i < 100; ++i)
         {

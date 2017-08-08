@@ -10,6 +10,7 @@
  *
  */
 
+#include <tiny_time.h>
 #include "tiny_log_print.h"
 
 #ifdef _WIN32

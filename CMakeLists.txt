@@ -9,7 +9,7 @@ SET(PROJ_NAME "Tiny")
 #
 #---------------------------------------------------------------------------------------
 #ADD_DEFINITIONS(-DTINY_UMM)
-#ADD_DEFINITIONS(-DTINY_DEBUG)
+ADD_DEFINITIONS(-DTINY_DEBUG)
 ADD_DEFINITIONS(-DTINY_STATIC)
 ADD_DEFINITIONS(-DNETTY_STATIC)
 
