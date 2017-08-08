@@ -64,7 +64,7 @@ static void MulticastChannel_OnRemove(Channel *thiz)
 
 static int _ReadData(Channel *thiz, char buf[], uint32_t buf_len, struct sockaddr_in *remote, socklen_t *socklen)
 {
-    ssize_t received = 0;
+    int received = 0;
 
     RETURN_VAL_IF_FAIL(thiz, -1);
     RETURN_VAL_IF_FAIL(buf, -1);
@@ -284,7 +284,7 @@ TinyRet MulticastChannel_Write(Channel *thiz, const void *data, uint32_t len)
 
 TinyRet MulticastChannel_WriteTo(Channel *thiz, const void *data, uint32_t len, struct sockaddr *to, socklen_t to_len)
 {
-    ssize_t ret = 0;
+    int ret = 0;
 
     RETURN_VAL_IF_FAIL(thiz, 0);
     RETURN_VAL_IF_FAIL(data, 0);

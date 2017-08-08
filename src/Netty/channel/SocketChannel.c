@@ -417,6 +417,7 @@ TinyRet SocketChannel_Open(Channel *thiz, ChannelType type)
             ret = TINY_RET_E_INTERNAL;
             break;
         }
+        LOG_D(TAG, "socket opened %d", thiz->fd);
     } while (0);
 
     return ret;
@@ -438,14 +439,14 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port)
         self_addr.sin_family = AF_INET;
         self_addr.sin_addr.s_addr = htonl(INADDR_ANY);
         self_addr.sin_port = htons(port);
-
+#ifndef WIN32
         ret = setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEPORT, (char *)&err, sizeof(err));
         if (ret < 0)
         {
             //LOG_D(TAG, "setsockopt: %s", strerror(errno));
             return TINY_RET_E_SOCKET_SETSOCKOPT;
         }
-
+#endif
         ret = setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEADDR, &err, sizeof(err));
         if (ret < 0)
         {
@@ -482,28 +483,39 @@ TinyRet SocketChannel_Connect(Channel *thiz, const char *ip, uint16_t port)
 {
 	TinyRet ret = TINY_RET_OK;
 	int err = 0;
+	int err2 = 0;
 	RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 	LOG_D(TAG, "SocketChannel_Connect: %s:%d", ip, port);
 	
 	do
 	{
-		struct sockaddr_in s_addr;
-    		memset(&s_addr, 0, sizeof (s_addr));
-   		s_addr.sin_family = AF_INET;
-    		s_addr.sin_port = htons(port);
-    		s_addr.sin_addr.s_addr = inet_addr(ip);
-		err = connect(thiz->fd, (struct sockaddr*)&s_addr, sizeof(struct sockaddr));
+		struct sockaddr_in addr;
+    	memset(&addr, 0, sizeof (addr));
+   		addr.sin_family = AF_INET;
+    	addr.sin_port = htons(port);
+    	addr.sin_addr.s_addr = inet_addr(ip);
+		err = connect(thiz->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr));
+#ifdef WIN32
+		if (err == SOCKET_ERROR)
+#else
 		if (err < 0)
+#endif
 		{
+#ifdef WIN32
+			err2 = WSAGetLastError();
+			if (err2 != WSAEWOULDBLOCK)
+#else
+			err2 = errno;
 			if (errno  != EINPROGRESS)
+#endif
 			{
-				LOG_E(TAG, "connect failed! %d", errno);
+				LOG_E(TAG, "connect failed!%d %s", thiz->fd, strerror(err2));
 				ret = TINY_RET_E_INTERNAL;
 				break;
 			} 
 			else
 			{
-				LOG_I(TAG, "connect in progress! %d", errno);
+				LOG_I(TAG, "connect in progress!%d %s", thiz->fd, strerror(errno));
 				ret = TINY_RET_E_SOCKET_CONNECTING;
 				break;
 			}
@@ -557,8 +569,8 @@ TinyRet SocketChannel_JoinGroup(Channel *thiz, const char *ip, const char *group
     struct sockaddr_in addr;
     int ret = NO_ERROR;
 
-    loop = 1;
-    ret = setsockopt(fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
+    int loop = 1;
+    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
     if (ret == SOCKET_ERROR)
     {
         DWORD e = GetLastError();
@@ -573,7 +585,7 @@ TinyRet SocketChannel_JoinGroup(Channel *thiz, const char *ip, const char *group
     ipMreqV4.imr_interface.s_addr = ip;
 
     // Join the group
-    ret = setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&ipMreqV4, sizeof(ipMreqV4));
+    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&ipMreqV4, sizeof(ipMreqV4));
     if (ret == SOCKET_ERROR)
     {
         // !!! bug 10065 = A socket operation was attempted to an unreachable host.

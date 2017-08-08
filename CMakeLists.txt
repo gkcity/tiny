@@ -32,10 +32,10 @@ ELSE(WIN32)
     ADD_DEFINITIONS(-Wno-pointer-to-int-cast)
 
     # release, macos only link by O2 & O3
-#    ADD_DEFINITIONS(-O0)
-#    ADD_DEFINITIONS(-O1)
+#     ADD_DEFINITIONS(-O0)
+    ADD_DEFINITIONS(-O1)
 #    ADD_DEFINITIONS(-O2)
-    ADD_DEFINITIONS(-O3)
+#    ADD_DEFINITIONS(-O3)
 
     # debug
     ADD_DEFINITIONS(-g)

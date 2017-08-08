@@ -15,6 +15,8 @@
 #ifndef __CHANNEL_HANDLER_H__
 #define __CHANNEL_HANDLER_H__
 
+#include <stdint.h>
+
 #include <tiny_typedef.h>
 #include <tiny_ret.h>
 #include <common/Netty_api.h>
@@ -33,9 +35,9 @@ typedef enum _ChannelDataType
 
 typedef struct _ChannelIdle
 {
-    uint32_t                    readerIdleTimeSeconds;
-    uint32_t                    writerIdleTimeSeconds;
-    uint32_t                    allIdleTimeSeconds;
+    uint64_t                    readerIdleTimeSeconds;
+    uint64_t                    writerIdleTimeSeconds;
+    uint64_t			timeout;
 } ChannelIdle;
 
 struct _ChannelHandler;

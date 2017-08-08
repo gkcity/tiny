@@ -37,7 +37,8 @@ int tiny_gettimeofday(struct timeval *tv, void *tz)
 
 int tiny_sleep(int second)
 {
-    return Sleep(second * 1000);
+    Sleep(second * 1000);
+	return 0;
 }
 
 #if 0

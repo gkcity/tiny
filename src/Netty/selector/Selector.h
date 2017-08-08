@@ -43,8 +43,9 @@ struct _Selector
 
 typedef enum _SelectorOperation
 {
-    SELECTOR_OP_READ = 0,
-    SELECTOR_OP_WRITE = 1,
+    SELECTOR_OP_READ = 1,
+    SELECTOR_OP_WRITE = 2,
+    SELECTOR_OP_ALL = 3,
 } SelectorOperation;
 
 //Selector * Selector_New(void);

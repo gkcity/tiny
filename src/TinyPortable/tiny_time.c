@@ -25,6 +25,8 @@
 
 #ifdef ESP
 #include "tiny_time_esp.c"
+#elif WIN32
+#include "tiny_time_windows.c"
 #else
 #include "tiny_time_linux.c"
 #endif

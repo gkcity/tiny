@@ -67,6 +67,7 @@ typedef void (* ChannelHandleActive)(Channel *thiz);
 typedef void (* ChannelHandleInactive)(Channel *thiz);
 typedef void (* ChannelHandleEventTriggered)(Channel *thiz, void *event);
 typedef TinyRet (* ChannelHandleRead)(Channel *channel, Selector *selector);
+typedef TinyRet (* ChannelHandleWrite)(Channel* channel, Selector* selector);
 typedef int64_t (* ChannelTimeout)(Channel *thiz, void *ctx);
 
 struct _Channel
@@ -81,6 +82,7 @@ struct _Channel
     ChannelHandleActive             onActive;
     ChannelHandleInactive           onInactive;
     ChannelHandleRead               onRead;
+    ChannelHandleWrite			onWrite;
     ChannelHandleEventTriggered     onEventTriggered;
     ChannelTimeout                  getNextTimeout;
     TinyList                        handlers;

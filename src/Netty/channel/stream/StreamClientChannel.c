@@ -48,6 +48,15 @@ void StreamClientChannel_Delete(Channel *thiz)
     tiny_free(thiz);
 }
 
+static void StreamClientChannel_OnRegister2(Channel *thiz, Selector *selector)
+{
+    if (Channel_IsActive(thiz))
+    {
+        Selector_Register(selector, thiz->fd, SELECTOR_OP_ALL);
+        LOG_D(TAG, "StreamClientChannel_OnRegister2: %d", thiz->fd);
+    }
+}
+
 static void StreamClientChannel_OnRegister(Channel *thiz, Selector *selector)
 {
     if (Channel_IsActive(thiz))
@@ -70,8 +79,28 @@ static TinyRet StreamClientChannel_OnRead(Channel *thiz, Selector *selector)
     StreamClientChannelContext *ctx = (StreamClientChannelContext *)thiz->ctx;
     int error;
     socklen_t len = sizeof(error);
+    LOG_D(TAG, "connect receive read");
 
     if (Selector_IsReadable(selector, thiz->fd))
+    {
+        if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+            LOG_E(TAG, "connect error: %d", error);
+            return TINY_RET_E_INTERNAL;
+        }
+        thiz->onActive(thiz);
+    }
+
+    return TINY_RET_OK;
+}
+
+static TinyRet StreamClientChannel_OnWrite(Channel* thiz, Selector* selector)
+{
+    StreamClientChannelContext *ctx = (StreamClientChannelContext *)thiz->ctx;
+    int error;
+    socklen_t len = sizeof(error);
+    LOG_D(TAG, "connect receive write");
+
+    if (Selector_IsWriteable(selector, thiz->fd))
     {
         if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
             LOG_E(TAG, "connect error: %d", error);
@@ -94,12 +123,15 @@ static void StreamClientChannel_OnActive(Channel* thiz)
 {
     RETURN_IF_FAIL(thiz);
 
+    LOG_D(TAG, "connected");
+
     if (thiz->ctx != NULL)
     {
     	((StreamClientChannelContext *)thiz->ctx) ->initializer(thiz, ((StreamClientChannelContext *)thiz->ctx) ->initializerContext);
     }
     thiz->onActive=SocketChannel_OnActive;
     thiz->onRead = SocketChannel_OnRead;
+    thiz->onRegister = StreamClientChannel_OnRegister;
 
     thiz->onActive(thiz);
 }
@@ -112,11 +144,12 @@ static TinyRet StreamClientChannel_Construct(Channel *thiz)
 
     do
     {
-        thiz->onRegister = StreamClientChannel_OnRegister;
+        thiz->onRegister = StreamClientChannel_OnRegister2;
         thiz->onRemove = StreamClientChannel_OnRemove;
         //thiz->onInactive = StreamClientChannel_OnInactive;
         thiz->onActive = StreamClientChannel_OnActive;
         thiz->onRead = StreamClientChannel_OnRead;
+        thiz->onWrite = StreamClientChannel_OnWrite;
 
         thiz->ctx = StreamClientChannelContext_New();
         if (thiz->ctx == NULL)
@@ -198,7 +231,7 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
 {
     TinyRet ret = TINY_RET_OK;
 
-    LOG_D(TAG, "StreamClientChannel_Bind: %d", port);
+    LOG_D(TAG, "StreamClientChannel_Connect: %s:%d", ip, port);
 
     do
     {
@@ -215,8 +248,6 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
             LOG_E(TAG, "SocketChannel_SetBlock failed");
             break;
         }
-
-	
 
     	StreamClientChannel_SetRemoteInfo(thiz, ip, port);
 

@@ -74,11 +74,11 @@ void Selector_Register(Selector *thiz, int fd, SelectorOperation op)
 
 //    LOG_D(TAG, "Selector_Register: %d", fd);
 
-    if (op == SELECTOR_OP_READ)
+    if ((op & SELECTOR_OP_READ) != 0)
     {
         FD_SET(fd, &thiz->read_set);
     }
-    else if (op == SELECTOR_OP_WRITE)
+    if ((op & SELECTOR_OP_WRITE) != 0)
     {
         FD_SET(fd, &thiz->write_set);
     }

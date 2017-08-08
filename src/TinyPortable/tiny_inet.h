@@ -18,6 +18,8 @@
 
 #ifdef LWIP_SOCKET
 #include <lwip/inet.h>
+#elif WIN32
+#include <WinInet.h>
 #else
 #include <arpa/inet.h>
 #endif

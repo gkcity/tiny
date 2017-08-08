@@ -18,6 +18,8 @@
 
 #ifdef LWIP_SOCKET
 #include "tiny_socket_lwip.h"
+#elif WIN32
+#include "tiny_socket_windows.h"
 #else
 #include "tiny_socket_linux.h"
 #endif

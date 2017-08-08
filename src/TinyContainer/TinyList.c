@@ -467,7 +467,7 @@ void * TinyList_GetAt(TinyList * thiz, int pos)
 
 TinyRet TinyList_RemoveAt(TinyList * thiz, int pos)
 {
-    TinyRet ret = TINY_RET_OK;
+    TinyRet ret = TINY_RET_E_POSITION_INVALID;
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
@@ -500,7 +500,7 @@ TinyRet TinyList_RemoveAt(TinyList * thiz, int pos)
 
                 TinyNode_Delete(thiz, node);
 
-				ret = TINY_RET_OK;
+		ret = TINY_RET_OK;
                 break;
             }
 
@@ -508,7 +508,6 @@ TinyRet TinyList_RemoveAt(TinyList * thiz, int pos)
             i++;
         }
 
-        ret = TINY_RET_E_POSITION_INVALID;
     }
     while (false);
 

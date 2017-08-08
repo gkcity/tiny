@@ -143,6 +143,6 @@ SET_TARGET_PROPERTIES(netty_static PROPERTIES LINKER_LANGUAGE C)
 #----------------------------------------------------------------------------
 # example
 #----------------------------------------------------------------------------
-ADD_SUBDIRECTORY(example-httpserver)
-ADD_SUBDIRECTORY(example-timer)
-ADD_SUBDIRECTORY(example-ssdp)
+#ADD_SUBDIRECTORY(example-httpserver)
+#ADD_SUBDIRECTORY(example-timer)
+#ADD_SUBDIRECTORY(example-ssdp)

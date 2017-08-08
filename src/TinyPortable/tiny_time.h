@@ -19,6 +19,8 @@
 
 #ifdef ESP
 #include <sys/time.h>
+#elif WIN32
+#include <time.h>
 #else
 #include <sys/time.h>
 #endif

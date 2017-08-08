@@ -16,6 +16,8 @@
 #define __TINY_SOCKET_WINDOWS_H__
 
 #include <tiny_typedef.h>
+#include <WinSock2.h>
+#include <ws2def.h>
 
 TINY_BEGIN_DECLS
 
