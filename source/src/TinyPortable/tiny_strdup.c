@@ -15,12 +15,15 @@
 #include "tiny_strdup.h"
 #include "tiny_malloc.h"
 
+TINY_LOR
 char * tiny_strdup(const char *src)
 {
-    char *dst = tiny_malloc((uint32_t) strlen(src) + 1);
+    uint32_t len = (uint32_t)strlen(src);
+    char *dst = (char *) tiny_malloc(len + 1);
     if (dst != NULL)
     {
-        strcpy(dst, src);
+        memset(dst, 0, len + 1);
+        strncpy(dst, src, len);
     }
 
     return dst;

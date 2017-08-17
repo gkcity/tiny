@@ -15,11 +15,13 @@
 #ifndef __STR_GET_VALUE_H__
 #define __STR_GET_VALUE_H__
 
+#include <tiny_lor.h>
 #include "tiny_base.h"
 #include "tiny_api.h"
 
 TINY_BEGIN_DECLS
 
+#if 0
 /**
  * usage:
  *     char *s = "server_port=100;control_port=2000;timing_port=30000"
@@ -38,7 +40,10 @@ TINY_BEGIN_DECLS
  *       r2 = 5;
  *       v2 = 30000;
  */
-TINY_API int str_get_value(const char *buf, uint32_t buf_len, const char *start_tag, const char *end_tag, char *value, uint32_t value_len);
+TINY_API
+TINY_LOR
+int str_get_value(const char *buf, uint32_t buf_len, const char *start_tag, const char *end_tag, char *value, uint32_t value_len);
+#endif
 
 
 TINY_END_DECLS

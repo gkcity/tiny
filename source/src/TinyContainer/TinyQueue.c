@@ -57,7 +57,7 @@ void TinyQueue_Pop(TinyQueue *thiz)
     TinyList_RemoveHead(thiz);
 }
 
-uint32_t TinyQueue_GetSize(TinyQueue *thiz)
+int TinyQueue_GetSize(TinyQueue *thiz)
 {
     return TinyList_GetCount(thiz);
 }

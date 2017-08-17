@@ -16,40 +16,11 @@
 #define __TINY_TYPEDEF_H__
 
 
-/**---------------------------------------
- *
- * _DEFAULT_SOURCE: for ip_mreq
- *
- *---------------------------------------*/
-#ifndef _DEFAULT_SOURCE
-#define _DEFAULT_SOURCE 1
-#endif
-
-/**---------------------------------------
- *
- * _DARWIN_C_SOURCE: for ip_mreq
- *
- *---------------------------------------*/
-#if defined __APPLE__
-#define _DARWIN_C_SOURCE 1
-#endif
-
-#ifdef _WIN32
-#include <ws2tcpip.h>
-#include <windows.h>
-#include <time.h>
-#else /* Linux */
-#include <unistd.h>
-//#include <sys/time.h>
-#endif /* _WIN32 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stdint.h>
-
-//#include <errno.h>
 
 #ifdef __cplusplus
     #define TINY_BEGIN_DECLS extern "C" {
@@ -65,11 +36,6 @@
 
 #define DIM(a) (sizeof(a)/sizeof(a[0]))
 
-#ifdef _WIN32
-    #define TINY_INLINE              __inline
-#else
-    #define TINY_INLINE              inline
-#endif /* _WIN32 */
 
 
 #endif /* __TINY_TYPEDEF_H__ */

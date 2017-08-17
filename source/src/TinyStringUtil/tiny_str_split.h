@@ -4,7 +4,7 @@
 * @author jxfengzi@gmail.com
 * @date   2013-11-19
 *
-* @file   str_equal.h
+* @file   str_split.h
 *
 * @remark
 *		set tabstop=4
@@ -15,10 +15,12 @@
 #ifndef __STR_SPLIT_H__
 #define __STR_SPLIT_H__
 
+#include <tiny_lor.h>
 #include "tiny_base.h"
 #include "tiny_api.h"
 
 TINY_BEGIN_DECLS
+
 
 /**
  * usage:
@@ -34,7 +36,9 @@ TINY_BEGIN_DECLS
  *       group[3] = "mediaserver"
  *       group[4] = "1"
  */
-TINY_API uint32_t str_split(const char *str, const char *c, char group[][128], uint32_t groupCount);
+TINY_API
+TINY_LOR
+uint32_t str_split(const char *str, const char *c, char group[][128], uint32_t groupCount);
 
 
 TINY_END_DECLS

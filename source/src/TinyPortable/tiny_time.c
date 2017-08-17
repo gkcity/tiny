@@ -14,6 +14,16 @@
 
 #include "tiny_snprintf.h"
 
+#ifdef ESP
+    #include "tiny_time_esp.c"
+#else
+    #ifdef WIN32
+        #include "tiny_time_windows.c"
+    #else
+        #include "tiny_time_linux.c"
+    #endif
+#endif
+
 #define BEIJINGTIME     8
 #define DAY             (60*60*24)
 #define YEARFIRST       2001
@@ -23,14 +33,7 @@
 #define YEAR004         (365*4 + 1)
 #define YEAR001         365
 
-#ifdef ESP
-#include "tiny_time_esp.c"
-#elif WIN32
-#include "tiny_time_windows.c"
-#else
-#include "tiny_time_linux.c"
-#endif
-
+#ifdef TINY_DEBUG
 int tiny_getstrtime(char buf[], int len)
 {
     struct timeval tv;
@@ -111,6 +114,4 @@ int tiny_getstrtime(char buf[], int len)
 
     return 0;
 }
-
-
-
+#endif

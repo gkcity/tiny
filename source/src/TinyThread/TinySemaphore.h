@@ -20,7 +20,7 @@ TINY_BEGIN_DECLS
 
 
 #if (defined __LINUX__) || (defined __ANDROID__)
-#include <semaphore.h>  
+#include <semaphore.h>
 #endif
 
 #ifdef __MAC_OSX__
@@ -31,24 +31,24 @@ TINY_BEGIN_DECLS
 
 #ifdef _WIN32
 #define MAX_SEM_SIZE    128
-typedef HANDLE          ct_sem_t;
+typedef HANDLE          tiny_sem_t;
 #endif /* _WIN32 */
 
 #if (defined __LINUX__) || (defined __ANDROID__)
-typedef sem_t           ct_sem_t;
+typedef sem_t           tiny_sem_t;
 #endif
 
 #ifdef __MAC_OSX__
-typedef struct _ct_sem_t
+typedef struct _tiny_sem_t
 {
     char                name[PATH_MAX + 1];
     sem_t *             sem;
-} ct_sem_t;
+} tiny_sem_t;
 #endif
 
 typedef struct _TinySemaphore
 {
-    ct_sem_t           sem;
+    tiny_sem_t           sem;
 } TinySemaphore;
 
 TINY_API TinySemaphore * TinySemaphore_New(void);

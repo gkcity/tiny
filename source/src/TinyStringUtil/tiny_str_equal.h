@@ -15,13 +15,16 @@
 #ifndef __STR_EQUAL_H__
 #define __STR_EQUAL_H__
 
+#include <tiny_lor.h>
 #include "tiny_base.h"
 #include "tiny_api.h"
 
 TINY_BEGIN_DECLS
 
 
-TINY_API bool str_equal(const char *a, const char *b, bool ignore_case);
+//TINY_API
+//TINY_LOR
+//bool str_equal(const char *a, const char *b, bool ignore_case);
 
 
 TINY_END_DECLS

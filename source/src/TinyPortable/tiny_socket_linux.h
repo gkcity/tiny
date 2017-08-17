@@ -16,6 +16,7 @@
 #define __TINY_SOCKET_LINUX_H__
 
 #include <tiny_typedef.h>
+#include <tiny_inline.h>
 
 /* According to POSIX.1-2001, POSIX.1-2008 */
 #include <sys/select.h>
@@ -24,8 +25,6 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -33,20 +32,23 @@
 TINY_BEGIN_DECLS
 
 
+#define tiny_socket_initialize()
+#define tiny_socket_finalize()
 #define tiny_select                 select
 #define tiny_socket_close           close
+#define tiny_socket                 socket
+#define tiny_setsockopt             setsockopt
+#define tiny_bind                   bind
+#define tiny_listen                 listen
+#define tiny_accept                 accept
+#define tiny_recv                   recv
+#define tiny_send                   send
+#define tiny_setsockopt             setsockopt
+#define tiny_recvfrom               recvfrom
+#define tiny_sendto                 sendto
+#define tiny_connect                connect
 
-TINY_INLINE
-int tiny_socket_set_block(int fd, bool block)
-{
-    int flags = fcntl(fd, F_GETFL, 0);
-    if (flags < 0)
-    {
-        return flags;
-    }
-
-    return fcntl(fd, F_SETFL, block ? flags & ~O_NONBLOCK : flags | O_NONBLOCK);
-}
+int tiny_socket_set_block(int fd, bool block);
 
 
 TINY_END_DECLS

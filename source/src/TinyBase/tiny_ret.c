@@ -14,6 +14,7 @@
 
 #include "tiny_ret.h"
 
+#ifdef TINY_DEBUG
 typedef struct _ValueDetail
 {
     uint32_t value;
@@ -21,6 +22,7 @@ typedef struct _ValueDetail
 } ValueDetail;
 
 #define ENTRY(value, description)   {value, description}
+
 
 static const ValueDetail code_details[] =
 {
@@ -62,6 +64,7 @@ static const ValueDetail code_details[] =
     ENTRY(CODE_NOT_INITIALIZED, "not initialized"),
 };
 
+TINY_LOR
 static const ValueDetail error_levels[] =
 {
     ENTRY(EL_NULL, "NULL"),
@@ -70,6 +73,7 @@ static const ValueDetail error_levels[] =
     ENTRY(EL_FATAL, "Fatal error"),
 };
 
+TINY_LOR
 const char * tiny_ret_to_str(TinyRet ret)
 {
     int32_t code = TINY_RET_CODE(ret);
@@ -93,3 +97,4 @@ const char * tiny_ret_to_str(TinyRet ret)
 
     return description;
 }
+#endif

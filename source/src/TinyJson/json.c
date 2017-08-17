@@ -72,78 +72,120 @@ struct _JsonArray
 /* Various */
 //static void remove_comments(char *string, const char *start_token, const char *end_token);
 
+TINY_LOR
 static char *parson_strndup(const char *string, size_t n);
 
+TINY_LOR
 static char *parson_strdup(const char *string);
 
+TINY_LOR
 static int hex_char_to_int(char c);
 
+TINY_LOR
 static int parse_utf16_hex(const char *string, unsigned int *result);
 
+TINY_LOR
 static int num_bytes_in_utf8_sequence(unsigned char c);
 
+TINY_LOR
 static int verify_utf8_sequence(const unsigned char *string, int *len);
 
+TINY_LOR
 static int is_valid_utf8(const char *string, size_t string_len);
 
+TINY_LOR
 static int is_decimal(const char *string, size_t length);
 
 /* JSON Object */
+TINY_LOR
 static JsonObject *json_object_init(JsonElement *wrapping_value);
 
+TINY_LOR
 static JsonResult json_object_add(JsonObject *object, const char *name, JsonElement *value);
 
+TINY_LOR
 static JsonResult json_object_resize(JsonObject *object, size_t new_capacity);
 
+TINY_LOR
 static JsonElement *json_object_nget_value(const JsonObject *object, const char *name, size_t n);
 
+TINY_LOR
 static void json_object_free(JsonObject *object);
 
 /* JSON Array */
+TINY_LOR
 static JsonArray *json_array_init(JsonElement *wrapping_value);
 
+TINY_LOR
 static JsonResult json_array_add(JsonArray *array, JsonElement *value);
 
+TINY_LOR
 static JsonResult json_array_resize(JsonArray *array, size_t new_capacity);
 
+TINY_LOR
 static void json_array_free(JsonArray *array);
 
 /* JSON Value */
+TINY_LOR
 static JsonElement *json_value_init_string_no_copy(char *string);
 
 /* Parser */
+TINY_LOR
 static JsonResult skip_quotes(const char **string);
 
+TINY_LOR
 static int parse_utf16(const char **unprocessed, char **processed);
 
+TINY_LOR
 static char *process_string(const char *input, size_t len);
 
+TINY_LOR
 static char *get_quoted_string(const char **string);
 
+TINY_LOR
 static JsonElement *parse_object_value(const char **string, size_t nesting);
 
+TINY_LOR
 static JsonElement *parse_array_value(const char **string, size_t nesting);
 
+TINY_LOR
 static JsonElement *parse_string_value(const char **string);
 
+TINY_LOR
 static JsonElement *parse_boolean_value(const char **string);
 
+TINY_LOR
 static JsonElement *parse_number_value(const char **string);
 
+TINY_LOR
 static JsonElement *parse_null_value(const char **string);
 
+TINY_LOR
 static JsonElement *parse_value(const char **string, size_t nesting);
 
 /* Serialization */
+#if 1
+TINY_LOR
 static int json_serialize_to_buffer_r(const JsonElement *value, char *buf, int level, int is_pretty, char *num_buf);
+#endif
 
+#if 1
+TINY_LOR
 static int json_serialize_string(const char *string, char *buf);
+#endif
 
+#if 1
+TINY_LOR
 static int append_indent(char *buf, int level);
+#endif
 
+#if 1
+TINY_LOR
 static int append_string(char *buf, const char *string);
+#endif
 
 /* Various */
+TINY_LOR
 static char *parson_strndup(const char *string, size_t n)
 {
     char *output_string = (char *) tiny_malloc(n + 1);
@@ -156,11 +198,13 @@ static char *parson_strndup(const char *string, size_t n)
     return output_string;
 }
 
+TINY_LOR
 static char *parson_strdup(const char *string)
 {
     return parson_strndup(string, strlen(string));
 }
 
+TINY_LOR
 static int hex_char_to_int(char c)
 {
     if (c >= '0' && c <= '9')
@@ -178,6 +222,7 @@ static int hex_char_to_int(char c)
     return -1;
 }
 
+TINY_LOR
 static int parse_utf16_hex(const char *s, unsigned int *result)
 {
     int x1, x2, x3, x4;
@@ -197,6 +242,7 @@ static int parse_utf16_hex(const char *s, unsigned int *result)
     return 1;
 }
 
+TINY_LOR
 static int num_bytes_in_utf8_sequence(unsigned char c)
 {
     if (c == 0xC0 || c == 0xC1 || c > 0xF4 || IS_CONT(c))
@@ -222,6 +268,7 @@ static int num_bytes_in_utf8_sequence(unsigned char c)
     return 0; /* won't happen */
 }
 
+TINY_LOR
 static int verify_utf8_sequence(const unsigned char *string, int *len)
 {
     unsigned int cp = 0;
@@ -277,6 +324,7 @@ static int verify_utf8_sequence(const unsigned char *string, int *len)
     return 1;
 }
 
+TINY_LOR
 static int is_valid_utf8(const char *string, size_t string_len)
 {
     int len = 0;
@@ -292,6 +340,7 @@ static int is_valid_utf8(const char *string, size_t string_len)
     return 1;
 }
 
+TINY_LOR
 static int is_decimal(const char *string, size_t length)
 {
     if (length > 1 && string[0] == '0' && string[1] != '.')
@@ -361,6 +410,7 @@ static void remove_comments(char *string, const char *start_token, const char *e
 #endif
 
 /* JSON Object */
+TINY_LOR
 static JsonObject *json_object_init(JsonElement *wrapping_value)
 {
     JsonObject *new_obj = (JsonObject *) tiny_malloc(sizeof(JsonObject));
@@ -376,6 +426,7 @@ static JsonObject *json_object_init(JsonElement *wrapping_value)
     return new_obj;
 }
 
+TINY_LOR
 static JsonResult json_object_add(JsonObject *object, const char *name, JsonElement *value)
 {
     size_t index = 0;
@@ -411,6 +462,7 @@ static JsonResult json_object_add(JsonObject *object, const char *name, JsonElem
     return JSON_SUCCESS;
 }
 
+TINY_LOR
 static JsonResult json_object_resize(JsonObject *object, size_t new_capacity)
 {
     char **temp_names = NULL;
@@ -446,6 +498,7 @@ static JsonResult json_object_resize(JsonObject *object, size_t new_capacity)
     return JSON_SUCCESS;
 }
 
+TINY_LOR
 static JsonElement *json_object_nget_value(const JsonObject *object, const char *name, size_t n)
 {
     size_t i, name_length;
@@ -464,6 +517,7 @@ static JsonElement *json_object_nget_value(const JsonObject *object, const char 
     return NULL;
 }
 
+TINY_LOR
 static void json_object_free(JsonObject *object)
 {
     size_t i;
@@ -478,6 +532,7 @@ static void json_object_free(JsonObject *object)
 }
 
 /* JSON Array */
+TINY_LOR
 static JsonArray *json_array_init(JsonElement *wrapping_value)
 {
     JsonArray *new_array = (JsonArray *) tiny_malloc(sizeof(JsonArray));
@@ -492,6 +547,7 @@ static JsonArray *json_array_init(JsonElement *wrapping_value)
     return new_array;
 }
 
+TINY_LOR
 static JsonResult json_array_add(JsonArray *array, JsonElement *value)
 {
     if (array->count >= array->capacity)
@@ -512,6 +568,7 @@ static JsonResult json_array_add(JsonArray *array, JsonElement *value)
     return JSON_SUCCESS;
 }
 
+TINY_LOR
 static JsonResult json_array_resize(JsonArray *array, size_t new_capacity)
 {
     JsonElement **new_items = NULL;
@@ -537,6 +594,7 @@ static JsonResult json_array_resize(JsonArray *array, size_t new_capacity)
     return JSON_SUCCESS;
 }
 
+TINY_LOR
 static void json_array_free(JsonArray *array)
 {
     size_t i;
@@ -550,6 +608,7 @@ static void json_array_free(JsonArray *array)
 }
 
 /* JSON Value */
+TINY_LOR
 static JsonElement *json_value_init_string_no_copy(char *string)
 {
     JsonElement *new_value = (JsonElement *) tiny_malloc(sizeof(JsonElement));
@@ -565,6 +624,7 @@ static JsonElement *json_value_init_string_no_copy(char *string)
 }
 
 /* Parser */
+TINY_LOR
 static JsonResult skip_quotes(const char **string)
 {
     if (**string != '\"')
@@ -594,6 +654,7 @@ static JsonResult skip_quotes(const char **string)
     return JSON_SUCCESS;
 }
 
+TINY_LOR
 static int parse_utf16(const char **unprocessed, char **processed)
 {
     unsigned int cp, lead, trail;
@@ -653,6 +714,7 @@ static int parse_utf16(const char **unprocessed, char **processed)
 
 /* Copies and processes passed string up to supplied length.
 Example: "\u006Corem ipsum" -> lorem ipsum */
+TINY_LOR
 static char *process_string(const char *input, size_t len)
 {
     const char *input_ptr = input;
@@ -736,6 +798,7 @@ static char *process_string(const char *input, size_t len)
 
 /* Return processed contents of a string between quotes and
    skips passed argument to a matching quote. */
+TINY_LOR
 static char *get_quoted_string(const char **string)
 {
     const char *string_start = *string;
@@ -749,6 +812,7 @@ static char *get_quoted_string(const char **string)
     return process_string(string_start + 1, string_len);
 }
 
+TINY_LOR
 static JsonElement *parse_value(const char **string, size_t nesting)
 {
     if (nesting > MAX_NESTING)
@@ -786,6 +850,7 @@ static JsonElement *parse_value(const char **string, size_t nesting)
     }
 }
 
+TINY_LOR
 static JsonElement *parse_object_value(const char **string, size_t nesting)
 {
     JsonElement *output_value = json_value_init_object(), *new_value = NULL;
@@ -846,6 +911,7 @@ static JsonElement *parse_object_value(const char **string, size_t nesting)
     return output_value;
 }
 
+TINY_LOR
 static JsonElement *parse_array_value(const char **string, size_t nesting)
 {
     JsonElement *output_value = json_value_init_array(), *new_array_value = NULL;
@@ -894,6 +960,7 @@ static JsonElement *parse_array_value(const char **string, size_t nesting)
     return output_value;
 }
 
+TINY_LOR
 static JsonElement *parse_string_value(const char **string)
 {
     JsonElement *value = NULL;
@@ -911,6 +978,7 @@ static JsonElement *parse_string_value(const char **string)
     return value;
 }
 
+TINY_LOR
 static JsonElement *parse_boolean_value(const char **string)
 {
     size_t true_token_size = SIZEOF_TOKEN("true");
@@ -928,6 +996,7 @@ static JsonElement *parse_boolean_value(const char **string)
     return NULL;
 }
 
+TINY_LOR
 static JsonElement *parse_number_value(const char **string)
 {
     char *end;
@@ -944,6 +1013,7 @@ static JsonElement *parse_number_value(const char **string)
     return json_value_init_number(number);
 }
 
+TINY_LOR
 static JsonElement *parse_null_value(const char **string)
 {
     size_t token_size = SIZEOF_TOKEN("null");
@@ -966,6 +1036,8 @@ static JsonElement *parse_null_value(const char **string)
                                   if (buf != NULL) { buf += written; }\
                                   written_total += written; } while(0)
 
+#if 1
+TINY_LOR
 static int json_serialize_to_buffer_r(const JsonElement *value, char *buf, int level, int is_pretty, char *num_buf)
 {
     const char *key = NULL, *string = NULL;
@@ -1142,7 +1214,10 @@ static int json_serialize_to_buffer_r(const JsonElement *value, char *buf, int l
             return -1;
     }
 }
+#endif
 
+#if 1
+TINY_LOR
 static int json_serialize_string(const char *string, char *buf)
 {
     size_t i = 0, len = strlen(string);
@@ -1277,7 +1352,10 @@ static int json_serialize_string(const char *string, char *buf)
     APPEND_STRING("\"");
     return written_total;
 }
+#endif
 
+#if 1
+TINY_LOR
 static int append_indent(char *buf, int level)
 {
     int i;
@@ -1288,7 +1366,10 @@ static int append_indent(char *buf, int level)
     }
     return written_total;
 }
+#endif
 
+#if 1
+TINY_LOR
 static int append_string(char *buf, const char *string)
 {
     if (buf == NULL)
@@ -1297,10 +1378,12 @@ static int append_string(char *buf, const char *string)
     }
     return sprintf(buf, "%s", string);
 }
+#endif
 
 #undef APPEND_STRING
 #undef APPEND_INDENT
 
+TINY_LOR
 JsonElement *json_parse_string(const char *string)
 {
     if (string == NULL)
@@ -1316,6 +1399,7 @@ JsonElement *json_parse_string(const char *string)
 
 /* JSON Object API */
 
+TINY_LOR
 JsonElement *json_object_get_value(const JsonObject *object, const char *name)
 {
     if (object == NULL || name == NULL)
@@ -1325,31 +1409,37 @@ JsonElement *json_object_get_value(const JsonObject *object, const char *name)
     return json_object_nget_value(object, name, strlen(name));
 }
 
+TINY_LOR
 const char *json_object_get_string(const JsonObject *object, const char *name)
 {
     return json_value_get_string(json_object_get_value(object, name));
 }
 
+TINY_LOR
 double json_object_get_number(const JsonObject *object, const char *name)
 {
     return json_value_get_number(json_object_get_value(object, name));
 }
 
+TINY_LOR
 JsonObject *json_object_get_object(const JsonObject *object, const char *name)
 {
     return json_value_get_object(json_object_get_value(object, name));
 }
 
+TINY_LOR
 JsonArray *json_object_get_array(const JsonObject *object, const char *name)
 {
     return json_value_get_array(json_object_get_value(object, name));
 }
 
+TINY_LOR
 int json_object_get_boolean(const JsonObject *object, const char *name)
 {
     return json_value_get_boolean(json_object_get_value(object, name));
 }
 
+TINY_LOR
 JsonElement *json_object_dotget_value(const JsonObject *object, const char *name)
 {
     const char *dot_position = strchr(name, '.');
@@ -1361,36 +1451,43 @@ JsonElement *json_object_dotget_value(const JsonObject *object, const char *name
     return json_object_dotget_value(object, dot_position + 1);
 }
 
-const char *json_object_dotget_string(const JsonObject *object, const char *name)
-{
-    return json_value_get_string(json_object_dotget_value(object, name));
-}
+//TINY_LOR
+//const char *json_object_dotget_string(const JsonObject *object, const char *name)
+//{
+//    return json_value_get_string(json_object_dotget_value(object, name));
+//}
+//
+//TINY_LOR
+//double json_object_dotget_number(const JsonObject *object, const char *name)
+//{
+//    return json_value_get_number(json_object_dotget_value(object, name));
+//}
+//
+//TINY_LOR
+//JsonObject *json_object_dotget_object(const JsonObject *object, const char *name)
+//{
+//    return json_value_get_object(json_object_dotget_value(object, name));
+//}
+//
+//TINY_LOR
+//JsonArray *json_object_dotget_array(const JsonObject *object, const char *name)
+//{
+//    return json_value_get_array(json_object_dotget_value(object, name));
+//}
+//
+//TINY_LOR
+//int json_object_dotget_boolean(const JsonObject *object, const char *name)
+//{
+//    return json_value_get_boolean(json_object_dotget_value(object, name));
+//}
 
-double json_object_dotget_number(const JsonObject *object, const char *name)
-{
-    return json_value_get_number(json_object_dotget_value(object, name));
-}
-
-JsonObject *json_object_dotget_object(const JsonObject *object, const char *name)
-{
-    return json_value_get_object(json_object_dotget_value(object, name));
-}
-
-JsonArray *json_object_dotget_array(const JsonObject *object, const char *name)
-{
-    return json_value_get_array(json_object_dotget_value(object, name));
-}
-
-int json_object_dotget_boolean(const JsonObject *object, const char *name)
-{
-    return json_value_get_boolean(json_object_dotget_value(object, name));
-}
-
+TINY_LOR
 size_t json_object_get_count(const JsonObject *object)
 {
     return object ? object->count : 0;
 }
 
+TINY_LOR
 const char *json_object_get_name(const JsonObject *object, size_t index)
 {
     if (object == NULL || index >= json_object_get_count(object))
@@ -1400,43 +1497,50 @@ const char *json_object_get_name(const JsonObject *object, size_t index)
     return object->names[index];
 }
 
-JsonElement *json_object_get_value_at(const JsonObject *object, size_t index)
-{
-    if (object == NULL || index >= json_object_get_count(object))
-    {
-        return NULL;
-    }
-    return object->values[index];
-}
+//TINY_LOR
+//JsonElement *json_object_get_value_at(const JsonObject *object, size_t index)
+//{
+//    if (object == NULL || index >= json_object_get_count(object))
+//    {
+//        return NULL;
+//    }
+//    return object->values[index];
+//}
 
+TINY_LOR
 JsonElement *json_object_get_wrapping_value(const JsonObject *object)
 {
     return object->wrapping_value;
 }
 
-int json_object_has_value(const JsonObject *object, const char *name)
-{
-    return json_object_get_value(object, name) != NULL;
-}
+//TINY_LOR
+//int json_object_has_value(const JsonObject *object, const char *name)
+//{
+//    return json_object_get_value(object, name) != NULL;
+//}
 
+TINY_LOR
 int json_object_has_value_of_type(const JsonObject *object, const char *name, JsonElementType type)
 {
     JsonElement *val = json_object_get_value(object, name);
     return val != NULL && json_value_get_type(val) == type;
 }
 
-int json_object_dothas_value(const JsonObject *object, const char *name)
-{
-    return json_object_dotget_value(object, name) != NULL;
-}
-
-int json_object_dothas_value_of_type(const JsonObject *object, const char *name, JsonElementType type)
-{
-    JsonElement *val = json_object_dotget_value(object, name);
-    return val != NULL && json_value_get_type(val) == type;
-}
+//TINY_LOR
+//int json_object_dothas_value(const JsonObject *object, const char *name)
+//{
+//    return json_object_dotget_value(object, name) != NULL;
+//}
+//
+//TINY_LOR
+//int json_object_dothas_value_of_type(const JsonObject *object, const char *name, JsonElementType type)
+//{
+//    JsonElement *val = json_object_dotget_value(object, name);
+//    return val != NULL && json_value_get_type(val) == type;
+//}
 
 /* JSON Array API */
+TINY_LOR
 JsonElement *json_array_get_value(const JsonArray *array, size_t index)
 {
     if (array == NULL || index >= json_array_get_count(array))
@@ -1446,77 +1550,92 @@ JsonElement *json_array_get_value(const JsonArray *array, size_t index)
     return array->items[index];
 }
 
-const char *json_array_get_string(const JsonArray *array, size_t index)
-{
-    return json_value_get_string(json_array_get_value(array, index));
-}
+//TINY_LOR
+//const char *json_array_get_string(const JsonArray *array, size_t index)
+//{
+//    return json_value_get_string(json_array_get_value(array, index));
+//}
+//
+//TINY_LOR
+//double json_array_get_number(const JsonArray *array, size_t index)
+//{
+//    return json_value_get_number(json_array_get_value(array, index));
+//}
 
-double json_array_get_number(const JsonArray *array, size_t index)
-{
-    return json_value_get_number(json_array_get_value(array, index));
-}
-
+TINY_LOR
 JsonObject *json_array_get_object(const JsonArray *array, size_t index)
 {
     return json_value_get_object(json_array_get_value(array, index));
 }
 
-JsonArray *json_array_get_array(const JsonArray *array, size_t index)
-{
-    return json_value_get_array(json_array_get_value(array, index));
-}
+//TINY_LOR
+//JsonArray *json_array_get_array(const JsonArray *array, size_t index)
+//{
+//    return json_value_get_array(json_array_get_value(array, index));
+//}
+//
+//TINY_LOR
+//int json_array_get_boolean(const JsonArray *array, size_t index)
+//{
+//    return json_value_get_boolean(json_array_get_value(array, index));
+//}
 
-int json_array_get_boolean(const JsonArray *array, size_t index)
-{
-    return json_value_get_boolean(json_array_get_value(array, index));
-}
-
+TINY_LOR
 size_t json_array_get_count(const JsonArray *array)
 {
     return array ? array->count : 0;
 }
 
+TINY_LOR
 JsonElement *json_array_get_wrapping_value(const JsonArray *array)
 {
     return array->wrapping_value;
 }
 
 /* JSON Value API */
+TINY_LOR
 JsonElementType json_value_get_type(const JsonElement *value)
 {
     return value ? value->type : JSON_ERROR;
 }
 
+TINY_LOR
 JsonObject *json_value_get_object(const JsonElement *value)
 {
     return json_value_get_type(value) == JSON_OBJECT ? value->value.object : NULL;
 }
 
+TINY_LOR
 JsonArray *json_value_get_array(const JsonElement *value)
 {
     return json_value_get_type(value) == JSON_ARRAY ? value->value.array : NULL;
 }
 
+TINY_LOR
 const char *json_value_get_string(const JsonElement *value)
 {
     return json_value_get_type(value) == JSON_STRING ? value->value.string : NULL;
 }
 
+TINY_LOR
 double json_value_get_number(const JsonElement *value)
 {
     return json_value_get_type(value) == JSON_NUMBER ? value->value.number : 0;
 }
 
+TINY_LOR
 int json_value_get_boolean(const JsonElement *value)
 {
     return json_value_get_type(value) == JSON_BOOLEAN ? value->value.boolean : -1;
 }
 
-JsonElement *json_value_get_parent(const JsonElement *value)
-{
-    return value ? value->parent : NULL;
-}
+//TINY_LOR
+//JsonElement *json_value_get_parent(const JsonElement *value)
+//{
+//    return value ? value->parent : NULL;
+//}
 
+TINY_LOR
 void json_value_free(JsonElement *value)
 {
     switch (json_value_get_type(value))
@@ -1536,6 +1655,7 @@ void json_value_free(JsonElement *value)
     tiny_free(value);
 }
 
+TINY_LOR
 JsonElement *json_value_init_object(void)
 {
     JsonElement *new_value = (JsonElement *) tiny_malloc(sizeof(JsonElement));
@@ -1554,6 +1674,7 @@ JsonElement *json_value_init_object(void)
     return new_value;
 }
 
+TINY_LOR
 JsonElement *json_value_init_array(void)
 {
     JsonElement *new_value = (JsonElement *) tiny_malloc(sizeof(JsonElement));
@@ -1572,6 +1693,7 @@ JsonElement *json_value_init_array(void)
     return new_value;
 }
 
+TINY_LOR
 JsonElement *json_value_init_string(const char *string)
 {
     char *copy = NULL;
@@ -1599,6 +1721,7 @@ JsonElement *json_value_init_string(const char *string)
     return value;
 }
 
+TINY_LOR
 JsonElement *json_value_init_number(double number)
 {
     JsonElement *new_value = (JsonElement *) tiny_malloc(sizeof(JsonElement));
@@ -1612,6 +1735,7 @@ JsonElement *json_value_init_number(double number)
     return new_value;
 }
 
+TINY_LOR
 JsonElement *json_value_init_boolean(int boolean)
 {
     JsonElement *new_value = (JsonElement *) tiny_malloc(sizeof(JsonElement));
@@ -1625,6 +1749,7 @@ JsonElement *json_value_init_boolean(int boolean)
     return new_value;
 }
 
+TINY_LOR
 JsonElement *json_value_init_null(void)
 {
     JsonElement *new_value = (JsonElement *) tiny_malloc(sizeof(JsonElement));
@@ -1637,6 +1762,7 @@ JsonElement *json_value_init_null(void)
     return new_value;
 }
 
+TINY_LOR
 JsonElement *json_value_deep_copy(const JsonElement *value)
 {
     size_t i = 0;
@@ -1729,52 +1855,56 @@ JsonElement *json_value_deep_copy(const JsonElement *value)
     }
 }
 
-size_t json_serialization_size(const JsonElement *value)
-{
-    char num_buf[1100]; /* recursively allocating buffer on stack is a bad idea, so let's do it only once */
-    int res = json_serialize_to_buffer_r(value, NULL, 0, 0, num_buf);
-    return res < 0 ? 0 : (size_t) (res + 1);
-}
+//TINY_LOR
+//size_t json_serialization_size(const JsonElement *value)
+//{
+//    char num_buf[1100]; /* recursively allocating buffer on stack is a bad idea, so let's do it only once */
+//    int res = json_serialize_to_buffer_r(value, NULL, 0, 0, num_buf);
+//    return res < 0 ? 0 : (size_t) (res + 1);
+//}
 
-JsonResult json_serialize_to_buffer(const JsonElement *value, char *buf, size_t buf_size_in_bytes)
-{
-    int written = -1;
-    size_t needed_size_in_bytes = json_serialization_size(value);
-    if (needed_size_in_bytes == 0 || buf_size_in_bytes < needed_size_in_bytes)
-    {
-        return JSON_FAILURE;
-    }
-    written = json_serialize_to_buffer_r(value, buf, 0, 0, NULL);
-    if (written < 0)
-    {
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
+//TINY_LOR
+//JsonResult json_serialize_to_buffer(const JsonElement *value, char *buf, size_t buf_size_in_bytes)
+//{
+//    int written = -1;
+//    size_t needed_size_in_bytes = json_serialization_size(value);
+//    if (needed_size_in_bytes == 0 || buf_size_in_bytes < needed_size_in_bytes)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    written = json_serialize_to_buffer_r(value, buf, 0, 0, NULL);
+//    if (written < 0)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
 
-char *json_serialize_to_string(const JsonElement *value)
-{
-    JsonResult serialization_result = JSON_FAILURE;
-    size_t buf_size_bytes = json_serialization_size(value);
-    char *buf = NULL;
-    if (buf_size_bytes == 0)
-    {
-        return NULL;
-    }
-    buf = (char *) tiny_malloc(buf_size_bytes);
-    if (buf == NULL)
-    {
-        return NULL;
-    }
-    serialization_result = json_serialize_to_buffer(value, buf, buf_size_bytes);
-    if (serialization_result == JSON_FAILURE)
-    {
-        json_free_serialized_string(buf);
-        return NULL;
-    }
-    return buf;
-}
+//TINY_LOR
+//char *json_serialize_to_string(const JsonElement *value)
+//{
+//    JsonResult serialization_result = JSON_FAILURE;
+//    size_t buf_size_bytes = json_serialization_size(value);
+//    char *buf = NULL;
+//    if (buf_size_bytes == 0)
+//    {
+//        return NULL;
+//    }
+//    buf = (char *) tiny_malloc(buf_size_bytes);
+//    if (buf == NULL)
+//    {
+//        return NULL;
+//    }
+//    serialization_result = json_serialize_to_buffer(value, buf, buf_size_bytes);
+//    if (serialization_result == JSON_FAILURE)
+//    {
+//        json_free_serialized_string(buf);
+//        return NULL;
+//    }
+//    return buf;
+//}
 
+TINY_LOR
 size_t json_serialization_size_pretty(const JsonElement *value)
 {
     char num_buf[1100]; /* recursively allocating buffer on stack is a bad idea, so let's do it only once */
@@ -1782,6 +1912,7 @@ size_t json_serialization_size_pretty(const JsonElement *value)
     return res < 0 ? 0 : (size_t) (res + 1);
 }
 
+TINY_LOR
 JsonResult json_serialize_to_buffer_pretty(const JsonElement *value, char *buf, size_t buf_size_in_bytes)
 {
     int written = -1;
@@ -1798,6 +1929,7 @@ JsonResult json_serialize_to_buffer_pretty(const JsonElement *value, char *buf, 
     return JSON_SUCCESS;
 }
 
+TINY_LOR
 char *json_serialize_to_string_pretty(const JsonElement *value)
 {
     JsonResult serialization_result = JSON_FAILURE;
@@ -1821,121 +1953,130 @@ char *json_serialize_to_string_pretty(const JsonElement *value)
     return buf;
 }
 
+TINY_LOR
 void json_free_serialized_string(char *string)
 {
     tiny_free(string);
 }
 
-JsonResult json_array_remove(JsonArray *array, size_t ix)
-{
-    JsonElement *temp_value = NULL;
-    size_t last_element_ix = 0;
-    if (array == NULL || ix >= json_array_get_count(array))
-    {
-        return JSON_FAILURE;
-    }
-    last_element_ix = json_array_get_count(array) - 1;
-    json_value_free(json_array_get_value(array, ix));
-    if (ix != last_element_ix)
-    { /* Replace value with one from the end of array */
-        temp_value = json_array_get_value(array, last_element_ix);
-        if (temp_value == NULL)
-        {
-            return JSON_FAILURE;
-        }
-        array->items[ix] = temp_value;
-    }
-    array->count -= 1;
-    return JSON_SUCCESS;
-}
+//TINY_LOR
+//JsonResult json_array_remove(JsonArray *array, size_t ix)
+//{
+//    JsonElement *temp_value = NULL;
+//    size_t last_element_ix = 0;
+//    if (array == NULL || ix >= json_array_get_count(array))
+//    {
+//        return JSON_FAILURE;
+//    }
+//    last_element_ix = json_array_get_count(array) - 1;
+//    json_value_free(json_array_get_value(array, ix));
+//    if (ix != last_element_ix)
+//    { /* Replace value with one from the end of array */
+//        temp_value = json_array_get_value(array, last_element_ix);
+//        if (temp_value == NULL)
+//        {
+//            return JSON_FAILURE;
+//        }
+//        array->items[ix] = temp_value;
+//    }
+//    array->count -= 1;
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_array_replace_value(JsonArray *array, size_t ix, JsonElement *value)
+//{
+//    if (array == NULL || value == NULL || value->parent != NULL || ix >= json_array_get_count(array))
+//    {
+//        return JSON_FAILURE;
+//    }
+//    json_value_free(json_array_get_value(array, ix));
+//    value->parent = json_array_get_wrapping_value(array);
+//    array->items[ix] = value;
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_array_replace_string(JsonArray *array, size_t i, const char *string)
+//{
+//    JsonElement *value = json_value_init_string(string);
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_array_replace_value(array, i, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_array_replace_number(JsonArray *array, size_t i, double number)
+//{
+//    JsonElement *value = json_value_init_number(number);
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_array_replace_value(array, i, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_array_replace_boolean(JsonArray *array, size_t i, int boolean)
+//{
+//    JsonElement *value = json_value_init_boolean(boolean);
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_array_replace_value(array, i, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_array_replace_null(JsonArray *array, size_t i)
+//{
+//    JsonElement *value = json_value_init_null();
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_array_replace_value(array, i, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_array_clear(JsonArray *array)
+//{
+//    size_t i = 0;
+//    if (array == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    for (i = 0; i < json_array_get_count(array); i++)
+//    {
+//        json_value_free(json_array_get_value(array, i));
+//    }
+//    array->count = 0;
+//    return JSON_SUCCESS;
+//}
 
-JsonResult json_array_replace_value(JsonArray *array, size_t ix, JsonElement *value)
-{
-    if (array == NULL || value == NULL || value->parent != NULL || ix >= json_array_get_count(array))
-    {
-        return JSON_FAILURE;
-    }
-    json_value_free(json_array_get_value(array, ix));
-    value->parent = json_array_get_wrapping_value(array);
-    array->items[ix] = value;
-    return JSON_SUCCESS;
-}
-
-JsonResult json_array_replace_string(JsonArray *array, size_t i, const char *string)
-{
-    JsonElement *value = json_value_init_string(string);
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_array_replace_value(array, i, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
-JsonResult json_array_replace_number(JsonArray *array, size_t i, double number)
-{
-    JsonElement *value = json_value_init_number(number);
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_array_replace_value(array, i, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
-JsonResult json_array_replace_boolean(JsonArray *array, size_t i, int boolean)
-{
-    JsonElement *value = json_value_init_boolean(boolean);
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_array_replace_value(array, i, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
-JsonResult json_array_replace_null(JsonArray *array, size_t i)
-{
-    JsonElement *value = json_value_init_null();
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_array_replace_value(array, i, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
-JsonResult json_array_clear(JsonArray *array)
-{
-    size_t i = 0;
-    if (array == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    for (i = 0; i < json_array_get_count(array); i++)
-    {
-        json_value_free(json_array_get_value(array, i));
-    }
-    array->count = 0;
-    return JSON_SUCCESS;
-}
-
+TINY_LOR
 JsonResult json_array_append_value(JsonArray *array, JsonElement *value)
 {
     if (array == NULL || value == NULL || value->parent != NULL)
@@ -1945,6 +2086,7 @@ JsonResult json_array_append_value(JsonArray *array, JsonElement *value)
     return json_array_add(array, value);
 }
 
+TINY_LOR
 JsonResult json_array_append_string(JsonArray *array, const char *string)
 {
     JsonElement *value = json_value_init_string(string);
@@ -1960,51 +2102,55 @@ JsonResult json_array_append_string(JsonArray *array, const char *string)
     return JSON_SUCCESS;
 }
 
-JsonResult json_array_append_number(JsonArray *array, double number)
-{
-    JsonElement *value = json_value_init_number(number);
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_array_append_value(array, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
+//TINY_LOR
+//JsonResult json_array_append_number(JsonArray *array, double number)
+//{
+//    JsonElement *value = json_value_init_number(number);
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_array_append_value(array, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_array_append_boolean(JsonArray *array, int boolean)
+//{
+//    JsonElement *value = json_value_init_boolean(boolean);
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_array_append_value(array, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_array_append_null(JsonArray *array)
+//{
+//    JsonElement *value = json_value_init_null();
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_array_append_value(array, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
 
-JsonResult json_array_append_boolean(JsonArray *array, int boolean)
-{
-    JsonElement *value = json_value_init_boolean(boolean);
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_array_append_value(array, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
-JsonResult json_array_append_null(JsonArray *array)
-{
-    JsonElement *value = json_value_init_null();
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_array_append_value(array, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
+TINY_LOR
 JsonResult json_object_set_value(JsonObject *object, const char *name, JsonElement *value)
 {
     size_t i = 0;
@@ -2031,26 +2177,31 @@ JsonResult json_object_set_value(JsonObject *object, const char *name, JsonEleme
     return json_object_add(object, name, value);
 }
 
+TINY_LOR
 JsonResult json_object_set_string(JsonObject *object, const char *name, const char *string)
 {
     return json_object_set_value(object, name, json_value_init_string(string));
 }
 
+TINY_LOR
 JsonResult json_object_set_number(JsonObject *object, const char *name, double number)
 {
     return json_object_set_value(object, name, json_value_init_number(number));
 }
 
+TINY_LOR
 JsonResult json_object_set_boolean(JsonObject *object, const char *name, int boolean)
 {
     return json_object_set_value(object, name, json_value_init_boolean(boolean));
 }
 
-JsonResult json_object_set_null(JsonObject *object, const char *name)
-{
-    return json_object_set_value(object, name, json_value_init_null());
-}
+//TINY_LOR
+//JsonResult json_object_set_null(JsonObject *object, const char *name)
+//{
+//    return json_object_set_value(object, name, json_value_init_null());
+//}
 
+TINY_LOR
 JsonResult json_object_dotset_value(JsonObject *object, const char *name, JsonElement *value)
 {
     const char *dot_pos = NULL;
@@ -2091,66 +2242,71 @@ JsonResult json_object_dotset_value(JsonObject *object, const char *name, JsonEl
     }
 }
 
-JsonResult json_object_dotset_string(JsonObject *object, const char *name, const char *string)
-{
-    JsonElement *value = json_value_init_string(string);
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_object_dotset_value(object, name, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
+//TINY_LOR
+//JsonResult json_object_dotset_string(JsonObject *object, const char *name, const char *string)
+//{
+//    JsonElement *value = json_value_init_string(string);
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_object_dotset_value(object, name, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_object_dotset_number(JsonObject *object, const char *name, double number)
+//{
+//    JsonElement *value = json_value_init_number(number);
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_object_dotset_value(object, name, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_object_dotset_boolean(JsonObject *object, const char *name, int boolean)
+//{
+//    JsonElement *value = json_value_init_boolean(boolean);
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_object_dotset_value(object, name, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
+//
+//TINY_LOR
+//JsonResult json_object_dotset_null(JsonObject *object, const char *name)
+//{
+//    JsonElement *value = json_value_init_null();
+//    if (value == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    if (json_object_dotset_value(object, name, value) == JSON_FAILURE)
+//    {
+//        json_value_free(value);
+//        return JSON_FAILURE;
+//    }
+//    return JSON_SUCCESS;
+//}
 
-JsonResult json_object_dotset_number(JsonObject *object, const char *name, double number)
-{
-    JsonElement *value = json_value_init_number(number);
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_object_dotset_value(object, name, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
-JsonResult json_object_dotset_boolean(JsonObject *object, const char *name, int boolean)
-{
-    JsonElement *value = json_value_init_boolean(boolean);
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_object_dotset_value(object, name, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
-JsonResult json_object_dotset_null(JsonObject *object, const char *name)
-{
-    JsonElement *value = json_value_init_null();
-    if (value == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    if (json_object_dotset_value(object, name, value) == JSON_FAILURE)
-    {
-        json_value_free(value);
-        return JSON_FAILURE;
-    }
-    return JSON_SUCCESS;
-}
-
+TINY_LOR
 JsonResult json_object_remove(JsonObject *object, const char *name)
 {
     size_t i = 0, last_item_index = 0;
@@ -2177,6 +2333,7 @@ JsonResult json_object_remove(JsonObject *object, const char *name)
     return JSON_FAILURE; /* No execution path should end here */
 }
 
+TINY_LOR
 JsonResult json_object_dotremove(JsonObject *object, const char *name)
 {
     const char *dot_pos = strchr(name, '.');
@@ -2199,22 +2356,24 @@ JsonResult json_object_dotremove(JsonObject *object, const char *name)
     }
 }
 
-JsonResult json_object_clear(JsonObject *object)
-{
-    size_t i = 0;
-    if (object == NULL)
-    {
-        return JSON_FAILURE;
-    }
-    for (i = 0; i < json_object_get_count(object); i++)
-    {
-        tiny_free(object->names[i]);
-        json_value_free(object->values[i]);
-    }
-    object->count = 0;
-    return JSON_SUCCESS;
-}
+//TINY_LOR
+//JsonResult json_object_clear(JsonObject *object)
+//{
+//    size_t i = 0;
+//    if (object == NULL)
+//    {
+//        return JSON_FAILURE;
+//    }
+//    for (i = 0; i < json_object_get_count(object); i++)
+//    {
+//        tiny_free(object->names[i]);
+//        json_value_free(object->values[i]);
+//    }
+//    object->count = 0;
+//    return JSON_SUCCESS;
+//}
 
+TINY_LOR
 JsonResult json_validate(const JsonElement *schema, const JsonElement *value)
 {
     JsonElement *temp_schema_value = NULL, *temp_value = NULL;
@@ -2292,6 +2451,7 @@ JsonResult json_validate(const JsonElement *schema, const JsonElement *value)
     }
 }
 
+TINY_LOR
 JsonResult json_value_equals(const JsonElement *a, const JsonElement *b)
 {
     JsonObject *a_object = NULL, *b_object = NULL;
@@ -2356,7 +2516,7 @@ JsonResult json_value_equals(const JsonElement *a, const JsonElement *b)
         case JSON_BOOLEAN:
             return json_value_get_boolean(a) == json_value_get_boolean(b);
         case JSON_NUMBER:
-            return _fabs(json_value_get_number(a) - json_value_get_number(b)) < 0.000001; /* EPSILON */
+            return _fabs((float) (json_value_get_number(a) - json_value_get_number(b))) < 0.000001f; /* EPSILON */
         case JSON_ERROR:
             return 1;
         case JSON_NULL:
@@ -2366,32 +2526,38 @@ JsonResult json_value_equals(const JsonElement *a, const JsonElement *b)
     }
 }
 
-JsonElementType json_type(const JsonElement *value)
-{
-    return json_value_get_type(value);
-}
-
-JsonObject *json_object(const JsonElement *value)
-{
-    return json_value_get_object(value);
-}
-
-JsonArray *json_array(const JsonElement *value)
-{
-    return json_value_get_array(value);
-}
-
-const char *json_string(const JsonElement *value)
-{
-    return json_value_get_string(value);
-}
-
-double json_number(const JsonElement *value)
-{
-    return json_value_get_number(value);
-}
-
-int json_boolean(const JsonElement *value)
-{
-    return json_value_get_boolean(value);
-}
+//TINY_LOR
+//JsonElementType json_type(const JsonElement *value)
+//{
+//    return json_value_get_type(value);
+//}
+//
+//TINY_LOR
+//JsonObject *json_object(const JsonElement *value)
+//{
+//    return json_value_get_object(value);
+//}
+//
+//TINY_LOR
+//JsonArray *json_array(const JsonElement *value)
+//{
+//    return json_value_get_array(value);
+//}
+//
+//TINY_LOR
+//const char *json_string(const JsonElement *value)
+//{
+//    return json_value_get_string(value);
+//}
+//
+//TINY_LOR
+//double json_number(const JsonElement *value)
+//{
+//    return json_value_get_number(value);
+//}
+//
+//TINY_LOR
+//int json_boolean(const JsonElement *value)
+//{
+//    return json_value_get_boolean(value);
+//}

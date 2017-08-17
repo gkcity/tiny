@@ -8,19 +8,20 @@ SET(Header
         TinyContainerListener.h
         TinyList.h
         TinyMap.h
-        TinyQueue.h
-    )
+        )
 
 SET(Source
         TinyList.c
         TinyMap.c
-        TinyQueue.c
-    )
+        )
+
+#TinyQueue.h
+#TinyQueue.c
 
 SET(SRC
         ${Header}
         ${Source}
-    )
+        )
 
 #----------------------------------------------------------------------------
 # static library
@@ -32,4 +33,4 @@ SET_TARGET_PROPERTIES(tiny_container_static PROPERTIES LINKER_LANGUAGE C)
 #----------------------------------------------------------------------------
 # test
 #----------------------------------------------------------------------------
-#ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(test)

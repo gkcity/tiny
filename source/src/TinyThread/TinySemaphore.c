@@ -11,13 +11,13 @@
  */
 
 #include "TinySemaphore.h"
-#include "../TinyPortable/tiny_malloc.h"
-#include "tiny_log.h"
+#include <tiny_malloc.h>
+#include <tiny_log.h>
 
 #define TAG     "TinySemaphore"
 
 #ifdef _WIN32
-#else
+//#else
 bool ctx_gen_ipc_name(const char *name, char *full_name, uint32_t len)
 {
     const char * dir = NULL;
@@ -104,7 +104,7 @@ TinyRet TinySemaphore_Construct(TinySemaphore *thiz)
 #if (defined __LINUX__) || (defined __ANDROID__)
         if (sem_init(&thiz->sem, 0, 0) != 0)
         {
-            LOG_E(TAG, "TinySemaphore_Initialize: sem_init %s", strerror(errno));
+            //LOG_E(TAG, "TinySemaphore_Initialize: sem_init %s", strerror(errno));
             ret = TINY_RET_E_INTERNAL;
             break;
         }

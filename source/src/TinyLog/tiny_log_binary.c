@@ -12,10 +12,12 @@
 
 #include "tiny_log_binary.h"
 
-#ifdef TINY_DEBUG
+//#ifdef TINY_DEBUG
+#if 1
+TINY_LOR
 void tiny_print_binary(const char *title, const uint8_t *data, size_t len, bool wrapLines)
 {
-    printf("[ %s, %ld ] = ", title, len);
+    printf("[ %s, %d ] = ", title, (int)len);
 
     if (wrapLines)
     {

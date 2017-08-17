@@ -11,8 +11,8 @@
  */
 
 #include <tiny_time.h>
+#include <tiny_snprintf.h>
 #include "tiny_log_print.h"
-#include "tiny_time.h"
 
 #ifdef _WIN32
 #include <io.h>
@@ -49,6 +49,7 @@
 #ifdef TINY_DEBUG
 static int log_fd = -1;
 
+TINY_LOR
 static char get_priority(int prio)
 {
     char c = 'U';
@@ -82,6 +83,7 @@ static char get_priority(int prio)
     return c;
 }
 
+TINY_LOR
 static void change_screen_color(int prio)
 {
     const char *color = LOG_COLOR_NONE;
@@ -115,6 +117,7 @@ static void change_screen_color(int prio)
     printf("%s", color);
 }
 
+TINY_LOR
 int __tiny_log_write(int prio, const char *tag, const char *text)
 {
     char log[LOG_HEAD + LOG_BUF_SIZE];
@@ -122,7 +125,7 @@ int __tiny_log_write(int prio, const char *tag, const char *text)
     
     tiny_getstrtime(date, 128);
 
-    snprintf(log,
+    tiny_snprintf(log,
             LOG_HEAD + LOG_BUF_SIZE,
             "[%s] %c/%s %s\n",
             date,
@@ -144,11 +147,13 @@ int __tiny_log_write(int prio, const char *tag, const char *text)
     else
     {
         int ret = _write(log_fd, log, strlen(log));
+        (void)ret;
     }
 
     return 0;
 }
 
+TINY_LOR
 int __tiny_log_print(int prio, const char *tag,  const char *fmt, ...)
 {
     va_list ap;
@@ -161,6 +166,7 @@ int __tiny_log_print(int prio, const char *tag,  const char *fmt, ...)
     return __tiny_log_write(prio, tag, buf);
 }
 
+TINY_LOR
 int __tiny_log_vprint(int prio, const char *tag, const char *fmt, va_list ap)
 {
     char buf[LOG_BUF_SIZE];

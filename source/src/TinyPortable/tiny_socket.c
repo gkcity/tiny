@@ -4,7 +4,7 @@
  * @author jxfengzi@gmail.com
  * @date   2013-7-9
  *
- * @file   tiny_socket.h
+ * @file   tiny_socket.c
  *
  * @remark
  *      set tabstop=4
@@ -12,19 +12,12 @@
  *      set expandtab
  */
 
-#ifndef __TINY_SOCKET_H__
-#define __TINY_SOCKET_H__
-
-
 #ifdef LWIP_SOCKET
-    #include "tiny_socket_lwip.h"
+    #include "tiny_socket_lwip.c"
 #else
     #ifdef WIN32
-        #include "tiny_socket_windows.h"
+        #include "tiny_socket_windows.c"
     #else
-        #include "tiny_socket_linux.h"
+        #include "tiny_socket_linux.c"
     #endif
 #endif
-
-
-#endif /* __TINY_SOCKET_H__ */

@@ -15,7 +15,8 @@
 #include "tiny_str_equal.h"
 #include <ctype.h>
 
-
+#if 0
+TINY_LOR
 int str_get_value(const char *buf, uint32_t buf_len, const char *start_tag, const char *end_tag, char *value, uint32_t value_len)
 {
     const char *v_start = NULL;
@@ -62,3 +63,4 @@ int str_get_value(const char *buf, uint32_t buf_len, const char *start_tag, cons
 
     return v_len;
 }
+#endif

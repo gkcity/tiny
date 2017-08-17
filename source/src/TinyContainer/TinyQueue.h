@@ -37,7 +37,7 @@ TINY_API void TinyQueue_SetDeleteListener(TinyList * thiz, TinyContainerItemDele
 TINY_API void * TinyQueue_Head(TinyQueue *thiz);
 TINY_API void TinyQueue_Push(TinyQueue *thiz, void *data);
 TINY_API void TinyQueue_Pop(TinyQueue *thiz);
-TINY_API uint32_t TinyQueue_GetSize(TinyQueue *thiz);
+TINY_API int TinyQueue_GetSize(TinyQueue *thiz);
 
 
 TINY_END_DECLS

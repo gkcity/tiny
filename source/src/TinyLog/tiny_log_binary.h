@@ -17,7 +17,9 @@
 
 TINY_BEGIN_DECLS
 
-#ifdef TINY_DEBUG
+//#ifdef TINY_DEBUG
+#if 1
+    TINY_LOR
     void tiny_print_binary(const char *title, const uint8_t *data, size_t len, bool wrapLines);
     #define LOG_BINARY(T, D, L, W) tiny_print_binary(T, D, L, W)
 #else

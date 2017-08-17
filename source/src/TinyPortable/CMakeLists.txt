@@ -5,17 +5,20 @@
 #-----------------------------------------------------------------------------
 
 SET(Header
+        tiny_lor.h
+        tiny_inet.h
         tiny_malloc.h
         tiny_strdup.h
         tiny_snprintf.h
         tiny_socket.h
+        tiny_inline.h
         tiny_time.h
-    )
+        )
 
 SET(Source
-        tiny_malloc.c
         tiny_strdup.c
         tiny_time.c
+        tiny_socket.c
         )
 
 SET(SRC

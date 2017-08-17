@@ -36,22 +36,30 @@ typedef enum _tiny_log_priority {
 /*
  * Send a simple string to the log.
  */
-TINY_API int __tiny_log_write(int prio, const char *tag, const char *text);
+TINY_API
+TINY_LOR
+int __tiny_log_write(int prio, const char *tag, const char *text);
 
 /*
  * Send a formatted string to the log, used like printf(fmt,...)
  */
 #if defined(__GNUC__)
-TINY_API int __tiny_log_print(int prio, const char *tag, const char *fmt, ...) __attribute__((format(printf, 3, 4)));
+TINY_API
+TINY_LOR
+int __tiny_log_print(int prio, const char *tag, const char *fmt, ...) __attribute__((format(printf, 3, 4)));
 #else
-TINY_API int __tiny_log_print(int prio, const char *tag, const char *fmt, ...);
+TINY_API
+TINY_LOR
+int __tiny_log_print(int prio, const char *tag, const char *fmt, ...);
 #endif
 
 /*
  * A variant of __tiny_log_print() that takes a va_list to list
  * additional parameters.
  */
-TINY_API int __tiny_log_vprint(int prio, const char *tag, const char *fmt, va_list ap);
+TINY_API
+TINY_LOR
+int __tiny_log_vprint(int prio, const char *tag, const char *fmt, va_list ap);
 
 #endif /* TINY_DEBUG */
 

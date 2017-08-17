@@ -4,7 +4,7 @@
 * @author jxfengzi@gmail.com
 * @date   2013-11-19
 *
-* @file   str_equal.c
+* @file   str_split.c
 *
 * @remark
 *		set tabstop=4
@@ -12,10 +12,10 @@
 *		set expandtab
 */
 
-#include "tiny_str_equal.h"
+#include "tiny_str_split.h"
 #include <ctype.h>
 
-
+TINY_LOR
 uint32_t str_split(const char *str, const char *c, char group[][128], uint32_t groupCount)
 {
     uint32_t len = 128;

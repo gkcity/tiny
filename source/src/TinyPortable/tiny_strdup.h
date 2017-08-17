@@ -15,13 +15,16 @@
 #ifndef __TINY_STRDUP_H__
 #define __TINY_STRDUP_H__
 
+#include <tiny_lor.h>
 #include "tiny_typedef.h"
 #include "tiny_api.h"
 
 TINY_BEGIN_DECLS
 
 
-TINY_API char * tiny_strdup(const char *src);
+TINY_API
+TINY_LOR
+char * tiny_strdup(const char *src);
 
 
 

@@ -12,6 +12,7 @@
  *		set expandtab
  */
 
+#include <tiny_lor.h>
 #include "tiny_base.h"
 #include "tiny_api.h"
 
@@ -22,11 +23,25 @@
 TINY_BEGIN_DECLS
 
 
-TINY_API int is_space(int c);
-TINY_API int is_char(int c);
-TINY_API int is_ctl(int c);
-TINY_API int is_tspecial(int c);
-TINY_API int is_digit(int c);
+//TINY_API
+//TINY_LOR
+//int is_space(int c);
+
+TINY_API
+TINY_LOR
+int is_char(int c);
+
+TINY_API
+TINY_LOR
+int is_ctl(int c);
+
+TINY_API
+TINY_LOR
+int is_tspecial(int c);
+
+TINY_API
+TINY_LOR
+int is_digit(int c);
 
 
 TINY_END_DECLS

@@ -15,29 +15,38 @@
 #ifndef __TINY_SOCKET_LWIP_H__
 #define __TINY_SOCKET_LWIP_H__
 
-#include <sys/time.h>
-#include <lwip/lwip/sockets.h>
+#include <tiny_inline.h>
 #include <tiny_typedef.h>
+
+#if LWIP_TIMEVAL_PRIVATE
+#else
+    #include <sys/time.h>
+#endif
+
+#include <lwip/lwip/sockets.h>
+
 
 TINY_BEGIN_DECLS
 
 
-#define tiny_select             lwip_select
-#define tiny_socket_close       lwip_close
+#define tiny_socket_initialize()
+#define tiny_socket_finalize()
+#define tiny_select                 lwip_select
+#define tiny_socket_close           lwip_close
+#define tiny_socket                 lwip_socket
+#define tiny_setsockopt             lwip_setsockopt
+#define tiny_bind                   lwip_bind
+#define tiny_listen                 lwip_listen
+#define tiny_accept                 lwip_accept
+#define tiny_recv                   lwip_recv
+#define tiny_send                   lwip_send
+#define tiny_setsockopt             lwip_setsockopt
+#define tiny_recvfrom               lwip_recvfrom
+#define tiny_sendto                 lwip_sendto
+#define tiny_connect                lwip_connect
+
 
 int tiny_socket_set_block(int fd, bool block);
-
-TINY_INLINE
-int tiny_socket_set_block(int fd, bool block)
-{
-    int flags = lwip_fcntl(fd, F_GETFL, 0);
-    if (flags < 0)
-    {
-        return flags;
-    }
-
-    return lwip_fcntl(fd, F_SETFL, block ? flags & ~O_NONBLOCK : flags | O_NONBLOCK);
-}
 
 #define inet_ntop(af,src,dst,size) \
     (((af) == AF_INET) ? ipaddr_ntoa_r((src),(dst),(size)) : NULL)

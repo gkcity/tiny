@@ -15,16 +15,19 @@
 #include "tiny_char_util.h"
 #include <ctype.h>
 
+TINY_LOR
 int is_char(int c)
 {
     return c >= 0 && c <= 127;
 }
 
+TINY_LOR
 int is_ctl(int c)
 {
     return (c >= 0 && c <= 31) || (c == 127);
 }
 
+TINY_LOR
 int is_tspecial(int c)
 {
     switch (c)
@@ -40,12 +43,14 @@ int is_tspecial(int c)
     }
 }
 
+TINY_LOR
 int is_digit(int c)
 {
     return c >= '0' && c <= '9';
 }
 
-int tolower_compare(char a, char b)
-{
-    return (tolower(a) == tolower(b));
-}
+//TINY_LOR
+//int tolower_compare(char a, char b)
+//{
+//    return (tolower(a) == tolower(b));
+//}

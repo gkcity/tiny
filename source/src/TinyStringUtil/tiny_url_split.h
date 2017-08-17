@@ -15,13 +15,16 @@
 #ifndef __URL_SPLIT_H__
 #define __URL_SPLIT_H__
 
+#include <tiny_lor.h>
 #include "tiny_base.h"
 #include "tiny_api.h"
 
 TINY_BEGIN_DECLS
 
 
-TINY_API TinyRet url_split(const char *url, char ip[], uint32_t ip_len, uint16_t *port, char uri[], uint32_t uri_len);
+TINY_API
+TINY_LOR
+TinyRet url_split(const char *url, char ip[], uint32_t ip_len, uint16_t *port, char uri[], uint32_t uri_len);
 
 
 TINY_END_DECLS
