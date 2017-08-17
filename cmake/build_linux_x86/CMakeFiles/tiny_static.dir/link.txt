@@ -1,0 +1,2 @@
+/usr/bin/ar qc output/libtiny.a  
+/usr/bin/ranlib output/libtiny.a

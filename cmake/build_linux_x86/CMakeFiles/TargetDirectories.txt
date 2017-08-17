@@ -1,0 +1,4 @@
+/home/ouyang/extdisk/github.ouyang/tiny/cmake/build_linux_x86/CMakeFiles/rebuild_cache.dir
+/home/ouyang/extdisk/github.ouyang/tiny/cmake/build_linux_x86/CMakeFiles/tiny.dir
+/home/ouyang/extdisk/github.ouyang/tiny/cmake/build_linux_x86/CMakeFiles/edit_cache.dir
+/home/ouyang/extdisk/github.ouyang/tiny/cmake/build_linux_x86/CMakeFiles/tiny_static.dir
