@@ -15,8 +15,6 @@
 
 #ifdef __ANDROID__
     #include <android/log.h>
-    #define LOG_OPEN(file)
-    #define LOG_CLOSE()
     #define LOG_D(tag, format, ...) __android_log_print(ANDROID_LOG_DEBUG, tag, format, ##__VA_ARGS__)
     #define LOG_E(tag, format, ...) __android_log_print(ANDROID_LOG_ERROR, tag, format, ##__VA_ARGS__)
     #define LOG_I(tag, format, ...) __android_log_print(ANDROID_LOG_INFO, tag, format, ##__VA_ARGS__)

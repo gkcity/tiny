@@ -1,8 +1,9 @@
 #!/bin/sh
 
-rm -fr build_macos
-mkdir build_macos
-cd build_macos
+TARGET=target_macos
+rm -fr $TARGET
+mkdir $TARGET
+cd $TARGET
 cmake ../../ -DCMAKE_TOOLCHAIN_FILE=../macos.cmake
 make
 ls -l -h ./output

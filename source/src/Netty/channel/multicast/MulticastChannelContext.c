@@ -15,16 +15,19 @@
 #include <tiny_malloc.h>
 #include "channel/multicast/MulticastChannelContext.h"
 
+TINY_LOR
 static TinyRet MulticastChannelContext_Construct(MulticastChannelContext *thiz)
 {
     memset(thiz, 0, sizeof(MulticastChannelContext));
     return TINY_RET_OK;
 }
 
+TINY_LOR
 static void MulticastChannelContext_Dispose(MulticastChannelContext *thiz)
 {
 }
 
+TINY_LOR
 MulticastChannelContext * MulticastChannelContext_New(void)
 {
     MulticastChannelContext *thiz = NULL;
@@ -48,6 +51,7 @@ MulticastChannelContext * MulticastChannelContext_New(void)
     return thiz;
 }
 
+TINY_LOR
 void MulticastChannelContext_Delete(MulticastChannelContext *thiz)
 {
     RETURN_IF_FAIL(thiz);

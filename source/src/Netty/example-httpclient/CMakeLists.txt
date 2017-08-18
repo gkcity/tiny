@@ -1,13 +1,16 @@
 #-----------------------------------------------------------------------------
 #
-# example-timer
+# example-httpclient
 #
 #-----------------------------------------------------------------------------
 
-SET(SRC sample_timer.c)
+SET(SRC MyClientHandler.h
+        MyClientHandler.c
+        sample_http_client.c
+        )
 
-ADD_EXECUTABLE(sample_timer ${SRC})
-TARGET_LINK_LIBRARIES(sample_timer
+ADD_EXECUTABLE(sample_http_client ${SRC})
+TARGET_LINK_LIBRARIES(sample_http_client
         netty_static
         tiny_string_util_static
         tiny_container_static
@@ -15,4 +18,4 @@ TARGET_LINK_LIBRARIES(sample_timer
         tiny_portable_static
         tiny_base_static
         ${OS_LIB}
-        )
+    )

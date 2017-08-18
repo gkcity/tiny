@@ -13,11 +13,11 @@ static int test1(void)
 		return 0;
 	}
 
-	HttpMessage_SetType(&response, HTTP_RESPONSE);
-	HttpMessage_SetVersion(&response, 1, 1);
 	HttpMessage_SetResponse(&response, 204, "No Content");
-	HttpMessage_SetHeader(&response, "Content-Type", "text/TinyJson");
-	HttpMessage_SetHeaderInteger(&response, "Content-Length", 0);
+	HttpMessage_SetVersion(&response, 1, 1);
+
+	HttpHeader_Set(&response.header, "Content-Type", "text/json");
+	HttpHeader_SetInteger(&response.header, "Content-Length", 0);
 
 	HttpMessage_Dispose(&response);
 
@@ -33,14 +33,14 @@ static int test2(void)
 		return 0;
 	}
 
-	HttpMessage_SetType(&response, HTTP_RESPONSE);
-	HttpMessage_SetVersion(&response, 1, 1);
 	HttpMessage_SetResponse(&response, 204, "No Content");
-	HttpMessage_SetHeader(&response, "Content-Type", "text/TinyJson");
-	HttpMessage_SetHeaderInteger(&response, "Content-Length", 0);
+    HttpMessage_SetVersion(&response, 1, 1);
 
-	LOG_D(TAG, "BYTES: \n%s", HttpMessage_GetBytes(&response));
-	LOG_D(TAG, "SIZE: %d", HttpMessage_GetBytesSize(&response));
+    HttpHeader_Set(&response.header, "Content-Type", "text/json");
+    HttpHeader_SetInteger(&response.header, "Content-Length", 0);
+
+	LOG_D(TAG, "BYTES: \n%s", HttpMessage_GetBytesWithoutContent(&response));
+	LOG_D(TAG, "SIZE: %d", HttpMessage_GetBytesSizeWithoutContent(&response));
 
 	HttpMessage_Dispose(&response);
 

@@ -14,20 +14,9 @@
 #include <tiny_snprintf.h>
 #include "tiny_log_print.h"
 
-#ifdef _WIN32
-#include <io.h>
-#include <sys/stat.h>
-#else
-#define _dup dup
-#define _fileno fileno
-#define _open open
-#define _close close
-#define _write write
-#endif
-
-#define LOG_HEAD        128
-#define LOG_BUF_SIZE    1024
-#define LOG_DATE_LEN    64
+#define LOG_HEAD                128
+#define LOG_BUF_SIZE            1024
+#define LOG_DATE_LEN            64
 
 #define LOG_COLOR_NONE          "\033[m"
 #define LOG_COLOR_RED           "\033[0;32;31m"
@@ -47,7 +36,6 @@
 #define LOG_COLOR_WHITE         "\033[1;37m"
 
 #ifdef TINY_DEBUG
-static int log_fd = -1;
 
 TINY_LOR
 static char get_priority(int prio)
@@ -135,20 +123,12 @@ int __tiny_log_write(int prio, const char *tag, const char *text)
 
     log[LOG_HEAD + LOG_BUF_SIZE - 1] = 0;
 
-    if (log_fd == -1)
-    {
-    #ifdef _WIN32
-    #else
-        change_screen_color(prio);
-    #endif
+#ifdef _WIN32
+#else
+    change_screen_color(prio);
+#endif
 
-        printf("%s", log);
-    }
-    else
-    {
-        int ret = _write(log_fd, log, strlen(log));
-        (void)ret;
-    }
+    printf("%s", log);
 
     return 0;
 }

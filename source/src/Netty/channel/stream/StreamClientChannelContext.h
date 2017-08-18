@@ -21,18 +21,22 @@
 #include "channel/ChannelInitializer.h"
 
 TINY_BEGIN_DECLS
-;
+
+
 typedef struct _StreamClientChannelContext
 {
     ChannelInitializer          initializer;
     void                      * initializerContext;
 } StreamClientChannelContext;
 
+
+TINY_LOR
 StreamClientChannelContext * StreamClientChannelContext_New(void);
+
+TINY_LOR
 void StreamClientChannelContext_Delete(StreamClientChannelContext *thiz);
 
 
 TINY_END_DECLS
 
 #endif /* __STREAM_CLIENT_CHANNEL_CONTEXT_H__ */
-

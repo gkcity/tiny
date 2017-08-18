@@ -15,10 +15,11 @@
 #include <tiny_malloc.h>
 #include "StreamClientChannelContext.h"
 
-
+TINY_LOR
 static TinyRet StreamClientChannelContext_Construct(StreamClientChannelContext *thiz)
 {
     TinyRet ret = TINY_RET_OK;
+
     return ret;
 }
 
@@ -26,6 +27,7 @@ static void StreamClientChannelContext_Dispose(StreamClientChannelContext *thiz)
 {
 }
 
+TINY_LOR
 StreamClientChannelContext * StreamClientChannelContext_New(void)
 {
     StreamClientChannelContext *thiz = NULL;
@@ -49,6 +51,7 @@ StreamClientChannelContext * StreamClientChannelContext_New(void)
     return thiz;
 }
 
+TINY_LOR
 void StreamClientChannelContext_Delete(StreamClientChannelContext *thiz)
 {
     RETURN_IF_FAIL(thiz);

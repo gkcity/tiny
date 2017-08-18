@@ -17,6 +17,7 @@
 
 #include <tiny_inline.h>
 #include <tiny_typedef.h>
+#include <tiny_lor.h>
 
 #if LWIP_TIMEVAL_PRIVATE
 #else
@@ -45,8 +46,14 @@ TINY_BEGIN_DECLS
 #define tiny_sendto                 lwip_sendto
 #define tiny_connect                lwip_connect
 
-
+TINY_LOR
 int tiny_socket_set_block(int fd, bool block);
+
+TINY_LOR
+int tiny_socket_join_group(int fd, const char *ip, const char *group);
+
+TINY_LOR
+int tiny_socket_leave_group(int fd);
 
 #define inet_ntop(af,src,dst,size) \
     (((af) == AF_INET) ? ipaddr_ntoa_r((src),(dst),(size)) : NULL)

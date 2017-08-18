@@ -17,7 +17,6 @@
 
 #include <tiny_typedef.h>
 #include <tiny_ret.h>
-#include <tiny_socket.h>
 #include "channel/Channel.h"
 #include "channel/ChannelInitializer.h"
 
@@ -25,12 +24,20 @@
 TINY_BEGIN_DECLS
 
 
+TINY_LOR
 Channel * MulticastChannel_New(void);
-TinyRet MulticastChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx);
-TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, uint16_t port);
+
+TINY_LOR
+void MulticastChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx);
+
+TINY_LOR
+TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, uint16_t port, bool reuse);
+
+TINY_LOR
 TinyRet MulticastChannel_Write(Channel *thiz, const void *data, uint32_t len);
-//TinyRet MulticastChannel_WriteTo(Channel *thiz, const char *ip, uint16_t port, const void *data, uint32_t len);
-TinyRet MulticastChannel_WriteTo(Channel *thiz, const void *data, uint32_t len, struct sockaddr *to, socklen_t to_len);
+
+TINY_LOR
+TinyRet MulticastChannel_WriteTo(Channel *thiz, const void *data, uint32_t len, uint32_t ip, uint16_t port);
 
 
 TINY_END_DECLS

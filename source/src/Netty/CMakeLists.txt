@@ -5,13 +5,6 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------
-# Common
-#-----------------------
-SET(Common_Header
-        common/Netty_api.h
-    )
-
-#-----------------------
 # Selector
 #-----------------------
 SET(Selector_Header
@@ -27,9 +20,11 @@ SET(Selector_Source
 #-----------------------
 SET(Channel_Header
         channel/Channel.h
+        channel/ChannelAddress.h
         channel/ChannelHandler.h
-        channel/ChannelInitializer.h
+        channel/ChannelIdles.h
         channel/ChannelIdleStateHandler.h
+        channel/ChannelInitializer.h
         channel/SocketChannel.h
         channel/stream/StreamServerChannel.h
         channel/stream/StreamServerChannelContext.h
@@ -40,7 +35,8 @@ SET(Channel_Header
         )
 
 SET(Channel_Source
-        channel/Channel.c
+        channel/ChannelAddress.c
+        channel/ChannelIdles.c
         channel/ChannelIdleStateHandler.c
         channel/SocketChannel.c
         channel/stream/StreamServerChannel.c
@@ -80,17 +76,6 @@ SET(Codec_http_Source
     )
 
 #-----------------------
-# ByteBuf
-#------------------------
-Set(ByteBuf_Header
-	ByteBuf/byte_buf.h
-)
-
-Set(ByteBuf_Source
-	ByteBuf/byte_buf.c
-)
-
-#-----------------------
 # bootstrap
 #-----------------------
 SET(Bootstrap_Header
@@ -105,17 +90,12 @@ SET(Bootstrap_Source
 # source
 #----------------------------------------------------------------------------
 SET(SRC
-        ${Common_Header}
         ${Selector_Header}
         ${Selector_Source}
         ${Channel_Header}
         ${Channel_Source}
-        ${Timer_Header}
-        ${Timer_Source}
         ${Codec_http_Header}
         ${Codec_http_Source}
-        ${ByteBuf_Header}
-        ${ByteBuf_Source}
         ${Bootstrap_Header}
         ${Bootstrap_Source}
     )
@@ -138,11 +118,12 @@ SET_TARGET_PROPERTIES(netty_static PROPERTIES LINKER_LANGUAGE C)
 #----------------------------------------------------------------------------
 # test
 #----------------------------------------------------------------------------
-#ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(test)
 
 #----------------------------------------------------------------------------
 # example
 #----------------------------------------------------------------------------
-#ADD_SUBDIRECTORY(example-httpserver)
+ADD_SUBDIRECTORY(example-httpserver)
+#ADD_SUBDIRECTORY(example-httpclient)
+ADD_SUBDIRECTORY(example-ssdp)
 #ADD_SUBDIRECTORY(example-timer)
-#ADD_SUBDIRECTORY(example-ssdp)

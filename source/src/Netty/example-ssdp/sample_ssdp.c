@@ -9,38 +9,6 @@
 
 #define TAG "SsdpExample"
 
-
-static TinyRet my_socket_init(void)
-{
-	TinyRet ret = TINY_RET_OK;
-	static bool is_init = false;
-
-	do
-	{
-#ifdef _WIN32
-		WORD wVersionRequested;
-		WSADATA wsaData;
-#endif
-
-#ifdef _WIN32
-		wVersionRequested = MAKEWORD(2, 0);
-		if (WSAStartup(wVersionRequested, &wsaData) != 0)
-		{
-			LOG_W(TAG, "WSAStartup failed");
-			ret = TINY_RET_E_INTERNAL;
-			break;
-		}
-#else
-		// Ignore SIGPIPE signal, so if browser cancels the request, it won't kill the whole process.
-		//(void)signal(SIGPIPE, SIG_IGN);
-#endif
-
-		ret = TINY_RET_OK;
-	} while (0);
-
-	return ret;
-}
-
 static void SsdpInitializer(Channel *channel, void *ctx)
 {
     LOG_D(TAG, "SsdpInitializer: %s", channel->id);
@@ -49,40 +17,36 @@ static void SsdpInitializer(Channel *channel, void *ctx)
     SocketChannel_AddBefore(channel, ExampleSsdpHandler_Name, HttpMessageCodec());
 }
 
-static void timeout(Timer *timer, void *ctx)
-{
-    Channel *ssdp = (Channel *)ctx;
-    const char *data = "hello, world";
-    size_t len = strlen(data);
-    LOG_I(TAG, "timeout");
-
-    MulticastChannel_Write(ssdp, data, (uint32_t)len);
-}
+//static void timeout(Timer *timer, void *ctx)
+//{
+//    Channel *ssdp = (Channel *)ctx;
+//    const char *data = "hello, world";
+//    size_t len = strlen(data);
+//    LOG_I(TAG, "timeout");
+//
+//    MulticastChannel_Write(ssdp, data, (uint32_t)len);
+//}
 
 int main()
 {
     Channel *ssdp = NULL;
-    Timer *timer = NULL;
+//    Timer *timer = NULL;
     Bootstrap sb;
 
-    my_socket_init();
+    tiny_socket_initialize();
 
     // SSDP
     ssdp = MulticastChannel_New();
-    if (RET_FAILED(MulticastChannel_Initialize(ssdp, SsdpInitializer, NULL)))
-    {
-        LOG_D(TAG, "MulticastChannel_Initialize failed");
-        return 0;
-    }
+    MulticastChannel_Initialize(ssdp, SsdpInitializer, NULL);
 
-    if (RET_FAILED(MulticastChannel_Join(ssdp, "10.0.1.9", "239.255.255.250", 1900)))
+    if (RET_FAILED(MulticastChannel_Join(ssdp, "10.0.1.9", "239.255.255.250", 1900, false)))
     {
         LOG_D(TAG, "MulticastChannel_Join failed");
         return 0;
     }
 
     // new Timer
-    timer = Timer_New("mytimer", 3 * 1000000, ssdp, timeout);
+//    timer = Timer_New("mytimer", 3 * 1000000, ssdp, timeout);
 
     // Bootstrap
     if (RET_FAILED(Bootstrap_Construct(&sb)))
@@ -97,7 +61,7 @@ int main()
         return 0;
     }
 
-    Bootstrap_AddTimer(&sb, timer);
+//    Bootstrap_AddTimer(&sb, timer);
 
     if (RET_FAILED(Bootstrap_Sync(&sb)))
     {
@@ -112,6 +76,8 @@ int main()
     }
 
     Bootstrap_Dispose(&sb);
+
+    tiny_socket_finalize();
 
     return 0;
 }

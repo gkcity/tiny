@@ -15,9 +15,9 @@
 #ifndef __SELECTOR_H__
 #define __SELECTOR_H__
 
-#include "tiny_base.h"
+#include <tiny_lor.h>
+#include <tiny_base.h>
 #include <tiny_socket.h>
-
 
 TINY_BEGIN_DECLS
 
@@ -43,19 +43,27 @@ struct _Selector
 
 typedef enum _SelectorOperation
 {
-    SELECTOR_OP_READ = 1,
-    SELECTOR_OP_WRITE = 2,
-    SELECTOR_OP_ALL = 3,
+    SELECTOR_OP_READ    = 0x01,
+    SELECTOR_OP_WRITE   = 0x02,
+    SELECTOR_OP_ALL     = SELECTOR_OP_READ | SELECTOR_OP_WRITE,
 } SelectorOperation;
 
-//Selector * Selector_New(void);
-//void Selector_Delete(Selector *thiz);
+TINY_LOR
 TinyRet Selector_Construct(Selector *thiz);
+
+TINY_LOR
 TinyRet Selector_Dispose(Selector *thiz);
 
+TINY_LOR
 TinyRet Selector_Loop(Selector *thiz);
+
+TINY_LOR
 void Selector_Register(Selector *thiz, int fd, SelectorOperation op);
+
+TINY_LOR
 bool Selector_IsReadable(Selector *thiz, int fd);
+
+TINY_LOR
 bool Selector_IsWriteable(Selector *thiz, int fd);
 
 

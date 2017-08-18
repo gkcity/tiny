@@ -15,46 +15,38 @@
 #ifndef __CHANNEL_HANDLER_H__
 #define __CHANNEL_HANDLER_H__
 
-#include <stdint.h>
-
 #include <tiny_typedef.h>
 #include <tiny_ret.h>
-#include <common/Netty_api.h>
 #include "Channel.h"
-
-#define CHANNEL_HANDLER_NAME_LEN    32
+#include "ChannelIdles.h"
 
 TINY_BEGIN_DECLS
+
+
+#define CHANNEL_HANDLER_NAME_LEN    32
 
 typedef enum _ChannelDataType
 {
     DATA_RAW = 0,
     DATA_HTTP_MESSAGE = 1,
+    DATA_MDNS_MESSAGE = 2,
     DATA_USER_DEFINED = 100,
 } ChannelDataType;
 
-typedef struct _ChannelIdle
-{
-    uint64_t                    readerIdleTimeSeconds;
-    uint64_t                    writerIdleTimeSeconds;
-    uint64_t			timeout;
-} ChannelIdle;
 
 struct _ChannelHandler;
 typedef struct _ChannelHandler ChannelHandler;
 
-typedef void (* ChannelHandlerRemoved)(ChannelHandler *thiz);
-typedef void (* ChannelActive)(ChannelHandler *thiz, Channel *channel);
-typedef void (* ChannelInactive)(ChannelHandler *thiz, Channel *channel);
-// TODO: emdns需要非const数据
-//typedef bool (* ChannelRead)(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
-typedef bool (* ChannelRead)(ChannelHandler *thiz, Channel *channel, ChannelDataType type, void *data, uint32_t len);
-typedef bool (* ChannelWrite)(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
-typedef void (* ChannelEvent)(ChannelHandler *thiz, Channel *channel, void *event);
+typedef void (*ChannelHandlerRemoved)(ChannelHandler *thiz);
+typedef void (*ChannelActive)(ChannelHandler *thiz, Channel *channel);
+typedef void (*ChannelInactive)(ChannelHandler *thiz, Channel *channel);
+typedef bool (*ChannelRead)(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
+typedef bool (*ChannelWrite)(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
+typedef void (*ChannelEvent)(ChannelHandler *thiz, Channel *channel, void *event);
 
 struct _ChannelHandler
 {
-	char 					    name[CHANNEL_HANDLER_NAME_LEN];
+    char                        name[CHANNEL_HANDLER_NAME_LEN];
     ChannelHandlerRemoved       onRemove;
     ChannelDataType             inType;
     ChannelDataType             outType;
@@ -62,9 +54,9 @@ struct _ChannelHandler
     ChannelInactive             channelInactive;
     ChannelRead                 channelRead;
     ChannelWrite                channelWrite;
-    ChannelEvent				channelEvent;
-	ChannelTimeout              nextTimeout;
-	ChannelIdle                 idle;
+    ChannelEvent                channelEvent;
+    ChannelTimeoutGetter        getNextTimeout;
+    ChannelIdles                idles;
     void                      * data;
 };
 

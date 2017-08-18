@@ -4,7 +4,7 @@
  * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
- * @file   HttpServerCodec.h
+ * @file   MyClientHandler.h
  *
  * @remark
  *      set tabstop=4
@@ -12,21 +12,19 @@
  *      set expandtab
  */
 
-#ifndef __HTTP_MESSAGE_CODEC_H__
-#define __HTTP_MESSAGE_CODEC_H__
+#ifndef __MY_CLIENT_HANDLER_H__
+#define __MY_CLIENT_HANDLER_H__
 
 #include <channel/ChannelHandler.h>
 
 TINY_BEGIN_DECLS
 
 
-#define HttpMessageCodec_Name    "HttpMessageCodec"
+#define MyClientHandler_Name "MyClientHandler"
 
-TINY_API
-TINY_LOR
-ChannelHandler * HttpMessageCodec(void);
+ChannelHandler * MyClientHandler(void);
 
 
 TINY_END_DECLS
 
-#endif /* __HTTP_MESSAGE_CODEC_H__ */
+#endif /* __MY_CLIENT_HANDLER_H__ */

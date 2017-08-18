@@ -40,6 +40,10 @@ TINY_BEGIN_DECLS
 TINY_LOR
 int tiny_gettimeofday(struct timeval *tv, void *tz);
 
+TINY_LOR
+uint64_t tiny_current_microsecond(void);
+
+
 #ifdef TINY_DEBUG
 TINY_LOR
 int tiny_getstrtime(char buf[], int len);

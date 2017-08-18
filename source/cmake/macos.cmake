@@ -6,13 +6,20 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
+#----------------------------------------------------------------------------
+#
+# for GCC
+#
+#----------------------------------------------------------------------------
 ADD_DEFINITIONS(-Wno-multichar)
 ADD_DEFINITIONS(-Wno-pointer-to-int-cast)
-
-# release, macos only linked by O2 & O3
 ADD_DEFINITIONS(-O2)
-
-# debug
-ADD_DEFINITIONS(-g)
 ADD_DEFINITIONS(-fPIC)
 ADD_DEFINITIONS(-std=c99)
+
+#----------------------------------------------------------------------------
+#
+# DEBUG INFORMATION
+#
+#----------------------------------------------------------------------------
+ADD_DEFINITIONS(-DTINY_DEBUG)

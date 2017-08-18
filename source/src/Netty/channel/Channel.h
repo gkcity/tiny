@@ -18,45 +18,13 @@
 #include <tiny_typedef.h>
 #include <TinyList.h>
 #include <selector/Selector.h>
+#include <tiny_socket.h>
+#include "ChannelAddress.h"
 
 TINY_BEGIN_DECLS
 
 
 #define CHANNEL_ID_LEN              64
-#define IP_LEN                      32
-
-typedef enum _ChannelType
-{
-    TYPE_RS232,
-    TYPE_RS485,
-    TYPE_UDP,
-    TYPE_TCP_SERVER,
-    TYPE_TCP_CONNECTION,
-} ChannelType;
-
-typedef struct _Socket
-{
-    uint32_t                address;
-    char                    ip[IP_LEN];
-    uint16_t                port;
-} Socket;
-
-typedef struct _RS232
-{
-    uint16_t                port;
-} RS232;
-
-typedef struct _RS485
-{
-    uint16_t                port;
-} RS485;
-
-typedef union _ChannelAddress
-{
-    Socket                  socket;
-    RS232                   rs232;
-    RS485                   rs485;
-} ChannelAddress;
 
 struct _Channel;
 typedef struct _Channel Channel;
@@ -68,7 +36,7 @@ typedef void (* ChannelHandleInactive)(Channel *thiz);
 typedef void (* ChannelHandleEventTriggered)(Channel *thiz, void *event);
 typedef TinyRet (* ChannelHandleRead)(Channel *channel, Selector *selector);
 typedef TinyRet (* ChannelHandleWrite)(Channel* channel, Selector* selector);
-typedef int64_t (* ChannelTimeout)(Channel *thiz, void *ctx);
+typedef int64_t (* ChannelTimeoutGetter)(Channel *thiz, void *ctx);
 
 struct _Channel
 {
@@ -82,18 +50,18 @@ struct _Channel
     ChannelHandleActive             onActive;
     ChannelHandleInactive           onInactive;
     ChannelHandleRead               onRead;
-    ChannelHandleWrite			onWrite;
+    ChannelHandleWrite              onWrite;
     ChannelHandleEventTriggered     onEventTriggered;
-    ChannelTimeout                  getNextTimeout;
+    ChannelTimeoutGetter            getNextTimeout;
     TinyList                        handlers;
     int                             currentReader;
     int                             currentWriter;
     void                          * ctx;
 };
 
-bool Channel_IsActive(Channel *thiz);
-bool Channel_IsClosed(Channel *thiz);
-void Channel_Close(Channel *thiz);
+#define Channel_IsActive(thiz)      ((thiz)->fd >= 0)
+#define Channel_IsClosed(thiz)      ((thiz)->fd < 0)
+#define Channel_Close(thiz)         {tiny_socket_close((thiz)->fd); (thiz)->fd = -1;}
 
 
 TINY_END_DECLS

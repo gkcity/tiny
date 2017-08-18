@@ -23,7 +23,7 @@
 static TinyRet ExampleHandler_Construct(ChannelHandler *thiz);
 static TinyRet ExampleHandler_Dispose(ChannelHandler *thiz);
 static void ExampleHandler_Delete(ChannelHandler *thiz);
-static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, void *data, uint32_t len);
+static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
 static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event);
 
 ChannelHandler * ExampleHandler(void)
@@ -83,23 +83,27 @@ static TinyRet ExampleHandler_Dispose(ChannelHandler *thiz)
     return TINY_RET_OK;
 }
 
-static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, void *data, uint32_t len)
+static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
     HttpMessage *request = (HttpMessage *)data;
     HttpMessage response;
 
-    LOG_D(TAG, "_channelRead: %d", request->content_length);
+    LOG_D(TAG, "_channelRead: %s %s", request->request_line.method, request->request_line.uri);
 
     if (RET_SUCCEEDED(HttpMessage_Construct(&response)))
     {
-        HttpMessage_SetType(&response, HTTP_RESPONSE);
-        HttpMessage_SetVersion(&response, 1, 1);
         HttpMessage_SetResponse(&response, 200, "OK");
-        HttpMessage_SetHeader(&response, "Content-Type", "text/json");
-        HttpMessage_SetHeaderInteger(&response, "Content-Length", 0);
+        HttpMessage_SetVersion(&response, 1, 1);
 
-        SocketChannel_StartWrite(channel, DATA_HTTP_MESSAGE, HttpMessage_GetBytes(&response),
-                                 HttpMessage_GetBytesSize(&response));
+        HttpHeader_Set(&response.header, "Content-Type", "text/json");
+        HttpHeader_SetInteger(&response.header, "Content-Length", 0);
+
+        SocketChannel_StartWrite(channel, DATA_RAW, HttpMessage_GetBytesWithoutContent(&response), HttpMessage_GetBytesSizeWithoutContent(&response));
+
+		if (response.content.buf != NULL) 
+		{
+			SocketChannel_StartWrite(channel, DATA_RAW, response.content.buf, response.content.buf_size);
+		}
 
         Channel_Close(channel);
         HttpMessage_Dispose(&response);

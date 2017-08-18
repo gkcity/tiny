@@ -16,6 +16,7 @@
 #define __TIMER_H__
 
 #include <tiny_base.h>
+#include <tiny_lor.h>
 
 TINY_BEGIN_DECLS
 
@@ -35,7 +36,10 @@ struct _Timer
     TimerHandler            handler;
 };
 
+TINY_LOR
 Timer * Timer_New(const char *id, int64_t elapsed, void *ctx, TimerHandler handler);
+
+TINY_LOR
 void Timer_Delete(Timer *thiz);
 
 

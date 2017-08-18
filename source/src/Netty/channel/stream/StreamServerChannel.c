@@ -22,6 +22,7 @@
 
 #define TAG     "StreamServerChannel"
 
+TINY_LOR
 static void StreamServerChannel_Dispose(Channel *thiz)
 {
     if (thiz->ctx != NULL)
@@ -31,29 +32,32 @@ static void StreamServerChannel_Dispose(Channel *thiz)
     }
 }
 
+TINY_LOR
 static void StreamServerChannel_Delete(Channel *thiz)
 {
     StreamServerChannel_Dispose(thiz);
     tiny_free(thiz);
 }
 
+TINY_LOR
 static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector)
 {
     if (Channel_IsActive(thiz))
     {
         StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
-        LOG_D(TAG, "StreamServerChannel_OnRegister: %d", thiz->fd);
+        printf("StreamServerChannel_OnRegister Server FD: %d\n", thiz->fd);
 
-        for (int i = 0; i < TinyList_GetCount(&ctx->channels); ++i)
+        for (uint32_t i = 0; i < ctx->channels.size; ++i)
         {
             Channel *c = (Channel *) TinyList_GetAt(&ctx->channels, i);
             Selector_Register(selector, c->fd, SELECTOR_OP_READ);
-            LOG_D(TAG, "StreamServerChannel_OnRegister: %d", c->fd);
+            printf("StreamServerChannel_OnRegister Connection FD: %d\n", c->fd);
         }
     }
 }
 
+TINY_LOR
 static void StreamServerChannel_OnRemove(Channel *thiz)
 {
     LOG_D(TAG, "StreamServerChannel_OnRemove");
@@ -61,6 +65,7 @@ static void StreamServerChannel_OnRemove(Channel *thiz)
     StreamServerChannel_Delete(thiz);
 }
 
+TINY_LOR
 static TinyRet StreamServerChannel_OnRead(Channel *thiz, Selector *selector)
 {
     StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
@@ -74,10 +79,10 @@ static TinyRet StreamServerChannel_OnRead(Channel *thiz, Selector *selector)
         const char *ip = NULL;
         uint16_t port = 0;
 
-        LOG_D(TAG, "StreamServerChannel_OnRead");
+        printf("StreamServerChannel_OnRead FD: %d\n", thiz->fd);
 
         memset(&addr, 0, sizeof(addr));
-        fd = accept(thiz->fd, (struct sockaddr *)&addr, &len);
+        fd = tiny_accept(thiz->fd, (struct sockaddr *)&addr, &len);
         if (fd <= 0)
         {
             return TINY_RET_E_INTERNAL;
@@ -86,31 +91,39 @@ static TinyRet StreamServerChannel_OnRead(Channel *thiz, Selector *selector)
         ip = inet_ntoa(addr.sin_addr);
         port = ntohs(addr.sin_port);
 
-        LOG_D(TAG, "accept a new connection: %s:%d, fd:%d", ip, port, fd);
+        printf("accept a new connection: %s:%d, FD:%d\n", ip, port, fd);
 
         newChannel = SocketChannel_New();
-        SocketChannel_InitializeWithRemoteInfo(newChannel, ip, fd, port, ctx->initializer, ctx->initializerContext);
+        if (newChannel == NULL)
+        {
+            printf("SocketChannel_New NULL\n");
+            return TINY_RET_OK;
+        }
+
+        newChannel->fd = fd;
+        SocketChannel_SetRemoteInfo(newChannel, ip, port);
+        SocketChannel_Initialize(newChannel, ctx->initializer, ctx->initializerContext);
 
         TinyList_AddTail(&ctx->channels, newChannel);
 
         return TINY_RET_OK;
     }
 
-    for (int i = 0; i < TinyList_GetCount(&ctx->channels); ++i)
+    for (uint32_t i = 0; i < ctx->channels.size; ++i)
     {
         Channel *channel = (Channel *) TinyList_GetAt(&ctx->channels, i);
         if (Channel_IsActive(channel))
         {
             if (RET_FAILED(channel->onRead(channel, selector)))
             {
-                LOG_D(TAG, "close connection: %s:%d, fd:%d", channel->local.socket.ip, channel->local.socket.port, channel->fd);
+                LOG_D(TAG, "close connection: %s:%d, FD:%d", channel->local.socket.ip, channel->local.socket.port, channel->fd);
                 channel->onInactive(channel);
                 Channel_Close(channel);
             }
         }
     }
 
-    for (int i = 0; i < TinyList_GetCount(&ctx->channels); ++i)
+    for (uint32_t i = 0; i < ctx->channels.size; ++i)
     {
         Channel *channel = (Channel *)TinyList_GetAt(&ctx->channels, i);
         if (Channel_IsClosed(channel))
@@ -123,13 +136,14 @@ static TinyRet StreamServerChannel_OnRead(Channel *thiz, Selector *selector)
     return TINY_RET_OK;
 }
 
+TINY_LOR
 static void StreamServerChannel_OnInactive(Channel *thiz)
 {
     StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
 
     LOG_D(TAG, "StreamServerChannel_OnInactive");
 
-    for (int i = 0; i < TinyList_GetCount(&ctx->channels); ++i)
+    for (uint32_t i = 0; i < ctx->channels.size; ++i)
     {
         Channel *channel = (Channel *)TinyList_GetAt(&ctx->channels, i);
         channel->onInactive(channel);
@@ -137,6 +151,7 @@ static void StreamServerChannel_OnInactive(Channel *thiz)
     }
 }
 
+TINY_LOR
 static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
 {
     TinyRet ret = TINY_RET_OK;
@@ -165,6 +180,7 @@ static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
     return ret;
 }
 
+TINY_LOR
 Channel * StreamServerChannel_New(int maxConnections)
 {
     Channel * thiz = NULL;
@@ -188,53 +204,12 @@ Channel * StreamServerChannel_New(int maxConnections)
     return thiz;
 }
 
-TinyRet StreamServerChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx)
+TINY_LOR
+void StreamServerChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx)
 {
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-    RETURN_VAL_IF_FAIL(initializer, TINY_RET_E_ARG_NULL);
+    RETURN_IF_FAIL(thiz);
+    RETURN_IF_FAIL(initializer);
 
     ((StreamServerChannelContext *)thiz->ctx) ->initializer = initializer ;
     ((StreamServerChannelContext *)thiz->ctx) ->initializerContext = ctx;
-
-    return TINY_RET_OK;
-}
-
-TinyRet StreamServerChannel_Bind(Channel *thiz, uint16_t port)
-{
-    TinyRet ret = TINY_RET_OK;
-
-    LOG_D(TAG, "StreamServerChannel_Bind: %d", port);
-
-    do
-    {
-        ret = SocketChannel_Open(thiz, TYPE_TCP_SERVER);
-        if (RET_FAILED(ret))
-        {
-            LOG_E(TAG, "SocketChannel_Open failed");
-            break;
-        }
-
-        ret = SocketChannel_Bind(thiz, port);
-        if (RET_FAILED(ret))
-        {
-            LOG_E(TAG, "SocketChannel_Bind failed");
-            break;
-        }
-
-        ret = SocketChannel_SetBlock(thiz, false);
-        if (RET_FAILED(ret))
-        {
-            LOG_E(TAG, "SocketChannel_SetBlock failed");
-            break;
-        }
-
-        ret = SocketChannel_Listen(thiz, ((StreamServerChannelContext *)thiz->ctx)->maxConnections);
-        if (RET_FAILED(ret))
-        {
-            LOG_E(TAG, "SocketChannel_Listen failed");
-            break;
-        }
-    } while (0);
-
-    return ret;
 }

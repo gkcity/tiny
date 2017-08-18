@@ -140,13 +140,16 @@ SET(TinyJson_Source
 #-----------------------
 
 SET(Netty_Header
-        ${SOURCE_ROOT}/Netty/common/Netty_api.h
         ${SOURCE_ROOT}/Netty/selector/Selector.h
         ${SOURCE_ROOT}/Netty/channel/Channel.h
+        ${SOURCE_ROOT}/Netty/channel/ChannelAddress.h
         ${SOURCE_ROOT}/Netty/channel/ChannelHandler.h
-        ${SOURCE_ROOT}/Netty/channel/ChannelInitializer.h
+        ${SOURCE_ROOT}/Netty/channel/ChannelIdles.h
         ${SOURCE_ROOT}/Netty/channel/ChannelIdleStateHandler.h
+        ${SOURCE_ROOT}/Netty/channel/ChannelInitializer.h
         ${SOURCE_ROOT}/Netty/channel/SocketChannel.h
+        ${SOURCE_ROOT}/Netty/channel/stream/StreamClientChannel.h
+        ${SOURCE_ROOT}/Netty/channel/stream/StreamClientChannelContext.h
         ${SOURCE_ROOT}/Netty/channel/stream/StreamServerChannel.h
         ${SOURCE_ROOT}/Netty/channel/stream/StreamServerChannelContext.h
         ${SOURCE_ROOT}/Netty/channel/multicast/MulticastChannel.h
@@ -160,9 +163,12 @@ SET(Netty_Header
 
 SET(Netty_Source
         ${SOURCE_ROOT}/Netty/selector/Selector.c
-        ${SOURCE_ROOT}/Netty/channel/Channel.c
+        ${SOURCE_ROOT}/Netty/channel/ChannelAddress.c
+        ${SOURCE_ROOT}/Netty/channel/ChannelIdles.c
         ${SOURCE_ROOT}/Netty/channel/ChannelIdleStateHandler.c
         ${SOURCE_ROOT}/Netty/channel/SocketChannel.c
+        ${SOURCE_ROOT}/Netty/channel/stream/StreamClientChannel.c
+        ${SOURCE_ROOT}/Netty/channel/stream/StreamClientChannelContext.c
         ${SOURCE_ROOT}/Netty/channel/stream/StreamServerChannel.c
         ${SOURCE_ROOT}/Netty/channel/stream/StreamServerChannelContext.c
         ${SOURCE_ROOT}/Netty/channel/multicast/MulticastChannel.c

@@ -16,14 +16,16 @@
 #define __CHANNEL_IDLE_STATE_HANDLER_H__
 
 #include <channel/ChannelHandler.h>
-#include <common/Netty_api.h>
 
 TINY_BEGIN_DECLS
 
 
 #define ChannelIdleStateHandler_Name    "ChannelIdleStateHandler"
 
-NETTY_API ChannelHandler * ChannelIdleStateHandler(uint32_t readerIdle, uint32_t writerIdle);
+
+TINY_API
+TINY_LOR
+ChannelHandler * ChannelIdleStateHandler(uint32_t readerIdle, uint32_t writerIdle, uint32_t allIdle);
 
 
 TINY_END_DECLS

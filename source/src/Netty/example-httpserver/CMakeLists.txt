@@ -17,4 +17,5 @@ TARGET_LINK_LIBRARIES(sample_http_server
         tiny_log_static
         tiny_portable_static
         tiny_base_static
-        ${OS_LIB})
+        ${OS_LIB}
+    )

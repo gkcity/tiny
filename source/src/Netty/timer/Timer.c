@@ -19,6 +19,7 @@
 
 #define TAG     "Timer"
 
+TINY_LOR
 static TinyRet Timer_Construct(Timer *thiz, const char *id, int64_t elapsed, void *ctx, TimerHandler handler)
 {
     TinyRet ret = TINY_RET_OK;
@@ -35,6 +36,7 @@ static TinyRet Timer_Construct(Timer *thiz, const char *id, int64_t elapsed, voi
     return ret;
 }
 
+TINY_LOR
 Timer * Timer_New(const char *id, int64_t elapsed, void *ctx, TimerHandler handler)
 {
     Timer *thiz = NULL;
@@ -58,6 +60,7 @@ Timer * Timer_New(const char *id, int64_t elapsed, void *ctx, TimerHandler handl
     return thiz;
 }
 
+TINY_LOR
 static TinyRet Timer_Dispose(Timer *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -66,6 +69,7 @@ static TinyRet Timer_Dispose(Timer *thiz)
     return TINY_RET_OK;
 }
 
+TINY_LOR
 void Timer_Delete(Timer *thiz)
 {
     Timer_Dispose(thiz);

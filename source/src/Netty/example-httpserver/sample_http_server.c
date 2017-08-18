@@ -1,78 +1,128 @@
 #include <tiny_log.h>
+#include <bootstrap/Bootstrap.h>
 #include <channel/stream/StreamServerChannel.h>
+#include <channel/stream/StreamServerChannelContext.h>
 #include <channel/SocketChannel.h>
 #include <channel/ChannelIdleStateHandler.h>
-#include <bootstrap/Bootstrap.h>
 #include <codec-http/HttpMessageCodec.h>
 #include "ExampleHandler.h"
 
 #define TAG "HttpServerExample"
 
-
-static TinyRet my_socket_init(void)
-{
-	TinyRet ret = TINY_RET_OK;
-	static bool is_init = false;
-
-	do
-	{
-#ifdef _WIN32
-		WORD wVersionRequested;
-		WSADATA wsaData;
-#endif
-
-#ifdef _WIN32
-		wVersionRequested = MAKEWORD(2, 0);
-		if (WSAStartup(wVersionRequested, &wsaData) != 0)
-		{
-			LOG_W(TAG, "WSAStartup failed");
-			ret = TINY_RET_E_INTERNAL;
-			break;
-		}
-#else
-		// Ignore SIGPIPE signal, so if browser cancels the request, it won't kill the whole process.
-		//(void)signal(SIGPIPE, SIG_IGN);
-#endif
-
-		ret = TINY_RET_OK;
-	} while (0);
-
-	return ret;
-}
-
 static void HttpServerInitializer(Channel *channel, void *ctx)
 {
-    LOG_D(TAG, "HttpServerInitializer: %s", channel->id);
+    printf("HttpServerInitializer: %s\n", channel->id);
     SocketChannel_AddLast(channel, ChannelIdleStateHandler(0, 0, 3));
     SocketChannel_AddLast(channel, ExampleHandler());
     SocketChannel_AddBefore(channel, ExampleHandler_Name, HttpMessageCodec());
 }
 
+static TinyRet init_http_server(Channel *server, uint16_t port)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    StreamServerChannel_Initialize(server, HttpServerInitializer, NULL);
+
+    do
+    {
+        ret = SocketChannel_Open(server, TYPE_TCP_SERVER);
+        if (RET_FAILED(ret))
+        {
+            printf("SocketChannel_Open failed: %d\n", TINY_RET_CODE(ret));
+            break;
+        }
+
+        ret = SocketChannel_Bind(server, port, false);
+        if (RET_FAILED(ret))
+        {
+            printf("SocketChannel_Bind failed: %d\n", TINY_RET_CODE(ret));
+            break;
+        }
+
+        ret = SocketChannel_SetBlock(server, false);
+        if (RET_FAILED(ret))
+        {
+            printf("SocketChannel_SetBlock failed: %d\n", TINY_RET_CODE(ret));
+            break;
+        }
+
+        ret = SocketChannel_Listen(server, ((StreamServerChannelContext *)server->ctx)->maxConnections);
+        if (RET_FAILED(ret))
+        {
+            printf("SocketChannel_Listen failed: %d\n", TINY_RET_CODE(ret));
+            break;
+        }
+    } while (0);
+
+    return ret;
+}
+
 int main()
 {
+    TinyRet ret = TINY_RET_OK;
     Channel *server1 = NULL;
-    Channel *server2 = NULL;
+//    Channel *server2 = NULL;
     Bootstrap sb;
 
-    my_socket_init();
+    tiny_socket_initialize();
 
     // new TCP Server
     server1 = StreamServerChannel_New(6);
-    StreamServerChannel_Initialize(server1, HttpServerInitializer, NULL);
-    StreamServerChannel_Bind(server1, 9091);
+    ret = init_http_server(server1, 9091);
+    if (RET_FAILED(ret))
+    {
+        printf("init_http_server 1 failed: %d\n", TINY_RET_CODE(ret));
+        return 0;
+    }
 
     // new TCP Server
-    server2 = StreamServerChannel_New(2);
-    StreamServerChannel_Initialize(server2, HttpServerInitializer, NULL);
-    StreamServerChannel_Bind(server2, 9092);
+//    server2 = StreamServerChannel_New(2);
+//    ret = init_http_server(server1, 9092);
+//    if (RET_FAILED(ret))
+//    {
+//        printf("init_http_server 2 failed: %s\n", tiny_ret_to_str(ret));
+//        return 0;
+//    }
 
     // Starting Bootstrap
-    Bootstrap_Construct(&sb);
-    Bootstrap_AddChannel(&sb, server1);
-    Bootstrap_AddChannel(&sb, server2);
-    Bootstrap_Sync(&sb);
-    Bootstrap_Shutdown(&sb);
+    ret = Bootstrap_Construct(&sb);
+    if (RET_FAILED(ret))
+    {
+        printf("Bootstrap_Construct failed: %d\n", TINY_RET_CODE(ret));
+        return 0;
+    }
+
+    ret = Bootstrap_AddChannel(&sb, server1);
+    if (RET_FAILED(ret))
+    {
+        printf("Bootstrap_AddChannel failed: %d\n", TINY_RET_CODE(ret));
+        return 0;
+    }
+
+//    ret = Bootstrap_AddChannel(&sb, server2);
+//    if (RET_FAILED(ret))
+//    {
+//        printf("Bootstrap_AddChannel failed: %s\n", tiny_ret_to_str(ret));
+//        return 0;
+//    }
+
+    ret = Bootstrap_Sync(&sb);
+    if (RET_FAILED(ret))
+    {
+        printf("Bootstrap_Sync failed: %d\n", TINY_RET_CODE(ret));
+        return 0;
+    }
+
+    ret = Bootstrap_Shutdown(&sb);
+    if (RET_FAILED(ret))
+    {
+        printf("Bootstrap_Shutdown failed: %d\n", TINY_RET_CODE(ret));
+        return 0;
+    }
+
     Bootstrap_Dispose(&sb);
+
+    tiny_socket_finalize();
 
     return 0;
 }

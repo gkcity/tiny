@@ -20,11 +20,90 @@
 
 #define TAG     "HttpMessageCodec"
 
-static TinyRet HttpMessageCodec_Construct(ChannelHandler *thiz);
-static TinyRet HttpMessageCodec_Dispose(ChannelHandler *thiz);
-static void HttpMessageCodec_Delete(ChannelHandler *thiz);
-static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, void *data, uint32_t len);
 
+TINY_LOR
+static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
+{
+	LOG_MEM(TAG, "_channelRead");
+
+	do
+	{
+		if (type != DATA_RAW)
+		{
+			LOG_D(TAG, "_channelRead inType error: %d", type);
+			break;
+		}
+
+		if (thiz->data == NULL)
+		{
+			thiz->data = HttpMessage_New();
+			if (thiz->data == NULL)
+			{
+				LOG_D(TAG, "HttpMessage_New failed");
+				break;
+			}
+		}
+
+		if (RET_FAILED(HttpMessage_Parse((HttpMessage *)thiz->data, data, len)))
+		{
+			LOG_D(TAG, "HttpMessage_Parse failed!");
+			HttpMessage_Delete((HttpMessage *)thiz->data);
+			thiz->data = NULL;
+			break;
+		}
+
+		if (HttpMessage_IsContentFull((HttpMessage *)thiz->data))
+		{
+            SocketChannel_NextRead(channel, DATA_HTTP_MESSAGE, thiz->data, len);
+			HttpMessage_Delete((HttpMessage *)thiz->data);
+			thiz->data = NULL;
+		}
+	} while (0);
+
+	return true;
+}
+
+TINY_LOR
+static TinyRet HttpMessageCodec_Dispose(ChannelHandler *thiz)
+{
+	RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+	if (thiz->data != NULL)
+	{
+		HttpMessage * p = (HttpMessage *)thiz->data;
+		HttpMessage_Delete(p);
+		thiz->data = NULL;
+	}
+
+	memset(thiz, 0, sizeof(ChannelHandler));
+
+	return TINY_RET_OK;
+}
+
+TINY_LOR
+static void HttpMessageCodec_Delete(ChannelHandler *thiz)
+{
+	HttpMessageCodec_Dispose(thiz);
+	tiny_free(thiz);
+}
+
+TINY_LOR
+static TinyRet HttpMessageCodec_Construct(ChannelHandler *thiz)
+{
+	memset(thiz, 0, sizeof(ChannelHandler));
+
+	strncpy(thiz->name, HttpMessageCodec_Name, CHANNEL_HANDLER_NAME_LEN);
+	thiz->onRemove = HttpMessageCodec_Delete;
+	thiz->inType = DATA_RAW;
+	thiz->outType = DATA_HTTP_MESSAGE;
+	thiz->channelRead = _channelRead;
+	thiz->channelWrite = NULL;
+	thiz->data = NULL;
+
+	return TINY_RET_OK;
+}
+
+TINY_LOR
 ChannelHandler * HttpMessageCodec(void)
 {
     ChannelHandler *thiz = NULL;
@@ -46,82 +125,4 @@ ChannelHandler * HttpMessageCodec(void)
     } while (0);
 
     return thiz;
-}
-
-static void HttpMessageCodec_Delete(ChannelHandler *thiz)
-{
-    HttpMessageCodec_Dispose(thiz);
-    tiny_free(thiz);
-}
-
-static TinyRet HttpMessageCodec_Construct(ChannelHandler *thiz)
-{
-    memset(thiz, 0, sizeof(ChannelHandler));
-
-    strncpy(thiz->name, HttpMessageCodec_Name, CHANNEL_HANDLER_NAME_LEN);
-	thiz->onRemove = HttpMessageCodec_Delete;
-    thiz->inType = DATA_RAW;
-    thiz->outType = DATA_HTTP_MESSAGE;
-    thiz->channelRead = _channelRead;
-    thiz->channelWrite = NULL;
-    thiz->data = NULL;
-
-    return TINY_RET_OK;
-}
-
-static TinyRet HttpMessageCodec_Dispose(ChannelHandler *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-
-    if (thiz->data != NULL)
-    {
-        HttpMessage * p = (HttpMessage *) thiz->data;
-        HttpMessage_Delete(p);
-        thiz->data = NULL;
-    }
-
-    memset(thiz, 0, sizeof(ChannelHandler));
-
-    return TINY_RET_OK;
-}
-
-static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, void *data, uint32_t len)
-{
-    do
-    {
-        LOG_D(TAG, "_channelRead: %d bytes from %s", len, channel->id);
-
-        if (type != DATA_RAW)
-        {
-            LOG_D(TAG, "_channelRead inType error: %d", type);
-            break;
-        }
-
-        if (thiz->data == NULL)
-        {
-            thiz->data = HttpMessage_New();
-            if (thiz->data == NULL)
-            {
-                LOG_D(TAG, "HttpMessage_New failed");
-                break;
-            }
-        }
-
-        if (RET_FAILED(HttpMessage_Parse((HttpMessage *)thiz->data, data, len)))
-        {
-            LOG_D(TAG, "HttpMessage_Parse failed!");
-            HttpMessage_Delete((HttpMessage *)thiz->data);
-            thiz->data = NULL;
-            break;
-        }
-
-        if (HttpMessage_IsContentFull((HttpMessage *)thiz->data))
-        {
-            SocketChannel_NextRead(channel, DATA_HTTP_MESSAGE, thiz->data, len);
-            HttpMessage_Delete((HttpMessage *) thiz->data);
-            thiz->data = NULL;
-        }
-    } while (0);
-
-    return true;
 }

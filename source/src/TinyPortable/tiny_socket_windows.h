@@ -17,6 +17,8 @@
 
 #include <tiny_typedef.h>
 #include <tiny_inline.h>
+#include <tiny_lor.h>
+
 #include <WinSock2.h>
 
 TINY_BEGIN_DECLS
@@ -31,19 +33,29 @@ TINY_BEGIN_DECLS
 #define tiny_sendto                 sendto
 #define tiny_connect                connect
 
+TINY_LOR
 void tiny_socket_initialize();
 
+TINY_LOR
 void tiny_socket_finalize();
 
+TINY_LOR
 int tiny_socket_set_block(int fd, bool block);
 
+TINY_LOR
 int tiny_bind(int fd, const struct sockaddr *addr, socklen_t len);
 
+TINY_LOR
 int tiny_listen(int fd, int backlog);
 
+TINY_LOR
 int tiny_recv(int fd, void *mem, size_t len, int flags);
 
+TINY_LOR
 int tiny_send(int fd, const void *data, size_t size, int flags);
+
+TINY_LOR
+int tiny_socket_join_group(int fd, const char *ip, const char *group);
 
 
 TINY_END_DECLS

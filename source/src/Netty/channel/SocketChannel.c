@@ -15,20 +15,20 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <tiny_socket.h>
-#include <tiny_inet.h>
 #include <tiny_snprintf.h>
-#include <errno.h>
 
 #include "SocketChannel.h"
 
 #define TAG     "SocketChannel"
 
-static void _OnHandlerRemoved(void * data, void *ctx)
+TINY_LOR
+static void _OnChannelRemoved(void * data, void *ctx)
 {
     ChannelHandler *handler = (ChannelHandler *)data;
     handler->onRemove(handler);
 }
 
+TINY_LOR
 static uint16_t _socket_get_port(int fd)
 {
     uint16_t port = 0;
@@ -43,140 +43,7 @@ static uint16_t _socket_get_port(int fd)
     return port;
 }
 
-static int _ReadData(Channel *thiz, char buf[], uint32_t len)
-{
-    uint32_t received = 0;
-
-	RETURN_VAL_IF_FAIL(thiz, -1);
-	RETURN_VAL_IF_FAIL(buf, -1);
-
-    LOG_D(TAG, "_ReadData");
-
-    while (len > 0)
-    {
-#ifdef _WIN32
-        int n = recv(thiz->fd, buf + received, len , 0);
-#else
-		ssize_t n = recv(thiz->fd, buf + received, len, 0);
-#endif
-        LOG_D(TAG, "recv: %ld", n);
-
-        if (n == 0)
-        {
-            break;
-        }
-
-#ifdef _WIN32
-        if (n == SOCKET_ERROR)
-        {
-            break;
-        #if 0
-            DWORD e = GetLastError();
-            LOGI("GetLastError: %d", e);
-
-            if (e == WSAEWOULDBLOCK)
-            {
-                break;
-                air_usleep(100);
-                continue;
-            }
-            else
-            {
-                break;
-            }
-        #endif
-        }
-#else
-        if (n == -1)
-        {
-            break;
-
-            // more data
-//            if (errno == EAGAIN)
-//            {
-//                continue;
-//            }
-//            else
-//            {
-//                break;
-//            }
-
-        }
-#endif
-
-        received += n;
-        len -= n;
-        break;
-    }
-
-    return (received == 0) ? -1 : (int) received;
-}
-
-static int _WriteData(Channel *thiz, const char *buf, uint32_t len)
-{
-    int sent = 0;
-
-	RETURN_VAL_IF_FAIL(thiz, -1);
-	RETURN_VAL_IF_FAIL(buf, -1);
-
-    LOG_D(TAG, "_WriteData: buf size is: %u", len);
-
-    while (len > 0)
-    {
-#ifdef _WIN32
-		int n = send(thiz->fd, buf + sent, len, 0);
-#else
-		ssize_t n = send(thiz->fd, buf + sent, len, 0);
-#endif
-        if (n == 0)
-        {
-            break;
-        }
-
-        LOG_D(TAG, "send: %ld bytes", n);
-
-#ifdef _WIN32
-        if (n == SOCKET_ERROR)
-        {
-            DWORD e = GetLastError();
-            LOG_I(TAG, "GetLastError: %d", e);
-
-            if (e == WSAEWOULDBLOCK)
-            {
-                //usleep(100);
-                continue;
-            }
-            else
-            {
-                break;
-            }
-        }
-#else
-        if (n == -1)
-        {
-            break;
-
-            // more data
-//            if (errno == EAGAIN)
-//            {
-//                continue;
-//            }
-//            else
-//            {
-//                break;
-//            }
-        }
-#endif
-
-        sent += n;
-        len -= n;
-    }
-
-    LOG_D(TAG, "_WriteData: %d bytes is sent.", sent);
-
-    return sent;
-}
-
+TINY_LOR
 static TinyRet SocketChannel_Dispose(Channel *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -188,29 +55,66 @@ static TinyRet SocketChannel_Dispose(Channel *thiz)
     return TINY_RET_OK;
 }
 
-static void SocketChannel_Delete(Channel *thiz)
+TINY_LOR
+void SocketChannel_Delete(Channel *thiz)
 {
     SocketChannel_Dispose(thiz);
     tiny_free(thiz);
 }
 
-static void SocketChannel_OnRegister(Channel *thiz, Selector *selector)
+TINY_LOR
+TinyRet SocketChannel_Connect(Channel *thiz)
 {
-    Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    LOG_D(TAG, "StreamClientChannel_Connect: %s:%d\n", thiz->remote.socket.ip, thiz->remote.socket.port);
+
+    do
+    {
+        int value = 0;
+        struct sockaddr_in remote;
+        memset(&remote, 0, sizeof(struct sockaddr_in));
+        remote.sin_family = AF_INET;
+        remote.sin_addr.s_addr = inet_addr(thiz->remote.socket.ip);
+        remote.sin_port = htons(thiz->remote.socket.port);
+
+        value = tiny_connect(thiz->fd, (const struct sockaddr *) &remote, 0);
+        if (value < 0)
+        {
+            ret = TINY_RET_E_SOCKET_FD;
+            break;
+        }
+
+        thiz->remote.socket.address = remote.sin_addr.s_addr;
+    } while (0);
+
+    return ret;
 }
 
-void SocketChannel_OnRemove(Channel *thiz)
+TINY_LOR
+void SocketChannel_OnRegister(Channel *thiz, Selector *selector)
 {
-    SocketChannel_Delete(thiz);
+    if (Channel_IsActive(thiz))
+    {
+        Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
+    }
 }
 
+TINY_LOR
 void SocketChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    for (int i = 0; i < TinyList_GetCount(&thiz->handlers); ++i)
+    printf("SocketChannel_OnActive, handlers: %d\n", thiz->handlers.size);
+
+    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
+
+//        printf("ChannelHandler: %s\n", handler->name);
+
         if (handler->channelActive != NULL)
         {
             handler->channelActive(handler, thiz);
@@ -218,11 +122,12 @@ void SocketChannel_OnActive(Channel *thiz)
     }
 }
 
-static void SocketChannel_OnInactive(Channel *thiz)
+TINY_LOR
+void SocketChannel_OnInactive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    for (int i = 0; i < TinyList_GetCount(&thiz->handlers); ++i)
+    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
         if (handler->channelInactive != NULL)
@@ -232,11 +137,12 @@ static void SocketChannel_OnInactive(Channel *thiz)
     }
 }
 
+TINY_LOR
 static void SocketChannel_OnEventTriggered(Channel *thiz, void *event)
 {
     RETURN_IF_FAIL(thiz);
 
-    for (int i = 0; i < TinyList_GetCount(&thiz->handlers); ++i)
+    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
         if (handler->channelEvent != NULL)
@@ -246,52 +152,64 @@ static void SocketChannel_OnEventTriggered(Channel *thiz, void *event)
     }
 }
 
-static int64_t SocketChannel_NextTimeout(Channel *thiz, void *ctx)
+TINY_LOR
+static int64_t SocketChannel_GetNextTimeout(Channel *thiz, void *ctx)
 {
     RETURN_VAL_IF_FAIL(thiz, 0);
 
-    for (int i = 0; i < TinyList_GetCount(&thiz->handlers); ++i)
+    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
-        if (handler->nextTimeout != NULL)
+        if (handler->getNextTimeout != NULL)
         {
-            return handler->nextTimeout(thiz, handler);
+            return handler->getNextTimeout(thiz, handler);
         }
     }
 
     return 0;
 }
 
+TINY_LOR
 TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector)
 {
-    char buf[1024];
+    char buf[CHANNEL_RECV_BUF_SIZE];
     int ret = 0;
-    int error;
-    socklen_t len = sizeof (error);
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
+    LOG_MEM(TAG, "OnRead");
+
     if (! Selector_IsReadable(selector, thiz->fd))
     {
+        printf("SocketChannel is not readable: %d\n", thiz->fd);
         return TINY_RET_OK;
     }
 
-    memset(buf, 0, 1024);
+    memset(buf, 0, CHANNEL_RECV_BUF_SIZE);
 
-    ret = _ReadData(thiz, buf, 1024);
+    ret = (int) (tiny_recv(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0));
     if (ret > 0)
     {
-#if 0
-        LOG_D(TAG, "read from (%d) %s:%d, ret: %d", thiz->fd, thiz->ip, thiz->port, ret);
-        LOG_D(TAG, "%s", buf);
-#endif
-
         SocketChannel_StartRead(thiz, DATA_RAW, buf, (uint32_t) ret);
     }
 
     return (ret > 0 ) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
 }
 
+TINY_LOR
+static TinyRet SocketChannel_OnWrite(Channel *thiz, Selector *selector)
+{
+    LOG_D(TAG, "OnWrite");
+
+    if (Selector_IsWriteable(selector, thiz->fd))
+    {
+        // TODO: to send buffer;
+    }
+
+    return TINY_RET_OK;
+}
+
+TINY_LOR
 static TinyRet SocketChannel_Construct(Channel *thiz)
 {
     TinyRet ret = TINY_RET_OK;
@@ -310,20 +228,23 @@ static TinyRet SocketChannel_Construct(Channel *thiz)
             break;
         }
 
-        TinyList_SetDeleteListener(&thiz->handlers, _OnHandlerRemoved, NULL);
+        TinyList_SetDeleteListener(&thiz->handlers, _OnChannelRemoved, NULL);
 
+        thiz->fd = -1;
         thiz->onRegister = SocketChannel_OnRegister;
-        thiz->onRemove = SocketChannel_OnRemove;
+        thiz->onRemove = SocketChannel_Delete;
         thiz->onRead = SocketChannel_OnRead;
+        thiz->onWrite = SocketChannel_OnWrite;
         thiz->onActive = SocketChannel_OnActive;
         thiz->onInactive = SocketChannel_OnInactive;
         thiz->onEventTriggered = SocketChannel_OnEventTriggered;
-        thiz->getNextTimeout = SocketChannel_NextTimeout;
+        thiz->getNextTimeout = SocketChannel_GetNextTimeout;
     } while (0);
 
     return ret;
 }
 
+TINY_LOR
 Channel * SocketChannel_New()
 {
     Channel *thiz = NULL;
@@ -347,38 +268,29 @@ Channel * SocketChannel_New()
     return thiz;
 }
 
-void SocketChannel_Initialize(Channel *thiz, const char *ip, int fd, uint16_t port, ChannelInitializer initializer, void *ctx)
-{
-    RETURN_IF_FAIL(thiz);
-	RETURN_IF_FAIL(ip);
-
-    tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::%s::%d", fd, ip, port);
-    thiz->fd = fd;
-
-    strncpy(thiz->local.socket.ip, ip, IP_LEN);
-    thiz->local.socket.port = port;
-
-    initializer(thiz, ctx);
-
-    thiz->onActive(thiz);
-}
-
-void SocketChannel_InitializeWithRemoteInfo(Channel *thiz, const char *ip, int fd, uint16_t port, ChannelInitializer initializer, void *ctx)
+TINY_LOR
+void SocketChannel_SetRemoteInfo(Channel *thiz, const char *ip, uint16_t port)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(ip);
 
-    tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::%s::%d", fd, ip, port);
-    thiz->fd = fd;
+    tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::%s::%d", thiz->fd, ip, port);
 
-    strncpy(thiz->remote.socket.ip, ip, IP_LEN);
+    strncpy(thiz->remote.socket.ip, ip, TINY_IP_LEN);
     thiz->remote.socket.port = port;
+}
+
+TINY_LOR
+void SocketChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx)
+{
+    RETURN_IF_FAIL(thiz);
+    RETURN_IF_FAIL(initializer);
 
     initializer(thiz, ctx);
-
     thiz->onActive(thiz);
 }
 
+TINY_LOR
 TinyRet SocketChannel_Open(Channel *thiz, ChannelType type)
 {
     TinyRet ret = TINY_RET_OK;
@@ -401,7 +313,8 @@ TinyRet SocketChannel_Open(Channel *thiz, ChannelType type)
         {
             LOG_D(TAG, "SocketChannel_Open: TCP");
             socket_type = SOCK_STREAM;
-            socket_protocol = IPPROTO_TCP;
+//            socket_protocol = IPPROTO_TCP;
+            socket_protocol = 0;
         }
         else
         {
@@ -410,20 +323,20 @@ TinyRet SocketChannel_Open(Channel *thiz, ChannelType type)
             break;
         }
 
-        thiz->fd = socket(AF_INET, socket_type, socket_protocol);
+        thiz->fd = tiny_socket(AF_INET, socket_type, socket_protocol);
         if (thiz->fd < 0)
         {
             LOG_E(TAG, "socket failed");
             ret = TINY_RET_E_INTERNAL;
             break;
         }
-        LOG_D(TAG, "socket opened %d", thiz->fd);
     } while (0);
 
     return ret;
 }
 
-TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port)
+TINY_LOR
+TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -431,128 +344,73 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port)
 
     LOG_D(TAG, "SocketChannel_Bind: %d", port);
 
+    printf("SocketChannel_Bind: %d\n", port);
+
     do
     {
-        int err = 1;
+        int value = 0;
         struct sockaddr_in  self_addr;
         memset(&self_addr, 0, sizeof(self_addr));
         self_addr.sin_family = AF_INET;
         self_addr.sin_addr.s_addr = htonl(INADDR_ANY);
         self_addr.sin_port = htons(port);
-#ifndef WIN32
-        ret = setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEPORT, (char *)&err, sizeof(err));
-        if (ret < 0)
-        {
-            //LOG_D(TAG, "setsockopt: %s", strerror(errno));
-            return TINY_RET_E_SOCKET_SETSOCKOPT;
-        }
-#endif
-        ret = setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEADDR, &err, sizeof(err));
-        if (ret < 0)
-        {
-            //LOG_D(TAG, "setsockopt: %s", strerror(errno));
-            return TINY_RET_E_SOCKET_SETSOCKOPT;
-        }
 
-        err = bind(thiz->fd, (struct sockaddr *)&self_addr, sizeof(self_addr));
+        if (reuse)
+        {
+            int err = 1;
 
-#ifdef _WIN32
-        if (err == SOCKET_ERROR)
+            value = tiny_setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEPORT, (char *)&err, sizeof(err));
+            if (value < 0)
             {
-                LOG_E(TAG, "bind failed");
-                ret = TINY_RET_E_INTERNAL;
+                //LOG_D(TAG, "setsockopt: %s", strerror(errno));
+                ret = TINY_RET_E_SOCKET_SETSOCKOPT;
                 break;
             }
-#else
-        if (err < 0)
+
+            value = tiny_setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEADDR, &err, sizeof(err));
+            if (value < 0)
+            {
+                //LOG_D(TAG, "setsockopt: %s", strerror(errno));
+                ret = TINY_RET_E_SOCKET_SETSOCKOPT;
+                break;
+            }
+        }
+
+        value = tiny_bind(thiz->fd, (struct sockaddr *)&self_addr, sizeof(self_addr));
+        if (value < 0)
         {
-            LOG_E(TAG, "bind failed");
-            ret = TINY_RET_E_INTERNAL;
+            LOG_D(TAG, "tiny_bind failed: %s", strerror(errno));
+            ret = TINY_RET_E_SOCKET_BIND;
             break;
         }
-#endif
+
+        printf("SocketChannel_Bind OK, port: %d \n", port);
 
         thiz->local.socket.address = self_addr.sin_addr.s_addr;
         thiz->local.socket.port = port;
+
+        tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::127.0.0.1::%d", thiz->fd,port);
     } while (0);
 
     return ret;
 }
 
-TinyRet SocketChannel_Connect(Channel *thiz, const char *ip, uint16_t port)
-{
-	TinyRet ret = TINY_RET_OK;
-	int err = 0;
-	int err2 = 0;
-	RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-	LOG_D(TAG, "SocketChannel_Connect: %s:%d", ip, port);
-	
-	do
-	{
-		struct sockaddr_in addr;
-    	memset(&addr, 0, sizeof (addr));
-   		addr.sin_family = AF_INET;
-    	addr.sin_port = htons(port);
-    	addr.sin_addr.s_addr = inet_addr(ip);
-		err = connect(thiz->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr));
-#ifdef WIN32
-		if (err == SOCKET_ERROR)
-#else
-		if (err < 0)
-#endif
-		{
-#ifdef WIN32
-			err2 = WSAGetLastError();
-			if (err2 != WSAEWOULDBLOCK)
-#else
-			err2 = errno;
-			if (errno  != EINPROGRESS)
-#endif
-			{
-				LOG_E(TAG, "connect failed!%d %s", thiz->fd, strerror(err2));
-				ret = TINY_RET_E_INTERNAL;
-				break;
-			} 
-			else
-			{
-				LOG_I(TAG, "connect in progress!%d %s", thiz->fd, strerror(errno));
-				ret = TINY_RET_E_SOCKET_CONNECTING;
-				break;
-			}
-		}
-		else
-		{
-			LOG_I(TAG, "connected immidiatelly!");
-		}
-	} while(0);
-	return ret;
-}
-
+TINY_LOR
 TinyRet SocketChannel_SetBlock(Channel *thiz, bool block)
 {
     return (tiny_socket_set_block(thiz->fd, block) == 0) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
 }
 
+TINY_LOR
 TinyRet SocketChannel_Listen(Channel *thiz, int maxConnections)
 {
-    int ret = 0;
-
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL((maxConnections > 0), TINY_RET_E_ARG_NULL);
 
-    ret = listen(thiz->fd, maxConnections);
-
-#ifdef _WIN32
-    if (ret == SOCKET_ERROR)
+    if (tiny_listen(thiz->fd, maxConnections) < 0)
     {
         return TINY_RET_E_INTERNAL;
     }
-#else
-    if (ret < 0)
-    {
-        return TINY_RET_E_INTERNAL;
-    }
-#endif
 
     if (thiz->local.socket.port == 0)
     {
@@ -562,110 +420,19 @@ TinyRet SocketChannel_Listen(Channel *thiz, int maxConnections)
     return TINY_RET_OK;
 }
 
-#ifdef _WIN32
+TINY_LOR
 TinyRet SocketChannel_JoinGroup(Channel *thiz, const char *ip, const char *group)
 {
-    struct ip_mreq ipMreqV4;
-    struct sockaddr_in addr;
-    int ret = NO_ERROR;
-
-    int loop = 1;
-    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
-    if (ret == SOCKET_ERROR)
-    {
-        DWORD e = GetLastError();
-        LOG_D(TAG, "setsockopt: %d", e);
-        return TINY_RET_E_SOCKET_SETSOCKOPT;
-    }
-
-    // Setup the v4 option values and ip_mreq structure
-    memset(&ipMreqV4, 0, sizeof(struct ip_mreq));
-    ipMreqV4.imr_multiaddr.s_addr = inet_addr(group);
-    //ipMreqV4.imr_interface.s_addr = htonl(ip);
-    ipMreqV4.imr_interface.s_addr = ip;
-
-    // Join the group
-    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&ipMreqV4, sizeof(ipMreqV4));
-    if (ret == SOCKET_ERROR)
-    {
-        // !!! bug 10065 = A socket operation was attempted to an unreachable host.
-        DWORD e = GetLastError();
-        LOG_E(TAG, "setsockopt: %d", e);
-        return TINY_RET_E_SOCKET_SETSOCKOPT;
-    }
-
-    return TINY_RET_OK;
+    return (tiny_socket_join_group(thiz->fd, ip, group) == 0 ? TINY_RET_OK : TINY_RET_E_SOCKET_SETSOCKOPT);
 }
-#else // Linux | unix
-TinyRet SocketChannel_JoinGroup(Channel *thiz, const char *ip, const char *group)
-{
-    struct ip_mreq mc;
-    int ret = 0;
-//    int loop = 1;
-    unsigned char ttl = 255; // send to any reachable net, not only the subnet
-    int ittl = 255;
 
-    LOG_D(TAG, "SocketChannel_JoinGroup: %s group: %s", ip, group);
-
-    mc.imr_multiaddr.s_addr = inet_addr(group);
-    mc.imr_interface.s_addr = htonl(INADDR_ANY);
-    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (void *) &mc, sizeof(mc));
-    if (ret < 0)
-    {
-        //LOG_D(TAG, "add membership failed: %s", strerror(errno));
-        return TINY_RET_E_SOCKET_SETSOCKOPT;
-    }
-
-    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
-    if (ret < 0)
-    {
-        //LOG_D(TAG, "set ttl failed: %s", strerror(errno));
-        return TINY_RET_E_SOCKET_SETSOCKOPT;
-    }
-
-    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ittl, sizeof(ittl));
-    if (ret < 0)
-    {
-        //LOG_D(TAG, "set multicast ttl failed: %s", strerror(errno));
-        return TINY_RET_E_SOCKET_SETSOCKOPT;
-    }
-
-#if 0
-    // disable loopback
-    loop = 0;
-    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
-    if (ret < 0)
-    {
-        LOG_D(TAG, "disable loopback failed: %s", strerror(errno));
-        return TINY_RET_E_SOCKET_SETSOCKOPT;
-    }
-
-    // Join the group
-    ret = setsockopt(thiz->fd, IPPROTO_IP, IP_MULTICAST_IF, (char *)&ip, sizeof(ip));
-    if (ret < 0)
-    {
-        LOG_E(TAG, "join multicast interface %s failed: %s", ip, strerror(errno));
-        return TINY_RET_E_SOCKET_SETSOCKOPT;
-    }
-#endif
-
-    return TINY_RET_OK;
-}
-#endif // _WIN32
-
+TINY_LOR
 TinyRet SocketChannel_LeaveGroup(Channel *thiz)
 {
-    LOG_W(TAG, "SocketChannel_LeaveGroup: not implemented");
-
-#if 0
-    int ret = 0;
-    struct ip_mreq mreq;
-    ret = setsockopt(fd, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
-#endif
-
-    return TINY_RET_OK;
+    return (tiny_socket_leave_group(thiz->fd) == 0 ? TINY_RET_OK : TINY_RET_E_SOCKET_SETSOCKOPT);
 }
 
+TINY_LOR
 TinyRet SocketChannel_AddBefore(Channel *thiz, const char *name, ChannelHandler *handler)
 {
     int position = -1;
@@ -674,7 +441,7 @@ TinyRet SocketChannel_AddBefore(Channel *thiz, const char *name, ChannelHandler 
 	RETURN_VAL_IF_FAIL(name, TINY_RET_E_ARG_NULL);
 	RETURN_VAL_IF_FAIL(handler, TINY_RET_E_ARG_NULL);
 
-    for (int i = 0; i < TinyList_GetCount(&thiz->handlers); ++i)
+    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *h = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
         if (STR_EQUAL(h->name, name))
@@ -692,6 +459,7 @@ TinyRet SocketChannel_AddBefore(Channel *thiz, const char *name, ChannelHandler 
     return TinyList_InsertBefore(&thiz->handlers, position, handler);
 }
 
+TINY_LOR
 void SocketChannel_AddLast(Channel *thiz, ChannelHandler *handler)
 {
 	RETURN_IF_FAIL(thiz);
@@ -700,19 +468,19 @@ void SocketChannel_AddLast(Channel *thiz, ChannelHandler *handler)
     TinyList_AddTail(&thiz->handlers, handler);
 }
 
-void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, void *data, uint32_t len)
+TINY_LOR
+void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, const void *data, uint32_t len)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
     RETURN_IF_FAIL(len);
 
-    LOG_D(TAG, "SocketChannel_StartRead");
-
     thiz->currentReader = 0;
     SocketChannel_NextRead(thiz, type, data, len);
 }
 
-void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, void *data, uint32_t len)
+TINY_LOR
+void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *data, uint32_t len)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
@@ -726,6 +494,8 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, void *data, uin
             // LOG_D(TAG, "ChannelHandler not found: %d", thiz->currentReader);
             break;
         }
+
+        printf("ChannelHandler: %s\n", handler->name);
 
         if (handler->inType != type)
         {
@@ -741,7 +511,6 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, void *data, uin
             continue;
         }
 
-        LOG_D(TAG, "%s.channelRead", handler->name);
         if (handler->channelRead(handler, thiz, type, data, len))
         {
             break;
@@ -749,18 +518,20 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, void *data, uin
     }
 }
 
+TINY_LOR
 void SocketChannel_StartWrite(Channel *thiz, ChannelDataType type, const void *data, uint32_t len)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
     RETURN_IF_FAIL(len);
 
-    LOG_D(TAG, "Channel_ChannelWrite");
+//    printf("SocketChannel_StartWrite: \n%s\n", (const char *)data);
 
-    thiz->currentWriter = (TinyList_GetCount(&thiz->handlers)) - 1;
+    thiz->currentWriter = thiz->handlers.size - 1;
     SocketChannel_NextWrite(thiz, type, data, len);
 }
 
+TINY_LOR
 void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *data, uint32_t len)
 {
     RETURN_IF_FAIL(thiz);
@@ -772,8 +543,8 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter);
         if (handler == NULL)
         {
-            //LOG_D(TAG, "ChannelHandler not found: %d", thiz->currentReader);
-            int sent = _WriteData(thiz, data, len);
+            LOG_D(TAG, "tiny_send: %d", len);
+            int sent = (int) tiny_send(thiz->fd, data, len, 0);
             if (sent != len)
             {
                 Channel_Close(thiz);

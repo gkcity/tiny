@@ -24,6 +24,8 @@
     #endif
 #endif
 
+#ifdef TINY_DEBUG
+
 #define BEIJINGTIME     8
 #define DAY             (60*60*24)
 #define YEARFIRST       2001
@@ -33,7 +35,6 @@
 #define YEAR004         (365*4 + 1)
 #define YEAR001         365
 
-#ifdef TINY_DEBUG
 int tiny_getstrtime(char buf[], int len)
 {
     struct timeval tv;
@@ -115,3 +116,15 @@ int tiny_getstrtime(char buf[], int len)
     return 0;
 }
 #endif
+
+
+TINY_LOR
+uint64_t tiny_current_microsecond(void)
+{
+    struct timeval tv;
+
+    memset(&tv, 0, sizeof(struct timeval));
+    tiny_gettimeofday(&tv, NULL);
+
+    return (uint64_t)(tv.tv_sec * 1000 * 1000 + tv.tv_usec);
+}

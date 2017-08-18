@@ -22,20 +22,20 @@ INCLUDE_DIRECTORIES("/home/ouyang/extdisk/github.ouyang/espressif/ESP8266_RTOS_S
 INCLUDE_DIRECTORIES("/home/ouyang/extdisk/github.ouyang/espressif/ESP8266_RTOS_SDK/include/lwip/ipv6")
 INCLUDE_DIRECTORIES("/home/ouyang/extdisk/github.ouyang/espressif/ESP8266_RTOS_SDK/include/espressif")
 
-#---------------------------------------------------------------------------------------
-#
-# DISABLE DEBUG INFORMATION
-#
-#---------------------------------------------------------------------------------------
-#ADD_DEFINITIONS(-DTINY_DEBUG)
-
-#---------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 #
 # for GCC
 #
-#---------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 ADD_DEFINITIONS(-Wno-multichar)
 ADD_DEFINITIONS(-Wno-pointer-to-int-cast)
 ADD_DEFINITIONS(-O3)
 ADD_DEFINITIONS(-fPIC)
 ADD_DEFINITIONS(-std=c99)
+
+#----------------------------------------------------------------------------
+#
+# DEBUG INFORMATION
+#
+#----------------------------------------------------------------------------
+#ADD_DEFINITIONS(-DTINY_DEBUG)

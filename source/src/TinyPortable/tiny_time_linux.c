@@ -15,24 +15,14 @@
 #include "tiny_time.h"
 #include <sys/time.h>
 
+TINY_LOR
 time_t tiny_time(time_t *t)
 {
     return time(t);
 }
 
+TINY_LOR
 int tiny_gettimeofday(struct timeval *tv, void *tz)
 {
     return gettimeofday(tv, tz);
 }
-
-#if 0
-int tiny_sleep(int second)
-{
-    return sleep((unsigned int)second);
-}
-
-int tiny_usleep(int usecond)
-{
-    return usleep(usecond);
-}
-#endif

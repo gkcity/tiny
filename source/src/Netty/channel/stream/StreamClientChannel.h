@@ -23,14 +23,23 @@
 TINY_BEGIN_DECLS
 
 
-Channel * StreamClientChannel_New();
+TINY_LOR
+Channel * StreamClientChannel_New(void);
 
+TINY_LOR
 TinyRet StreamClientChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx);
-TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port);
-TinyRet StreamClientChannel_Close(Channel *thiz);
-void StreamClientChannel_Delete(Channel *thiz);
-bool StreamClientChannel_isConnected(Channel* thiz);
 
+TINY_LOR
+TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port);
+
+TINY_LOR
+TinyRet StreamClientChannel_Close(Channel *thiz);
+
+TINY_LOR
+void StreamClientChannel_Delete(Channel *thiz);
+
+TINY_LOR
+bool StreamClientChannel_isConnected(Channel* thiz);
 
 
 TINY_END_DECLS

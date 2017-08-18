@@ -28,10 +28,16 @@
 #define HTTP_HEAD_LEN                   256
 #define HTTP_LINE_LEN                   256
 
+TINY_LOR
 static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes, uint32_t len);
-static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *bytes, uint32_t len);
-static void HttpMessage_ToBytes(HttpMessage *thiz);
 
+TINY_LOR
+static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *bytes, uint32_t len);
+
+TINY_LOR
+static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz);
+
+TINY_LOR
 HttpMessage * HttpMessage_New(void)
 {
     HttpMessage *thiz = NULL;
@@ -59,6 +65,7 @@ HttpMessage * HttpMessage_New(void)
     return thiz;
 }
 
+TINY_LOR
 TinyRet HttpMessage_Construct(HttpMessage *thiz)
 {
     TinyRet ret = TINY_RET_OK;
@@ -88,6 +95,7 @@ TinyRet HttpMessage_Construct(HttpMessage *thiz)
     return ret;
 }
 
+TINY_LOR
 TinyRet HttpMessage_Dispose(HttpMessage *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -95,7 +103,7 @@ TinyRet HttpMessage_Dispose(HttpMessage *thiz)
     HttpContent_Dispose(&thiz->content);
     HttpHeader_Dispose(&thiz->header);
 
-	if (thiz->_bytes != NULL) 
+	if (thiz->_bytes != NULL)
 	{
 		tiny_free(thiz->_bytes);
 		thiz->_bytes = NULL;
@@ -105,6 +113,7 @@ TinyRet HttpMessage_Dispose(HttpMessage *thiz)
     return TINY_RET_OK;
 }
 
+TINY_LOR
 void HttpMessage_Delete(HttpMessage *thiz)
 {
     RETURN_IF_FAIL(thiz);
@@ -113,29 +122,7 @@ void HttpMessage_Delete(HttpMessage *thiz)
     tiny_free(thiz);
 }
 
-#if 0
-void HttpMessage_Copy(HttpMessage *dst, HttpMessage *src)
-{
-    RETURN_IF_FAIL(dst);
-    RETURN_IF_FAIL(src);
-
-    dst->ref = src->ref;
-    dst->type = src->type;
-    strncpy(dst->ip, src->ip, TINY_IP_LEN);
-    dst->port = src->port;
-    strncpy(dst->protocol_identifier, src->protocol_identifier, PROTOCOL_LEN);
-    strncpy(dst->request_line.method, src->request_line.method, HTTP_METHOD_LEN);
-    strncpy(dst->request_line.uri, src->request_line.uri, HTTP_URI_LEN);
-    dst->status_line.code = src->status_line.code;
-    strncpy(dst->status_line.status, src->status_line.status, HTTP_STATUS_LEN);
-    dst->version.major = src->version.major;
-    dst->version.minor = src->version.minor;
-    dst->content_length = src->content_length;
-    HttpHeader_Copy(&dst->header, &src->header);
-    HttpContent_Copy(&dst->content, &src->content);
-}
-#endif
-
+TINY_LOR
 void HttpMessage_SetProtocolIdentifier(HttpMessage * thiz, const char *identifier)
 {
     RETURN_IF_FAIL(thiz);
@@ -144,35 +131,40 @@ void HttpMessage_SetProtocolIdentifier(HttpMessage * thiz, const char *identifie
     strncpy(thiz->protocol_identifier, identifier, PROTOCOL_LEN);
 }
 
-void HttpMessage_SetIp(HttpMessage *thiz, const char *ip)
-{
-    RETURN_IF_FAIL(thiz);
-    RETURN_IF_FAIL(ip);
+//TINY_LOR
+//void HttpMessage_SetIp(HttpMessage *thiz, const char *ip)
+//{
+//    RETURN_IF_FAIL(thiz);
+//    RETURN_IF_FAIL(ip);
+//
+//    strncpy(thiz->ip, ip, TINY_IP_LEN);
+//}
+//
+//TINY_LOR
+//const char * HttpMessage_GetIp(HttpMessage *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return thiz->ip;
+//}
+//
+//TINY_LOR
+//void HttpMessage_SetPort(HttpMessage *thiz, uint16_t port)
+//{
+//    RETURN_IF_FAIL(thiz);
+//
+//    thiz->port = port;
+//}
+//
+//TINY_LOR
+//uint16_t HttpMessage_GetPort(HttpMessage *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return thiz->port;
+//}
 
-    strncpy(thiz->ip, ip, TINY_IP_LEN);
-}
-
-const char * HttpMessage_GetIp(HttpMessage *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
-
-    return thiz->ip;
-}
-
-void HttpMessage_SetPort(HttpMessage *thiz, uint16_t port)
-{
-    RETURN_IF_FAIL(thiz);
-
-    thiz->port = port;
-}
-
-uint16_t HttpMessage_GetPort(HttpMessage *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
-
-    return thiz->port;
-}
-
+TINY_LOR
 TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *bytes, uint32_t length)
 {
     TinyRet ret = TINY_RET_OK;
@@ -256,35 +248,36 @@ TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *bytes, uint32_t length
     return ret;
 }
 
-const char * HttpMessage_GetBytes(HttpMessage *thiz)
+
+TINY_LOR
+const char * HttpMessage_GetBytesWithoutContent(HttpMessage *thiz)
 {
 	RETURN_VAL_IF_FAIL(thiz, NULL);
 
-	if (thiz->_bytes == NULL) 
+	if (thiz->_bytes == NULL)
 	{
-		HttpMessage_ToBytes(thiz);
+		HttpMessage_ToBytesWithoutContent(thiz);
 	}
 
 	return thiz->_bytes;
 }
 
-uint32_t HttpMessage_GetBytesSize(HttpMessage *thiz)
+TINY_LOR
+uint32_t HttpMessage_GetBytesSizeWithoutContent(HttpMessage *thiz)
 {
 	if (thiz->_bytes == NULL)
 	{
-		HttpMessage_ToBytes(thiz);
+		HttpMessage_ToBytesWithoutContent(thiz);
 	}
 
 	return thiz->_size;
 }
 
-static void HttpMessage_ToBytes(HttpMessage *thiz) 
+TINY_LOR
+static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz)
 {
 	do
 	{
-		uint32_t i = 0;
-		uint32_t count = 0;
-		uint32_t content_length = 0;
 		uint32_t buffer_size = 0;
 		char line[HTTP_LINE_LEN];
 
@@ -302,9 +295,7 @@ static void HttpMessage_ToBytes(HttpMessage *thiz)
 		}
 
 		// calculate size
-		count = HttpHeader_GetCount(&thiz->header);
-		content_length = HttpContent_GetSize(&thiz->content);
-		buffer_size = HTTP_LINE_LEN + count * HTTP_HEAD_LEN + content_length;
+		buffer_size = HTTP_LINE_LEN + thiz->header.list.size * HTTP_HEAD_LEN;
 
 		thiz->_bytes = (char *)tiny_malloc(buffer_size);
 		if (thiz->_bytes == NULL)
@@ -346,7 +337,7 @@ static void HttpMessage_ToBytes(HttpMessage *thiz)
 		thiz->_size = (uint32_t)(strlen(thiz->_bytes));
 
 		// headers
-		for (i = 0; i < count; ++i)
+		for (uint32_t i = 0; i < thiz->header.list.size; ++i)
 		{
 			const char * name = HttpHeader_GetNameAt(&thiz->header, i);
 			const char * value = HttpHeader_GetValueAt(&thiz->header, i);
@@ -366,30 +357,26 @@ static void HttpMessage_ToBytes(HttpMessage *thiz)
 
 		strncat(thiz->_bytes, line, buffer_size);
 		thiz->_size = (uint32_t)(strlen(thiz->_bytes));
-
-		// content
-		if (content_length > 0)
-		{
-			memcpy(thiz->_bytes + thiz->_size, HttpContent_GetObject(&thiz->content), content_length);
-			thiz->_size += content_length;
-		}
 	} while (0);
 }
 
-void HttpMessage_SetType(HttpMessage * thiz, HttpType type)
-{
-    RETURN_IF_FAIL(thiz);
+//TINY_LOR
+//void HttpMessage_SetType(HttpMessage * thiz, HttpType type)
+//{
+//    RETURN_IF_FAIL(thiz);
+//
+//    thiz->type = type;
+//}
+//
+//TINY_LOR
+//HttpType HttpMessage_GetType(HttpMessage * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, HTTP_UNDEFINED);
+//
+//    return thiz->type;
+//}
 
-    thiz->type = type;
-}
-
-HttpType HttpMessage_GetType(HttpMessage * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, HTTP_UNDEFINED);
-
-    return thiz->type;
-}
-
+TINY_LOR
 void HttpMessage_SetMethod(HttpMessage *thiz, const char * method)
 {
     RETURN_IF_FAIL(thiz);
@@ -398,6 +385,7 @@ void HttpMessage_SetMethod(HttpMessage *thiz, const char * method)
     strncpy(thiz->request_line.method, method, HTTP_METHOD_LEN);
 }
 
+TINY_LOR
 void HttpMessage_SetUri(HttpMessage *thiz, const char * uri)
 {
     RETURN_IF_FAIL(thiz);
@@ -406,43 +394,50 @@ void HttpMessage_SetUri(HttpMessage *thiz, const char * uri)
     strncpy(thiz->request_line.uri, uri, HTTP_URI_LEN);
 }
 
-const char * HttpMessage_GetMethod(HttpMessage *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
+//TINY_LOR
+//const char * HttpMessage_GetMethod(HttpMessage *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return thiz->request_line.method;
+//}
+//
+//TINY_LOR
+//const char * HttpMessage_GetUri(HttpMessage *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return thiz->request_line.uri;
+//}
 
-    return thiz->request_line.method;
-}
-
-const char * HttpMessage_GetUri(HttpMessage *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
-
-    return thiz->request_line.uri;
-}
-
+TINY_LOR
 void HttpMessage_SetResponse(HttpMessage *thiz, int code, const char *status)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(status);
 
+    thiz->type = HTTP_RESPONSE;
     thiz->status_line.code = code;
     strncpy(thiz->status_line.status, status, HTTP_STATUS_LEN);
 }
 
-const char * HttpMessage_GetStatus(HttpMessage *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
+//TINY_LOR
+//const char * HttpMessage_GetStatus(HttpMessage *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return thiz->status_line.status;
+//}
+//
+//TINY_LOR
+//int HttpMessage_GetStatusCode(HttpMessage *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return thiz->status_line.code;
+//}
 
-    return thiz->status_line.status;
-}
-
-int HttpMessage_GetStatusCode(HttpMessage *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
-
-    return thiz->status_line.code;
-}
-
+TINY_LOR
 void HttpMessage_SetVersion(HttpMessage *thiz, int major, int minor)
 {
     RETURN_IF_FAIL(thiz);
@@ -451,122 +446,138 @@ void HttpMessage_SetVersion(HttpMessage *thiz, int major, int minor)
     thiz->version.minor = minor;
 }
 
-int HttpMessage_GetMajorVersion(HttpMessage *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
+//TINY_LOR
+//int HttpMessage_GetMajorVersion(HttpMessage *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return thiz->version.major;
+//}
+//
+//TINY_LOR
+//int HttpMessage_GetMinorVersion(HttpMessage *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return thiz->version.minor;
+//}
+//
+//TINY_LOR
+//HttpHeader * HttpMessage_GetHeader(HttpMessage * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return &thiz->header;
+//}
+//
+//TINY_LOR
+//HttpContent * HttpMessage_GetContent(HttpMessage * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return &thiz->content;
+//}
 
-    return thiz->version.major; 
-}
+//TINY_LOR
+//void HttpMessage_SetHeader(HttpMessage * thiz, const char *name, const char *value)
+//{
+//    RETURN_IF_FAIL(thiz);
+//    RETURN_IF_FAIL(name);
+//    RETURN_IF_FAIL(value);
+//
+//    HttpHeader_Set(&thiz->header, name, value);
+//}
 
-int HttpMessage_GetMinorVersion(HttpMessage *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
+//TINY_LOR
+//void HttpMessage_SetHeaderInteger(HttpMessage * thiz, const char *name, uint32_t value)
+//{
+//    RETURN_IF_FAIL(thiz);
+//    RETURN_IF_FAIL(name);
+//
+//    HttpHeader_SetInteger(&thiz->header, name, value);
+//}
 
-    return thiz->version.minor;
-}
+//TINY_LOR
+//const char * HttpMessage_GetHeaderValue(HttpMessage * thiz, const char *name)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//    RETURN_VAL_IF_FAIL(name, NULL);
+//
+//    return HttpHeader_GetValue(&thiz->header, name);
+//}
+//
+//TINY_LOR
+//uint32_t HttpMessage_GetHeaderCount(HttpMessage * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return HttpHeader_GetCount(&thiz->header);
+//}
+//
+//TINY_LOR
+//const char * HttpMessage_GetHeaderNameAt(HttpMessage * thiz, uint32_t index)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return HttpHeader_GetNameAt(&thiz->header, index);
+//}
 
-HttpHeader * HttpMessage_GetHeader(HttpMessage * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
+//TINY_LOR
+//const char * HttpMessage_GetHeaderValueAt(HttpMessage * thiz, uint32_t index)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return HttpHeader_GetValueAt(&thiz->header, index);
+//}
 
-    return &thiz->header;
-}
+//TINY_LOR
+//const char * HttpMessage_GetContentObject(HttpMessage * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//    return thiz->content.buf;
+//}
 
-HttpContent * HttpMessage_GetContent(HttpMessage * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
+//TINY_LOR
+//uint32_t HttpMessage_GetContentSize(HttpMessage * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return HttpContent_GetSize(&thiz->content);
+//}
+//
+//TINY_LOR
+//bool HttpMessage_IsMethodEqual(HttpMessage * thiz, const char *method)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, false);
+//
+//    return STR_EQUAL(thiz->request_line.method, method);
+//}
 
-    return &thiz->content;
-}
-
-void HttpMessage_SetHeader(HttpMessage * thiz, const char *name, const char *value)
-{
-    RETURN_IF_FAIL(thiz);
-    RETURN_IF_FAIL(name);
-    RETURN_IF_FAIL(value);
-
-    HttpHeader_Set(&thiz->header, name, value);
-}
-
-void HttpMessage_SetHeaderInteger(HttpMessage * thiz, const char *name, uint32_t value)
-{
-    RETURN_IF_FAIL(thiz);
-    RETURN_IF_FAIL(name);
-
-    HttpHeader_SetInteger(&thiz->header, name, value);
-}
-
-const char * HttpMessage_GetHeaderValue(HttpMessage * thiz, const char *name)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
-    RETURN_VAL_IF_FAIL(name, NULL);
-
-    return HttpHeader_GetValue(&thiz->header, name);
-}
-
-uint32_t HttpMessage_GetHeaderCount(HttpMessage * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
-
-    return HttpHeader_GetCount(&thiz->header);
-}
-
-const char * HttpMessage_GetHeaderNameAt(HttpMessage * thiz, uint32_t index)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
-
-    return HttpHeader_GetNameAt(&thiz->header, index);
-}
-
-const char * HttpMessage_GetHeaderValueAt(HttpMessage * thiz, uint32_t index)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
-
-    return HttpHeader_GetValueAt(&thiz->header, index);
-}
-
-const char * HttpMessage_GetContentObject(HttpMessage * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
-
-    return HttpContent_GetObject(&thiz->content);
-}
-
-uint32_t HttpMessage_GetContentSize(HttpMessage * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
-
-    return HttpContent_GetSize(&thiz->content);
-}
-
-bool HttpMessage_IsMethodEqual(HttpMessage * thiz, const char *method)
-{
-    RETURN_VAL_IF_FAIL(thiz, false);
-
-    return STR_EQUAL(thiz->request_line.method, method);
-}
-
+TINY_LOR
 bool HttpMessage_IsContentFull(HttpMessage *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, false);
 
-    return HttpContent_IsFull(&thiz->content);
+    return (thiz->content.buf_size == thiz->content.data_size);
 }
 
-TinyRet HttpMessage_SetContentSize(HttpMessage *thiz, uint32_t size)
-{
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+//TINY_LOR
+//TinyRet HttpMessage_SetContentSize(HttpMessage *thiz, uint32_t size)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+//
+//    return HttpContent_SetSize(&thiz->content, size);
+//}
 
-    return HttpContent_SetSize(&thiz->content, size);
-}
+//TINY_LOR
+//TinyRet HttpMessage_AddContentObject(HttpMessage *thiz, const char *bytes, uint32_t size)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return HttpContent_AddBytes(&thiz->content, bytes, size);
+//}
 
-TinyRet HttpMessage_AddContentObject(HttpMessage *thiz, const char *bytes, uint32_t size)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
-
-    return HttpContent_AddBytes(&thiz->content, bytes, size);
-}
-
+TINY_LOR
 static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes, uint32_t len)
 {
 	uint32_t i = 0;
@@ -673,6 +684,7 @@ static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes
     return (uint32_t)(p - bytes);
 }
 
+TINY_LOR
 static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *bytes, uint32_t len)
 {
 	uint32_t i = 0;
@@ -790,6 +802,7 @@ static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *byte
     return (uint32_t)(p - bytes);
 }
 
+TINY_LOR
 TinyRet HttpMessage_SetRequest(HttpMessage *thiz, const char * method, const char *url)
 {
     TinyRet ret = TINY_RET_OK;
@@ -825,9 +838,10 @@ TinyRet HttpMessage_SetRequest(HttpMessage *thiz, const char * method, const cha
             tiny_snprintf(host, 128, "%s:%d", ip, port);
         }
 
-        HttpMessage_SetIp(thiz, ip);
-        HttpMessage_SetPort(thiz, port);
-        HttpMessage_SetType(thiz, HTTP_REQUEST);
+        strncpy(thiz->ip, ip, TINY_IP_LEN);
+        thiz->port = port;
+        thiz->type = HTTP_REQUEST;
+
         HttpMessage_SetVersion(thiz, 1, 1);
         HttpMessage_SetMethod(thiz, method);
         HttpMessage_SetUri(thiz, uri);

@@ -12,9 +12,9 @@
  *      set expandtab
  */
 
+#ifdef TINY_DEBUG
 #include "tiny_ret.h"
 
-#ifdef TINY_DEBUG
 typedef struct _ValueDetail
 {
     uint32_t value;

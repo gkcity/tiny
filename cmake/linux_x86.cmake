@@ -6,4 +6,21 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-#ADD_DEFINITIONS(-g)
+#----------------------------------------------------------------------------
+#
+# for GCC
+#
+#----------------------------------------------------------------------------
+ADD_DEFINITIONS(-Wno-multichar)
+ADD_DEFINITIONS(-Wno-pointer-to-int-cast)
+ADD_DEFINITIONS(-O1)
+ADD_DEFINITIONS(-fPIC)
+ADD_DEFINITIONS(-std=c99)
+ADD_DEFINITIONS(-D_GNU_SOURCE)
+
+#----------------------------------------------------------------------------
+#
+# DEBUG INFORMATION
+#
+#----------------------------------------------------------------------------
+ADD_DEFINITIONS(-DTINY_DEBUG)

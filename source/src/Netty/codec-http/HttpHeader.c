@@ -31,34 +31,14 @@ typedef struct _Header
     char    value[HTTP_MAX_VALUE_LEN];
 } Header;
 
-static void data_delete_listener(void * data, void *ctx);
-
-HttpHeader * HttpHeader_New(void)
+TINY_LOR
+static void data_delete_listener(void * data, void *ctx)
 {
-    HttpHeader *thiz = NULL;
-
-    do
-    {
-        TinyRet ret = TINY_RET_OK;
-
-        thiz = (HttpHeader *)tiny_malloc(sizeof(HttpHeader));
-        if (thiz == NULL)
-        {
-            break;
-        }
-
-        ret = HttpHeader_Construct(thiz);
-        if (RET_FAILED(ret))
-        {
-            HttpHeader_Delete(thiz);
-            thiz = NULL;
-            break;
-        }
-    } while (0);
-
-    return thiz;
+    Header * header = (Header *)data;
+    tiny_free(header);
 }
 
+TINY_LOR
 TinyRet HttpHeader_Construct(HttpHeader *thiz)
 {
     TinyRet ret = TINY_RET_OK;
@@ -82,6 +62,7 @@ TinyRet HttpHeader_Construct(HttpHeader *thiz)
     return ret;
 }
 
+TINY_LOR
 TinyRet HttpHeader_Dispose(HttpHeader *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -91,30 +72,60 @@ TinyRet HttpHeader_Dispose(HttpHeader *thiz)
     return TINY_RET_OK;
 }
 
-void HttpHeader_Delete(HttpHeader *thiz)
-{
-    RETURN_IF_FAIL(thiz);
+//TINY_LOR
+//HttpHeader * HttpHeader_New(void)
+//{
+//    HttpHeader *thiz = NULL;
+//
+//    do
+//    {
+//        TinyRet ret = TINY_RET_OK;
+//
+//        thiz = (HttpHeader *)tiny_malloc(sizeof(HttpHeader));
+//        if (thiz == NULL)
+//        {
+//            break;
+//        }
+//
+//        ret = HttpHeader_Construct(thiz);
+//        if (RET_FAILED(ret))
+//        {
+//            HttpHeader_Delete(thiz);
+//            thiz = NULL;
+//            break;
+//        }
+//    } while (0);
+//
+//    return thiz;
+//}
+//
+//TINY_LOR
+//void HttpHeader_Delete(HttpHeader *thiz)
+//{
+//    RETURN_IF_FAIL(thiz);
+//
+//    HttpHeader_Dispose(thiz);
+//    tiny_free(thiz);
+//}
+//
+//TINY_LOR
+//void HttpHeader_Copy(HttpHeader *dst, HttpHeader *src)
+//{
+//    uint32_t i = 0;
+//    uint32_t count = 0;
+//
+//    RETURN_IF_FAIL(dst);
+//    RETURN_IF_FAIL(src);
+//
+//    count = (uint32_t)TinyList_GetCount(&src->list);
+//    for (i = 0; i < count; i++)
+//    {
+//        Header * header = (Header *)TinyList_GetAt(&src->list, i);
+//        HttpHeader_Set(dst, header->name, header->value);
+//    }
+//}
 
-    HttpHeader_Dispose(thiz);
-    tiny_free(thiz);
-}
-
-void HttpHeader_Copy(HttpHeader *dst, HttpHeader *src)
-{
-    uint32_t i = 0;
-    uint32_t count = 0;
-
-    RETURN_IF_FAIL(dst);
-    RETURN_IF_FAIL(src);
-
-    count = (uint32_t)TinyList_GetCount(&src->list);
-    for (i = 0; i < count; i++)
-    {
-        Header * header = (Header *)TinyList_GetAt(&src->list, i);
-        HttpHeader_Set(dst, header->name, header->value);
-    }
-}
-
+TINY_LOR
 void HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
 {
     Header * header = NULL;
@@ -133,6 +144,7 @@ void HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
     }
 }
 
+TINY_LOR
 void HttpHeader_SetInteger(HttpHeader * thiz, const char *name, uint32_t value)
 {
     char v[32];
@@ -145,13 +157,15 @@ void HttpHeader_SetInteger(HttpHeader * thiz, const char *name, uint32_t value)
     HttpHeader_Set(thiz, name, v);
 }
 
-uint32_t HttpHeader_GetCount(HttpHeader * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
+//TINY_LOR
+//uint32_t HttpHeader_GetCount(HttpHeader * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return (uint32_t) thiz->list.size;
+//}
 
-    return (uint32_t)TinyList_GetCount(&thiz->list);
-}
-
+TINY_LOR
 const char * HttpHeader_GetValue(HttpHeader * thiz, const char *name)
 {
     char s1[HTTP_MAX_NAME_LEN];
@@ -175,7 +189,7 @@ const char * HttpHeader_GetValue(HttpHeader * thiz, const char *name)
         s1[i] = (char)(tolower(s1[i]));
     }
 
-    count = (uint32_t)TinyList_GetCount(&thiz->list);
+    count = (uint32_t) thiz->list.size;
     for (i = 0; i < count; ++i)
     {
         header = (Header *)TinyList_GetAt(&thiz->list, i);
@@ -196,6 +210,7 @@ const char * HttpHeader_GetValue(HttpHeader * thiz, const char *name)
     return NULL;
 }
 
+TINY_LOR
 const char * HttpHeader_GetNameAt(HttpHeader * thiz, uint32_t index)
 {
     Header * header = NULL;
@@ -211,6 +226,7 @@ const char * HttpHeader_GetNameAt(HttpHeader * thiz, uint32_t index)
     return NULL;
 }
 
+TINY_LOR
 const char * HttpHeader_GetValueAt(HttpHeader * thiz, uint32_t index)
 {
     Header * header = NULL;
@@ -226,6 +242,7 @@ const char * HttpHeader_GetValueAt(HttpHeader * thiz, uint32_t index)
     return NULL;
 }
 
+TINY_LOR
 uint32_t HttpHeader_Parse(HttpHeader *thiz, const char *bytes, uint32_t length)
 {
     const char *p = bytes;
@@ -327,10 +344,4 @@ uint32_t HttpHeader_Parse(HttpHeader *thiz, const char *bytes, uint32_t length)
 
     // length of heads
     return (uint32_t)(p - bytes);
-}
-
-static void data_delete_listener(void * data, void *ctx)
-{
-    Header * header = (Header *)data;
-    tiny_free(header);
 }

@@ -16,7 +16,6 @@
 #include <tiny_log.h>
 #include <tiny_inet.h>
 #include <tiny_socket.h>
-#include "tiny_snprintf.h"
 #include "StreamClientChannel.h"
 #include "StreamClientChannelContext.h"
 #include "channel/SocketChannel.h"
@@ -24,48 +23,45 @@
 #define TAG     "StreamClientChannel"
 
 
-bool StreamClientChannel_isConnected(Channel* thiz)
- {
-     return thiz->fd != 0;
- }
+TINY_LOR
+bool StreamClientChannel_isConnected(Channel *thiz)
+{
+    return (thiz->fd >= 0);
+}
 
+TINY_LOR
 static void StreamClientChannel_Dispose(Channel *thiz)
 {
     if (thiz->ctx != NULL)
     {
-        StreamClientChannelContext_Delete((StreamClientChannelContext *)thiz->ctx);
+        StreamClientChannelContext_Delete((StreamClientChannelContext *) thiz->ctx);
         thiz->ctx = NULL;
     }
+
     if (StreamClientChannel_isConnected(thiz))
     {
-    	StreamClientChannel_Close(thiz);
+        StreamClientChannel_Close(thiz);
     }
 }
 
+TINY_LOR
 void StreamClientChannel_Delete(Channel *thiz)
 {
     StreamClientChannel_Dispose(thiz);
     tiny_free(thiz);
 }
 
-static void StreamClientChannel_OnRegister2(Channel *thiz, Selector *selector)
-{
-    if (Channel_IsActive(thiz))
-    {
-        Selector_Register(selector, thiz->fd, SELECTOR_OP_ALL);
-        LOG_D(TAG, "StreamClientChannel_OnRegister2: %d", thiz->fd);
-    }
-}
-
+TINY_LOR
 static void StreamClientChannel_OnRegister(Channel *thiz, Selector *selector)
 {
     if (Channel_IsActive(thiz))
     {
-        Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
+        Selector_Register(selector, thiz->fd, SELECTOR_OP_ALL);
         LOG_D(TAG, "StreamClientChannel_OnRegister: %d", thiz->fd);
     }
 }
 
+TINY_LOR
 static void StreamClientChannel_OnRemove(Channel *thiz)
 {
     LOG_D(TAG, "StreamClientChannel_OnRemove");
@@ -73,17 +69,18 @@ static void StreamClientChannel_OnRemove(Channel *thiz)
     StreamClientChannel_Delete(thiz);
 }
 
-
+TINY_LOR
 static TinyRet StreamClientChannel_OnRead(Channel *thiz, Selector *selector)
 {
-    StreamClientChannelContext *ctx = (StreamClientChannelContext *)thiz->ctx;
-    int error;
+    int error = 0;
     socklen_t len = sizeof(error);
+
     LOG_D(TAG, "connect receive read");
 
     if (Selector_IsReadable(selector, thiz->fd))
     {
-        if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+        if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+        {
             LOG_E(TAG, "connect error: %d", error);
             return TINY_RET_E_INTERNAL;
         }
@@ -93,33 +90,30 @@ static TinyRet StreamClientChannel_OnRead(Channel *thiz, Selector *selector)
     return TINY_RET_OK;
 }
 
-static TinyRet StreamClientChannel_OnWrite(Channel* thiz, Selector* selector)
+TINY_LOR
+static TinyRet StreamClientChannel_OnWrite(Channel *thiz, Selector *selector)
 {
-    StreamClientChannelContext *ctx = (StreamClientChannelContext *)thiz->ctx;
-    int error;
+    int error = 0;
     socklen_t len = sizeof(error);
+
     LOG_D(TAG, "connect receive write");
 
     if (Selector_IsWriteable(selector, thiz->fd))
     {
-        if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+        if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+        {
             LOG_E(TAG, "connect error: %d", error);
             return TINY_RET_E_INTERNAL;
         }
+
         thiz->onActive(thiz);
     }
 
     return TINY_RET_OK;
 }
-/*
-static void StreamClientChannel_OnInactive(Channel *thiz)
-{
-    LOG_D(TAG, "StreamClientChannel_OnInactive");
-    thiz->onInactive(thiz);
-    Channel_Close(thiz);
-}*/
 
-static void StreamClientChannel_OnActive(Channel* thiz)
+TINY_LOR
+static void StreamClientChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
@@ -127,15 +121,16 @@ static void StreamClientChannel_OnActive(Channel* thiz)
 
     if (thiz->ctx != NULL)
     {
-    	((StreamClientChannelContext *)thiz->ctx) ->initializer(thiz, ((StreamClientChannelContext *)thiz->ctx) ->initializerContext);
+        ((StreamClientChannelContext *) thiz->ctx)->initializer(thiz, ((StreamClientChannelContext *) thiz->ctx)->initializerContext);
     }
-    thiz->onActive=SocketChannel_OnActive;
-    thiz->onRead = SocketChannel_OnRead;
-    thiz->onRegister = StreamClientChannel_OnRegister;
 
+    thiz->onActive = SocketChannel_OnActive;
+    thiz->onRead = SocketChannel_OnRead;
+    thiz->onRegister = SocketChannel_OnRegister;
     thiz->onActive(thiz);
 }
 
+TINY_LOR
 static TinyRet StreamClientChannel_Construct(Channel *thiz)
 {
     TinyRet ret = TINY_RET_OK;
@@ -144,9 +139,8 @@ static TinyRet StreamClientChannel_Construct(Channel *thiz)
 
     do
     {
-        thiz->onRegister = StreamClientChannel_OnRegister2;
+        thiz->onRegister = StreamClientChannel_OnRegister;
         thiz->onRemove = StreamClientChannel_OnRemove;
-        //thiz->onInactive = StreamClientChannel_OnInactive;
         thiz->onActive = StreamClientChannel_OnActive;
         thiz->onRead = StreamClientChannel_OnRead;
         thiz->onWrite = StreamClientChannel_OnWrite;
@@ -162,9 +156,10 @@ static TinyRet StreamClientChannel_Construct(Channel *thiz)
     return ret;
 }
 
-Channel * StreamClientChannel_New()
+TINY_LOR
+Channel *StreamClientChannel_New()
 {
-    Channel * thiz = NULL;
+    Channel *thiz = NULL;
 
     do
     {
@@ -185,48 +180,19 @@ Channel * StreamClientChannel_New()
     return thiz;
 }
 
+TINY_LOR
 TinyRet StreamClientChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(initializer, TINY_RET_E_ARG_NULL);
 
-    ((StreamClientChannelContext *)thiz->ctx) ->initializer = initializer ;
-    ((StreamClientChannelContext *)thiz->ctx) ->initializerContext = ctx;
+    ((StreamClientChannelContext *) thiz->ctx)->initializer = initializer;
+    ((StreamClientChannelContext *) thiz->ctx)->initializerContext = ctx;
 
     return TINY_RET_OK;
 }
 
-/*
-static void StreamClientChannel_InitializeWithRemoteInfo(Channel *thiz, const char *ip, uint16_t port)
-{
-    RETURN_IF_FAIL(thiz);
-    RETURN_IF_FAIL(ip);
-
-    tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::%s::%d", thiz->fd, ip, port);
-
-    strncpy(thiz->remote.socket.ip, ip, IP_LEN);
-    thiz->remote.socket.port = port;
-
-    if (thiz->ctx != NULL)
-    {
-    	((StreamClientChannelContext *)thiz->ctx) ->initializer(thiz, ((StreamClientChannelContext *)thiz->ctx) ->initializerContext);
-    }
-
-    thiz->onActive(thiz);
-}
-*/
-
-static void StreamClientChannel_SetRemoteInfo(Channel *thiz, const char* ip, uint16_t port)
-{
-    RETURN_IF_FAIL(thiz);
-    RETURN_IF_FAIL(ip);
-
-    tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::%s::%d", thiz->fd, ip, port);
-
-    strncpy(thiz->remote.socket.ip, ip, IP_LEN);
-    thiz->remote.socket.port = port;
-}
-
+TINY_LOR
 TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port)
 {
     TinyRet ret = TINY_RET_OK;
@@ -249,23 +215,24 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
             break;
         }
 
-    	StreamClientChannel_SetRemoteInfo(thiz, ip, port);
+        SocketChannel_SetRemoteInfo(thiz, ip, port);
 
-	ret = SocketChannel_Connect(thiz, ip, port);
-	if (ret == TINY_RET_OK)
-	{
-	    thiz->onActive(thiz);
-	}
+        ret = SocketChannel_Connect(thiz);
+        if (ret == TINY_RET_OK)
+        {
+            thiz->onActive(thiz);
+        }
 
     } while (0);
 
     return ret;
 }
 
-TinyRet StreamClientChannel_Close(Channel* thiz)
+TINY_LOR
+TinyRet StreamClientChannel_Close(Channel *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_INVALID);
-    Channel_Close( thiz);
+    Channel_Close(thiz);
     return TINY_RET_OK;
 }
 

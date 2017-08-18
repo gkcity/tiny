@@ -18,40 +18,13 @@
 
 #define TAG     "Selector"
 
-static TinyRet _Selector_Select(Selector *thiz, int64_t ms);
+TINY_LOR
+static TinyRet _Selector_Select(Selector *thiz, int64_t us);
+
+TINY_LOR
 static TinyRet _Selector_LoopOnce(Selector *thiz);
 
-//Selector * Selector_New(void)
-//{
-//    Selector *thiz = NULL;
-//
-//    do
-//    {
-//        thiz = (Selector *)tiny_malloc(sizeof(Selector));
-//        if (thiz == NULL)
-//        {
-//            break;
-//        }
-//
-//        if (RET_FAILED(Selector_Construct(thiz)))
-//        {
-//            Selector_Delete(thiz);
-//            thiz = NULL;
-//            break;
-//        }
-//    } while (0);
-//
-//    return thiz;
-//}
-
-//void Selector_Delete(Selector *thiz)
-//{
-//    RETURN_IF_FAIL(thiz);
-//
-//    Selector_Dispose(thiz);
-//    tiny_free(thiz);
-//}
-
+TINY_LOR
 TinyRet Selector_Construct(Selector *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -61,6 +34,7 @@ TinyRet Selector_Construct(Selector *thiz)
     return TINY_RET_OK;
 }
 
+TINY_LOR
 TinyRet Selector_Dispose(Selector *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -68,16 +42,18 @@ TinyRet Selector_Dispose(Selector *thiz)
     return TINY_RET_OK;
 }
 
+TINY_LOR
 void Selector_Register(Selector *thiz, int fd, SelectorOperation op)
 {
     RETURN_IF_FAIL(thiz);
 
-//    LOG_D(TAG, "Selector_Register: %d", fd);
+    LOG_D(TAG, "Selector_Register: %d, Operation: 0x%x", fd, op);
 
     if ((op & SELECTOR_OP_READ) != 0)
     {
         FD_SET(fd, &thiz->read_set);
     }
+
     if ((op & SELECTOR_OP_WRITE) != 0)
     {
         FD_SET(fd, &thiz->write_set);
@@ -94,6 +70,7 @@ void Selector_Register(Selector *thiz, int fd, SelectorOperation op)
     }
 }
 
+TINY_LOR
 static TinyRet _Selector_Select(Selector *thiz, int64_t us)
 {
     TinyRet result = TINY_RET_OK;
@@ -101,7 +78,7 @@ static TinyRet _Selector_Select(Selector *thiz, int64_t us)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "_Selector_Select, timeout: %ld us", us);
+    LOG_D(TAG, "_Selector_Select, timeout: %d us", (int)us);
 
     if (us == 0)
     {
@@ -110,8 +87,8 @@ static TinyRet _Selector_Select(Selector *thiz, int64_t us)
     else
     {
         struct timeval tv;
-        tv.tv_sec = us / 1000000;
-        tv.tv_usec = us % 1000000;
+        tv.tv_sec = (long) (us / 1000000);
+        tv.tv_usec = (long) (us % 1000000);
 
         ret = tiny_select(thiz->max_fd, &thiz->read_set, &thiz->write_set, NULL, &tv);
     }
@@ -134,23 +111,28 @@ static TinyRet _Selector_Select(Selector *thiz, int64_t us)
     return result;
 }
 
+TINY_LOR
 bool Selector_IsReadable(Selector *thiz, int fd)
 {
     RETURN_VAL_IF_FAIL(thiz, false);
 
-    return FD_ISSET(fd, &thiz->read_set);
+    return (FD_ISSET(fd, &thiz->read_set) != 0);
 }
 
+TINY_LOR
 bool Selector_IsWriteable(Selector *thiz, int fd)
 {
     RETURN_VAL_IF_FAIL(thiz, false);
 
-    return FD_ISSET(fd, &thiz->write_set);
+    return (FD_ISSET(fd, &thiz->write_set) != 0);
 }
 
+TINY_LOR
 static TinyRet _Selector_LoopOnce(Selector *thiz)
 {
     TinyRet ret = TINY_RET_OK;
+
+    printf("_Selector_LoopOnce\n");
 
     /**
      * Reset
@@ -183,6 +165,7 @@ static TinyRet _Selector_LoopOnce(Selector *thiz)
     return ret;
 }
 
+TINY_LOR
 TinyRet Selector_Loop(Selector *thiz)
 {
     while (1)

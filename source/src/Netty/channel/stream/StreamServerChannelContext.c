@@ -15,12 +15,14 @@
 #include <tiny_malloc.h>
 #include "StreamServerChannelContext.h"
 
+TINY_LOR
 static void _OnChannelRemoved(void * data, void *ctx)
 {
     Channel *channel = (Channel *)data;
     channel->onRemove(channel);
 }
 
+TINY_LOR
 static TinyRet StreamServerChannelContext_Construct(StreamServerChannelContext *thiz)
 {
     TinyRet ret = TINY_RET_OK;
@@ -39,11 +41,13 @@ static TinyRet StreamServerChannelContext_Construct(StreamServerChannelContext *
     return ret;
 }
 
+TINY_LOR
 static void StreamServerChannelContext_Dispose(StreamServerChannelContext *thiz)
 {
     TinyList_Dispose(&thiz->channels);
 }
 
+TINY_LOR
 StreamServerChannelContext * StreamServerChannelContext_New(void)
 {
     StreamServerChannelContext *thiz = NULL;
@@ -67,6 +71,7 @@ StreamServerChannelContext * StreamServerChannelContext_New(void)
     return thiz;
 }
 
+TINY_LOR
 void StreamServerChannelContext_Delete(StreamServerChannelContext *thiz)
 {
     RETURN_IF_FAIL(thiz);

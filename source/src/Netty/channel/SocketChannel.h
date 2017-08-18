@@ -20,38 +20,96 @@
 #include <tiny_typedef.h>
 #include <tiny_ret.h>
 #include <TinyList.h>
-#include <common/Netty_api.h>
 
 TINY_BEGIN_DECLS
 
 
-NETTY_API Channel * SocketChannel_New(void);
-
-NETTY_API void SocketChannel_Initialize(Channel *thiz, const char *ip, int fd, uint16_t port, ChannelInitializer initializer, void *ctx);
-NETTY_API void SocketChannel_InitializeWithRemoteInfo(Channel *thiz, const char *ip, int fd, uint16_t port, ChannelInitializer initializer, void *ctx);
-NETTY_API TinyRet SocketChannel_AddBefore(Channel *thiz, const char *name, ChannelHandler *handler);
-NETTY_API void SocketChannel_AddLast(Channel *thiz, ChannelHandler *handler);
-NETTY_API TinyRet SocketChannel_Open(Channel *thiz, ChannelType type);
-NETTY_API TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port);
-NETTY_API TinyRet SocketChannel_SetBlock(Channel *thiz, bool block);
-NETTY_API TinyRet SocketChannel_Listen(Channel *thiz, int maxConnections);
-NETTY_API TinyRet SocketChannel_JoinGroup(Channel *thiz, const char *ip, const char *group);
-NETTY_API TinyRet SocketChannel_LeaveGroup(Channel *thiz);
-NETTY_API TinyRet SocketChannel_Connect(Channel *thiz, const char *ip, uint16_t port);
-
-// TODO: emdns需要非const数据
-//NETTY_API void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
-//NETTY_API void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
-NETTY_API void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, void *data, uint32_t len);
-NETTY_API void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, void *data, uint32_t len);
-NETTY_API void SocketChannel_StartWrite(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
-NETTY_API void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
+#define CHANNEL_RECV_BUF_SIZE    (1460)
 
 
-void SocketChannel_OnRemove(Channel *thiz);
-void SocketChannel_OnActive(Channel *thiz);
+TINY_API
+TINY_LOR
+Channel * SocketChannel_New(void);
+
+TINY_API
+TINY_LOR
+void SocketChannel_Delete(Channel *thiz);
+
+TINY_API
+TINY_LOR
+void SocketChannel_SetRemoteInfo(Channel *thiz, const char *ip, uint16_t port);
+
+TINY_API
+TINY_LOR
+void SocketChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_AddBefore(Channel *thiz, const char *name, ChannelHandler *handler);
+
+TINY_API
+TINY_LOR
+void SocketChannel_AddLast(Channel *thiz, ChannelHandler *handler);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_Open(Channel *thiz, ChannelType type);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_SetBlock(Channel *thiz, bool block);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_Listen(Channel *thiz, int maxConnections);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_JoinGroup(Channel *thiz, const char *ip, const char *group);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_LeaveGroup(Channel *thiz);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_Connect(Channel *thiz);
+
+TINY_API
+TINY_LOR
+void SocketChannel_OnRegister(Channel *thiz, Selector *selector);
+
+TINY_API
+TINY_LOR
 TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector);
 
+TINY_API
+TINY_LOR
+void SocketChannel_OnActive(Channel *thiz);
+
+TINY_API
+TINY_LOR
+void SocketChannel_OnInactive(Channel *thiz);
+
+TINY_API
+TINY_LOR
+void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
+
+TINY_API
+TINY_LOR
+void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
+
+TINY_API
+TINY_LOR
+void SocketChannel_StartWrite(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
+
+TINY_API
+TINY_LOR
+void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *data, uint32_t len);
 
 
 TINY_END_DECLS

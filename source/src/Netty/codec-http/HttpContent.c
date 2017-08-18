@@ -18,33 +18,7 @@
 
 #define TAG     "HttpContent"
 
-HttpContent * HttpContent_New(void)
-{
-    HttpContent *thiz = NULL;
-
-    do
-    {
-        TinyRet ret = TINY_RET_OK;
-
-        thiz = (HttpContent *)tiny_malloc(sizeof(HttpContent));
-        if (thiz == NULL)
-        {
-            break;
-        }
-
-        ret = HttpContent_Construct(thiz);
-        if (RET_FAILED(ret))
-        {
-            HttpContent_Delete(thiz);
-            thiz = NULL;
-            break;
-        }
-    }
-    while (0);
-
-    return thiz;
-}
-
+TINY_LOR
 TinyRet HttpContent_Construct(HttpContent *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -54,6 +28,7 @@ TinyRet HttpContent_Construct(HttpContent *thiz)
     return TINY_RET_OK;
 }
 
+TINY_LOR
 TinyRet HttpContent_Dispose(HttpContent *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -69,36 +44,67 @@ TinyRet HttpContent_Dispose(HttpContent *thiz)
     return TINY_RET_E_NOT_IMPLEMENTED;
 }
 
-void HttpContent_Delete(HttpContent *thiz)
-{
-    RETURN_IF_FAIL(thiz);
+//TINY_LOR
+//HttpContent * HttpContent_New(void)
+//{
+//    HttpContent *thiz = NULL;
+//
+//    do
+//    {
+//        TinyRet ret = TINY_RET_OK;
+//
+//        thiz = (HttpContent *)tiny_malloc(sizeof(HttpContent));
+//        if (thiz == NULL)
+//        {
+//            break;
+//        }
+//
+//        ret = HttpContent_Construct(thiz);
+//        if (RET_FAILED(ret))
+//        {
+//            HttpContent_Delete(thiz);
+//            thiz = NULL;
+//            break;
+//        }
+//    }
+//    while (0);
+//
+//    return thiz;
+//}
+//
+//TINY_LOR
+//void HttpContent_Delete(HttpContent *thiz)
+//{
+//    RETURN_IF_FAIL(thiz);
+//
+//    tiny_free(thiz);
+//}
+//
+//TINY_LOR
+//void HttpContent_Copy(HttpContent *dst, HttpContent *src)
+//{
+//    RETURN_IF_FAIL(dst);
+//    RETURN_IF_FAIL(src);
+//
+//    dst->buf_size = src->buf_size;
+//    dst->data_size = src->data_size;
+//
+//    if (src->buf_size > 0)
+//    {
+//        dst->buf = (char *)tiny_malloc(dst->buf_size);
+//        if (dst->buf != NULL)
+//        {
+//            memset(dst->buf, 0, dst->buf_size);
+//            memcpy(dst->buf, src->buf, src->buf_size);
+//        }
+//        else
+//        {
+//            LOG_E(TAG, "out of memory!");
+//        }
+//    }
+//}
 
-    tiny_free(thiz);
-}
-
-void HttpContent_Copy(HttpContent *dst, HttpContent *src)
-{
-    RETURN_IF_FAIL(dst);
-    RETURN_IF_FAIL(src);
-
-    dst->buf_size = src->buf_size;
-    dst->data_size = src->data_size;
-
-    if (src->buf_size > 0)
-    {
-        dst->buf = (char *)tiny_malloc(dst->buf_size);
-        if (dst->buf != NULL)
-        {
-            memset(dst->buf, 0, dst->buf_size);
-            memcpy(dst->buf, src->buf, src->buf_size);
-        }
-        else
-        {
-            LOG_E(TAG, "out of memory!");
-        }
-    }
-}
-
+TINY_LOR
 TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size)
 {
     TinyRet ret = TINY_RET_OK;
@@ -131,6 +137,7 @@ TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size)
     return ret;
 }
 
+TINY_LOR
 uint32_t HttpContent_AddBytes(HttpContent *thiz, const char *data, uint32_t size)
 {
     uint32_t unused_size = thiz->buf_size - thiz->data_size;
@@ -150,23 +157,26 @@ uint32_t HttpContent_AddBytes(HttpContent *thiz, const char *data, uint32_t size
     return size;
 }
 
-bool HttpContent_IsFull(HttpContent *thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, false);
+//TINY_LOR
+//bool HttpContent_IsFull(HttpContent *thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, false);
+//
+//    return (thiz->buf_size == thiz->data_size);
+//}
 
-    return (thiz->buf_size == thiz->data_size);
-}
+//TINY_LOR
+//uint32_t HttpContent_GetSize(HttpContent * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, 0);
+//
+//    return thiz->buf_size;
+//}
 
-uint32_t HttpContent_GetSize(HttpContent * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, 0);
-
-    return thiz->buf_size;
-}
-
-const char * HttpContent_GetObject(HttpContent * thiz)
-{
-    RETURN_VAL_IF_FAIL(thiz, NULL);
-
-    return thiz->buf;
-}
+//TINY_LOR
+//const char * HttpContent_GetObject(HttpContent * thiz)
+//{
+//    RETURN_VAL_IF_FAIL(thiz, NULL);
+//
+//    return thiz->buf;
+//}
