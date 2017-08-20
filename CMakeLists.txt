@@ -25,8 +25,8 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyWorker)
 #-------------------------------------------------------------------------------------
 # output dir
 #-------------------------------------------------------------------------------------
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/output)
-SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/output)
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/target)
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/target)
 MESSAGE(STATUS "executable output:  ${EXECUTABLE_OUTPUT_PATH}")
 MESSAGE(STATUS "library output: ${LIBRARY_OUTPUT_PATH}")
 
@@ -216,7 +216,7 @@ SET(SRC
 # static library
 #----------------------------------------------------------------------------
 ADD_LIBRARY(tiny_static STATIC ${SRC})
-SET_TARGET_PROPERTIES(tiny_static PROPERTIES OUTPUT_NAME "tiny")
+SET_TARGET_PROPERTIES(tiny_static PROPERTIES OUTPUT_NAME "tiny_static")
 SET_TARGET_PROPERTIES(tiny_static PROPERTIES LINKER_LANGUAGE C)
 
 #----------------------------------------------------------------------------

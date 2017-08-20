@@ -6,4 +6,4 @@ mkdir $TARGET
 cd $TARGET
 cmake ../../ -DCMAKE_TOOLCHAIN_FILE=../linux_x86.cmake
 make
-ls -l -h output/
+ls -l -h ../../target/
