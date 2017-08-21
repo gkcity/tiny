@@ -27,7 +27,7 @@ int main()
 
     StreamClientChannel_Initialize(client, HttpClientInitializer, NULL);
 
-    ret = StreamClientChannel_Connect(client, "127.0.0.1", 8080, 1000 * 3);
+    ret = StreamClientChannel_Connect(client, "127.0.0.1", 8080);
     if (RET_FAILED(ret))
     {
         printf("StreamClientChannel_Connect failed: %d\n", TINY_RET_CODE(ret));

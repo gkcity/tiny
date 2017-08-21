@@ -87,7 +87,7 @@ static TinyRet MyClientHandler_Dispose(ChannelHandler *thiz)
 
 static void _channelActive(ChannelHandler *thiz, Channel *channel)
 {
-//    HttpMessage request;
+    HttpMessage request;
 
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(channel);
@@ -100,7 +100,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
         HttpMessage_SetVersion(&request, 1, 1);
 
         HttpHeader_Set(&request.header, "App-Id", "9947163763053218");
-        HttpHeader_Set(&request.header, "Access-Token", "Qi5XuHF3qw0YDqXCDis8ubDK4UVToA5RFPZ8tEjXJlK4wAd-QlY1Opw9j6CYIayrpDh9dhjVJ8I72upGGoPHFfkrKoRnribNfurDyR3TXzQ");
+        HttpHeader_Set(&request.header, "Access-Token", "SJgbGdtgU3Ybg2kG-dOYWs1k9BBzlBITlDFso-Ib5E7by7jTtV3CUQ0jaS0Io4UsTUeGif1fDO9wwRG1LMxQEZJkEnc6nq0IPw4FrG735Ho");
 
         SocketChannel_StartWrite(channel, DATA_RAW, HttpMessage_GetBytesWithoutContent(&request), HttpMessage_GetBytesSizeWithoutContent(&request));
 

@@ -107,13 +107,13 @@ void SocketChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    printf("SocketChannel_OnActive, handlers: %d\n", thiz->handlers.size);
+    LOG_D(TAG, "SocketChannel_OnActive, handlers: %d", thiz->handlers.size);
 
     for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
 
-//        printf("ChannelHandler: %s\n", handler->name);
+        LOG_D(TAG, "ChannelHandler: %s", handler->name);
 
         if (handler->channelActive != NULL)
         {

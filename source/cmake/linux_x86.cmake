@@ -16,6 +16,7 @@ ADD_DEFINITIONS(-Wno-pointer-to-int-cast)
 ADD_DEFINITIONS(-O1)
 ADD_DEFINITIONS(-fPIC)
 ADD_DEFINITIONS(-std=c99)
+ADD_DEFINITIONS(-g)
 ADD_DEFINITIONS(-D_GNU_SOURCE)
 
 #----------------------------------------------------------------------------

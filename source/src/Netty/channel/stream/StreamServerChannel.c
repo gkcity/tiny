@@ -160,8 +160,6 @@ static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
 
     do
     {
-        memset(thiz, 0, sizeof(Channel));
-
         thiz->onRegister = StreamServerChannel_OnRegister;
         thiz->onRemove = StreamServerChannel_OnRemove;
         thiz->onInactive = StreamServerChannel_OnInactive;
@@ -187,7 +185,7 @@ Channel * StreamServerChannel_New(int maxConnections)
 
     do
     {
-        thiz = (Channel *)tiny_malloc(sizeof(Channel));
+        thiz = SocketChannel_New();
         if (thiz == NULL)
         {
             break;
