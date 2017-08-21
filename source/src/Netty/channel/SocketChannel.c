@@ -107,7 +107,7 @@ void SocketChannel_OnInactive(Channel *thiz)
 }
 
 TINY_LOR
-static void SocketChannel_OnEventTriggered(Channel *thiz, void *event)
+void SocketChannel_OnEventTriggered(Channel *thiz, void *event)
 {
     RETURN_IF_FAIL(thiz);
 
@@ -122,7 +122,7 @@ static void SocketChannel_OnEventTriggered(Channel *thiz, void *event)
 }
 
 TINY_LOR
-static int64_t SocketChannel_GetNextTimeout(Channel *thiz, void *ctx)
+int64_t SocketChannel_GetNextTimeout(Channel *thiz, void *ctx)
 {
     RETURN_VAL_IF_FAIL(thiz, 0);
 

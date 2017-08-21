@@ -21,11 +21,10 @@
 
 #define TAG     "StreamClientChannel"
 
-
 TINY_LOR
-bool StreamClientChannel_isConnected(Channel *thiz)
+static int64_t StreamClientChannel_GetConnectingTimeout(Channel *thiz, void *ctx)
 {
-    return (thiz->fd >= 0);
+    return ((StreamClientChannelContext *) thiz->ctx)->connectingTimeout * 1000000;
 }
 
 TINY_LOR
@@ -71,18 +70,19 @@ static void StreamClientChannel_OnRemove(Channel *thiz)
 TINY_LOR
 static TinyRet StreamClientChannel_OnRead(Channel *thiz, Selector *selector)
 {
-    int error = 0;
-    socklen_t len = sizeof(error);
-
-    LOG_D(TAG, "connect receive read");
+    LOG_D(TAG, "StreamClientChannel_OnRead");
 
     if (Selector_IsReadable(selector, thiz->fd))
     {
+        int error = 0;
+        socklen_t len = sizeof(error);
+
         if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
         {
             LOG_E(TAG, "connect error: %d", error);
             return TINY_RET_E_INTERNAL;
         }
+
         thiz->onActive(thiz);
     }
 
@@ -92,13 +92,13 @@ static TinyRet StreamClientChannel_OnRead(Channel *thiz, Selector *selector)
 TINY_LOR
 static TinyRet StreamClientChannel_OnWrite(Channel *thiz, Selector *selector)
 {
-    int error = 0;
-    socklen_t len = sizeof(error);
-
     LOG_D(TAG, "StreamClientChannel_OnWrite");
 
     if (Selector_IsWriteable(selector, thiz->fd))
     {
+        int error = 0;
+        socklen_t len = sizeof(error);
+
         if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
         {
             LOG_E(TAG, "connect error: %d", error);
@@ -109,6 +109,14 @@ static TinyRet StreamClientChannel_OnWrite(Channel *thiz, Selector *selector)
     }
 
     return TINY_RET_OK;
+}
+
+TINY_LOR
+static void StreamClientChannel_OnConnectingTimeout(Channel *thiz, void *event)
+{
+    RETURN_IF_FAIL(thiz);
+
+    Channel_Close(thiz);
 }
 
 TINY_LOR
@@ -126,6 +134,8 @@ static void StreamClientChannel_OnActive(Channel *thiz)
     thiz->onActive = SocketChannel_OnActive;
     thiz->onRead = SocketChannel_OnRead;
     thiz->onRegister = SocketChannel_OnRegister;
+    thiz->onEventTriggered = SocketChannel_OnEventTriggered;
+    thiz->getNextTimeout = SocketChannel_GetNextTimeout;
     thiz->onActive(thiz);
 }
 
@@ -143,6 +153,8 @@ static TinyRet StreamClientChannel_Construct(Channel *thiz)
         thiz->onActive = StreamClientChannel_OnActive;
         thiz->onRead = StreamClientChannel_OnRead;
         thiz->onWrite = StreamClientChannel_OnWrite;
+        thiz->onEventTriggered = StreamClientChannel_OnConnectingTimeout;
+        thiz->getNextTimeout = StreamClientChannel_GetConnectingTimeout;
 
         thiz->ctx = StreamClientChannelContext_New();
         if (thiz->ctx == NULL)
@@ -192,7 +204,7 @@ TinyRet StreamClientChannel_Initialize(Channel *thiz, ChannelInitializer initial
 }
 
 TINY_LOR
-TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port)
+TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port, uint32_t timeout)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -214,6 +226,8 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
             break;
         }
 
+        ((StreamClientChannelContext *) thiz->ctx)->connectingTimeout = timeout;
+
         SocketChannel_SetRemoteInfo(thiz, ip, port);
 
         ret = tiny_async_connect(thiz->fd, ip, port);
@@ -225,7 +239,7 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
 
         if (TINY_RET_CODE(ret) == CODE_PENDING)
         {
-            LOG_E(TAG, "connecting is pending");
+            LOG_D(TAG, "connecting is pending");
             break;
         }
 
@@ -241,4 +255,10 @@ TinyRet StreamClientChannel_Close(Channel *thiz)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_INVALID);
     Channel_Close(thiz);
     return TINY_RET_OK;
+}
+
+TINY_LOR
+bool StreamClientChannel_isConnected(Channel *thiz)
+{
+    return (thiz->fd >= 0);
 }

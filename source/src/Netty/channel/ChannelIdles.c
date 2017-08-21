@@ -13,7 +13,11 @@
  */
 
 #include <tiny_time.h>
+#include <tiny_log.h>
 #include "ChannelIdles.h"
+
+#define TAG         "ChannelIdle"
+
 
 TINY_LOR
 static void ChannelIdle_Initialize(ChannelIdle *thiz, uint32_t idle, uint64_t current)
@@ -90,6 +94,8 @@ int64_t ChannelIdles_GetNextTimeout(ChannelIdles *thiz)
     timeout = ChannelIdle_GetNextTimeout(&thiz->reader, current, timeout);
     timeout = ChannelIdle_GetNextTimeout(&thiz->writer, current, timeout);
     timeout = ChannelIdle_GetNextTimeout(&thiz->all, current, timeout);
+
+    LOG_D(TAG, "ChannelIdles_GetNextTimeout: %ld us", timeout);
 
     return timeout;
 }

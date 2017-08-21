@@ -30,7 +30,7 @@ TINY_LOR
 TinyRet StreamClientChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx);
 
 TINY_LOR
-TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port);
+TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port, uint32_t timeout);
 
 TINY_LOR
 TinyRet StreamClientChannel_Close(Channel *thiz);

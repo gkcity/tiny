@@ -27,6 +27,7 @@ typedef struct _StreamClientChannelContext
 {
     ChannelInitializer          initializer;
     void                      * initializerContext;
+    uint32_t                    connectingTimeout;
 } StreamClientChannelContext;
 
 

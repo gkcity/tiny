@@ -78,7 +78,7 @@ static TinyRet _Selector_Select(Selector *thiz, int64_t us)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "_Selector_Select, timeout: %d us", (int)us);
+    LOG_D(TAG, "_Selector_Select, timeout: %ds %dms %dus", (int) (us / 1000000), (int) (us % 1000000) / 1000, (int) (us % 1000));
 
     if (us == 0)
     {

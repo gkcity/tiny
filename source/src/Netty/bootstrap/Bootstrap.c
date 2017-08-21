@@ -111,23 +111,17 @@ TinyRet Bootstrap_Sync(Bootstrap *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_MEM(TAG, "Bootstrap_Sync");
+    LOG_D(TAG, "Bootstrap_Sync");
 
-    for (uint32_t i = 0; i < thiz->channels.size; ++i)
-    {
-        Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
-
-        if (channel == NULL)
-        {
-            printf("Channel is NULL\n");
-            continue;
-        }
-
-        if (channel->onActive != NULL)
-        {
-            channel->onActive(channel);
-        }
-    }
+//    for (uint32_t i = 0; i < thiz->channels.size; ++i)
+//    {
+//        Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
+//
+//        if (channel->onActive != NULL)
+//        {
+//            channel->onActive(channel);
+//        }
+//    }
 
     return Selector_Loop(&thiz->selector);
 }

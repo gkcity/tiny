@@ -118,5 +118,7 @@ static bool _channelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
 TINY_LOR
 static int64_t _channelGetNextTimeout(Channel *channel, void *ctx)
 {
+    LOG_D(TAG, "_channelGetNextTimeout, channelId: %s", channel->id);
+
     return ChannelIdles_GetNextTimeout(&((ChannelHandler *)ctx)->idles);
 }
