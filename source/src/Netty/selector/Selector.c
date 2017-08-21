@@ -93,6 +93,8 @@ static TinyRet _Selector_Select(Selector *thiz, int64_t us)
         ret = tiny_select(thiz->max_fd, &thiz->read_set, &thiz->write_set, NULL, &tv);
     }
 
+    LOG_D(TAG, "select: %d", ret);
+
     if (ret == 0)
     {
         LOG_D(TAG, "select timeout");

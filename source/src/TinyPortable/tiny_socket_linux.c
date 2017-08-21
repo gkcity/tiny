@@ -110,6 +110,7 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
         result = tiny_connect(fd, (const struct sockaddr *) &remote, sizeof(struct sockaddr_in));
         if (result < 0)
         {
+            /* UNP v1, p385, connection is build but not completed. */
             ret = (errno == EINPROGRESS) ? TINY_RET_PENDING : TINY_RET_E_SOCKET_CONNECTING;
         }
     } while (0);

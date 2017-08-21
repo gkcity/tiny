@@ -89,7 +89,7 @@ int64_t SocketChannel_GetNextTimeout(Channel *thiz, void *ctx);
 
 TINY_API
 TINY_LOR
-TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector);
+TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector);
 
 TINY_API
 TINY_LOR

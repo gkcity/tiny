@@ -144,7 +144,22 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
         err = connect(thiz->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr));
         if (err == SOCKET_ERROR)
         {
-            ret = (WSAGetLastError() == WSAEWOULDBLOCK) ? TINY_RET_PENDING : TINY_RET_E_SOCKET_CONNECTING;
+            switch (WSAGetLastError())
+            {
+                /* 10035 = A non-blocking socket operation could not be completed immediately */
+                case WSAEWOULDBLOCK:
+                    ret = TINY_RET_PENDING;
+                    break;
+
+                /* connection is established! */
+                case WSAEISCONN:
+                    ret = TINY_RET_OK;
+                    break;
+
+                default:
+                    ret = TINY_RET_E_SOCKET_CONNECTING;
+                    break;
+            }
         }
     } while(0);
 

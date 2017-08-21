@@ -61,7 +61,7 @@ static void MulticastChannel_OnRemove(Channel *thiz)
 }
 
 TINY_LOR
-static TinyRet MulticastChannel_OnRead(Channel *thiz, Selector *selector)
+static TinyRet MulticastChannel_OnReadWrite(Channel *thiz, Selector *selector)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -109,7 +109,7 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
 
         thiz->onRegister = MulticastChannel_OnRegister;
         thiz->onRemove = MulticastChannel_OnRemove;
-        thiz->onRead = MulticastChannel_OnRead;
+        thiz->onReadWrite = MulticastChannel_OnReadWrite;
 
         thiz->onActive = SocketChannel_OnActive;
         thiz->onInactive = SocketChannel_OnInactive;

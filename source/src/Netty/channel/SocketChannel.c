@@ -139,7 +139,7 @@ int64_t SocketChannel_GetNextTimeout(Channel *thiz, void *ctx)
 }
 
 TINY_LOR
-TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector)
+TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector)
 {
     char buf[CHANNEL_RECV_BUF_SIZE];
     int ret = 0;
@@ -166,19 +166,6 @@ TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector)
 }
 
 TINY_LOR
-static TinyRet SocketChannel_OnWrite(Channel *thiz, Selector *selector)
-{
-    LOG_D(TAG, "OnWrite");
-
-    if (Selector_IsWriteable(selector, thiz->fd))
-    {
-        // TODO: to send buffer;
-    }
-
-    return TINY_RET_OK;
-}
-
-TINY_LOR
 static TinyRet SocketChannel_Construct(Channel *thiz)
 {
     TinyRet ret = TINY_RET_OK;
@@ -201,9 +188,8 @@ static TinyRet SocketChannel_Construct(Channel *thiz)
 
         thiz->fd = -1;
         thiz->onRegister = SocketChannel_OnRegister;
+        thiz->onReadWrite = SocketChannel_OnReadWrite;
         thiz->onRemove = SocketChannel_Delete;
-        thiz->onRead = SocketChannel_OnRead;
-        thiz->onWrite = SocketChannel_OnWrite;
         thiz->onActive = SocketChannel_OnActive;
         thiz->onInactive = SocketChannel_OnInactive;
         thiz->onEventTriggered = SocketChannel_OnEventTriggered;
@@ -513,7 +499,7 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         if (handler == NULL)
         {
             LOG_D(TAG, "tiny_send: %d", len);
-            int sent = (int) tiny_send(thiz->fd, data, len, 0);
+            int sent = tiny_send(thiz->fd, data, len, 0);
             if (sent != len)
             {
                 Channel_Close(thiz);

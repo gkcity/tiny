@@ -194,19 +194,12 @@ static TinyRet _PostSelect(Selector *selector, void *ctx)
         Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
         if (Channel_IsActive(channel))
         {
-            if (RET_FAILED(channel->onRead(channel, selector)))
+            if (RET_FAILED(channel->onReadWrite(channel, selector)))
             {
-                LOG_D(TAG, "channel [%d] read failed", channel->fd);
+                LOG_D(TAG, "channel [%d] read or write failed", channel->fd);
                 channel->onInactive(channel);
                 Channel_Close(channel);
                 continue;
-            }
-
-            if (RET_FAILED(channel->onWrite(channel, selector)))
-            {
-                LOG_D(TAG, "channel [%s] write failed", channel->id);
-                channel->onInactive(channel);
-                Channel_Close(channel);
             }
         }
     }
