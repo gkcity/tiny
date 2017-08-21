@@ -144,6 +144,7 @@ SET(Netty_Header
         ${SOURCE_ROOT}/Netty/channel/Channel.h
         ${SOURCE_ROOT}/Netty/channel/ChannelAddress.h
         ${SOURCE_ROOT}/Netty/channel/ChannelHandler.h
+        ${SOURCE_ROOT}/Netty/channel/ChannelTimer.h
         ${SOURCE_ROOT}/Netty/channel/ChannelIdles.h
         ${SOURCE_ROOT}/Netty/channel/ChannelIdleStateHandler.h
         ${SOURCE_ROOT}/Netty/channel/ChannelInitializer.h
