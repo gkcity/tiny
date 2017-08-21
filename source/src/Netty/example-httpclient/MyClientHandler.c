@@ -148,17 +148,17 @@ static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event)
 
     LOG_E(TAG, "_channelEvent: %s", channel->id);
 
-    switch (timer->idleType)
+    switch (timer->type)
     {
-        case IDLE_READER:
+        case CHANNEL_TIMER_READER:
             LOG_E(TAG, "IDLE_READER");
             break;
 
-        case IDLE_WRITER:
+        case CHANNEL_TIMER_WRITER:
             LOG_E(TAG, "IDLE_WRITER");
             break;
 
-        case IDLE_ALL:
+        case CHANNEL_TIMER_ALL:
             LOG_E(TAG, "IDLE_ALL");
             break;
     }

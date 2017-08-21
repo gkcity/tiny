@@ -25,7 +25,7 @@ TINY_LOR
 static TinyRet StreamClientChannel_GetConnectingTimeout(Channel *thiz, ChannelTimer *timer, void *ctx)
 {
     timer->timeout = ((StreamClientChannelContext *) thiz->ctx)->connectingTimeout * 1000000;
-    timer->idleType = IDLE_ALL;
+    timer->type = CHANNEL_TIMER_ALL;
     return TINY_RET_OK;
 }
 

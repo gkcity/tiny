@@ -16,12 +16,11 @@
 #include <tiny_log.h>
 #include <tiny_base.h>
 #include "ChannelIdles.h"
-#include "ChannelTimer.h"
 
 #define TAG         "ChannelIdle"
 
 TINY_LOR
-static void ChannelIdle_Initialize(ChannelIdle *thiz, ChannelIdleType type, uint32_t idle, uint64_t current)
+static void ChannelIdle_Initialize(ChannelIdle *thiz, ChannelTimerType type, uint32_t idle, uint64_t current)
 {
     thiz->type = type;
 
@@ -73,7 +72,7 @@ static bool ChannelIdle_GetNextTimeout(ChannelIdle *thiz, uint64_t current, Chan
     if ((timer->valid && (timeout < timer->timeout)) || (!timer->valid))
     {
         timer->valid = true;
-        timer->idleType = thiz->type;
+        timer->type = thiz->type;
         timer->timeout = timeout;
     }
 
@@ -84,9 +83,9 @@ TINY_LOR
 void ChannelIdles_Initialize(ChannelIdles *thiz, uint32_t readerIdle, uint32_t writerIdle, uint32_t allIdle)
 {
     uint64_t current = tiny_current_microsecond();
-    ChannelIdle_Initialize(&thiz->reader, IDLE_READER, readerIdle, current);
-    ChannelIdle_Initialize(&thiz->writer, IDLE_WRITER, writerIdle, current);
-    ChannelIdle_Initialize(&thiz->all, IDLE_ALL, allIdle, current);
+    ChannelIdle_Initialize(&thiz->reader, CHANNEL_TIMER_READER, readerIdle, current);
+    ChannelIdle_Initialize(&thiz->writer, CHANNEL_TIMER_WRITER, writerIdle, current);
+    ChannelIdle_Initialize(&thiz->all, CHANNEL_TIMER_ALL, allIdle, current);
 }
 
 TINY_LOR
@@ -153,17 +152,17 @@ void ChannelIdles_OnEvent(ChannelIdles *thiz, void *event)
     ChannelTimer *timer = (ChannelTimer *)event;
     uint64_t current = tiny_current_microsecond();
 
-    switch (timer->idleType)
+    switch (timer->type)
     {
-        case IDLE_READER:
+        case CHANNEL_TIMER_READER:
             ChannelIdle_Update(&thiz->reader, current);
             break;
 
-        case IDLE_WRITER:
+        case CHANNEL_TIMER_WRITER:
             ChannelIdle_Update(&thiz->writer, current);
             break;
 
-        case IDLE_ALL:
+        case CHANNEL_TIMER_ALL:
             ChannelIdle_Update(&thiz->all, current);
             break;
     }

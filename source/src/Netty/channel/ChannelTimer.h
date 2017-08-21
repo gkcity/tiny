@@ -17,17 +17,23 @@
 
 #include <tiny_typedef.h>
 #include <tiny_ret.h>
-#include "ChannelIdles.h"
 
 TINY_BEGIN_DECLS
 
 
+typedef enum _ChannelTimerType
+{
+    CHANNEL_TIMER_READER        = 0,
+    CHANNEL_TIMER_WRITER        = 1,
+    CHANNEL_TIMER_ALL           = 2,
+} ChannelTimerType;
+
 typedef struct _ChannelTimer
 {
-    bool                valid;
-    int                 fd;
-    ChannelIdleType     idleType;
-    int64_t             timeout;
+    bool                        valid;
+    int                         fd;
+    ChannelTimerType            type;
+    int64_t                     timeout;
 } ChannelTimer;
 
 
