@@ -63,37 +63,6 @@ void SocketChannel_Delete(Channel *thiz)
 }
 
 TINY_LOR
-TinyRet SocketChannel_Connect(Channel *thiz)
-{
-    TinyRet ret = TINY_RET_OK;
-
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-
-    LOG_D(TAG, "StreamClientChannel_Connect: %s:%d\n", thiz->remote.socket.ip, thiz->remote.socket.port);
-
-    do
-    {
-        int value = 0;
-        struct sockaddr_in remote;
-        memset(&remote, 0, sizeof(struct sockaddr_in));
-        remote.sin_family = AF_INET;
-        remote.sin_addr.s_addr = inet_addr(thiz->remote.socket.ip);
-        remote.sin_port = htons(thiz->remote.socket.port);
-
-        value = tiny_connect(thiz->fd, (const struct sockaddr *) &remote, 0);
-        if (value < 0)
-        {
-            ret = TINY_RET_E_SOCKET_FD;
-            break;
-        }
-
-        thiz->remote.socket.address = remote.sin_addr.s_addr;
-    } while (0);
-
-    return ret;
-}
-
-TINY_LOR
 void SocketChannel_OnRegister(Channel *thiz, Selector *selector)
 {
     if (Channel_IsActive(thiz))
@@ -187,7 +156,7 @@ TinyRet SocketChannel_OnRead(Channel *thiz, Selector *selector)
 
     memset(buf, 0, CHANNEL_RECV_BUF_SIZE);
 
-    ret = (int) (tiny_recv(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0));
+    ret = tiny_recv(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0);
     if (ret > 0)
     {
         SocketChannel_StartRead(thiz, DATA_RAW, buf, (uint32_t) ret);
@@ -327,7 +296,7 @@ TinyRet SocketChannel_Open(Channel *thiz, ChannelType type)
         if (thiz->fd < 0)
         {
             LOG_E(TAG, "socket failed");
-            ret = TINY_RET_E_INTERNAL;
+            ret = TINY_RET_E_SOCKET_FD;
             break;
         }
     } while (0);
@@ -495,7 +464,7 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
             break;
         }
 
-        printf("ChannelHandler: %s\n", handler->name);
+        LOG_D(TAG, "ChannelHandler: %s", handler->name);
 
         if (handler->inType != type)
         {

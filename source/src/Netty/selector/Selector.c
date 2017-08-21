@@ -132,7 +132,7 @@ static TinyRet _Selector_LoopOnce(Selector *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
-    printf("_Selector_LoopOnce\n");
+    LOG_D(TAG, "_Selector_LoopOnce");
 
     /**
      * Reset

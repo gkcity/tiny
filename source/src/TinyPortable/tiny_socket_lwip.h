@@ -18,6 +18,7 @@
 #include <tiny_inline.h>
 #include <tiny_typedef.h>
 #include <tiny_lor.h>
+#include <tiny_ret.h>
 
 #if LWIP_TIMEVAL_PRIVATE
 #else
@@ -54,6 +55,10 @@ int tiny_socket_join_group(int fd, const char *ip, const char *group);
 
 TINY_LOR
 int tiny_socket_leave_group(int fd);
+
+TINY_LOR
+TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port);
+
 
 #define inet_ntop(af,src,dst,size) \
     (((af) == AF_INET) ? ipaddr_ntoa_r((src),(dst),(size)) : NULL)

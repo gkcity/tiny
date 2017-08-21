@@ -18,6 +18,7 @@
 #include <tiny_typedef.h>
 #include <tiny_inline.h>
 #include <tiny_lor.h>
+#include <tiny_ret.h>
 
 #include <WinSock2.h>
 
@@ -56,6 +57,9 @@ int tiny_send(int fd, const void *data, size_t size, int flags);
 
 TINY_LOR
 int tiny_socket_join_group(int fd, const char *ip, const char *group);
+
+TINY_LOR
+TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port);
 
 
 TINY_END_DECLS

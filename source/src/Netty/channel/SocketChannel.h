@@ -77,10 +77,6 @@ TinyRet SocketChannel_LeaveGroup(Channel *thiz);
 
 TINY_API
 TINY_LOR
-TinyRet SocketChannel_Connect(Channel *thiz);
-
-TINY_API
-TINY_LOR
 void SocketChannel_OnRegister(Channel *thiz, Selector *selector);
 
 TINY_API

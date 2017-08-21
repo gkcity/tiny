@@ -14,7 +14,6 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include <tiny_inet.h>
 #include <tiny_socket.h>
 #include "StreamClientChannel.h"
 #include "StreamClientChannelContext.h"
@@ -217,12 +216,14 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
 
         SocketChannel_SetRemoteInfo(thiz, ip, port);
 
-        ret = SocketChannel_Connect(thiz);
-        if (ret == TINY_RET_OK)
+        ret = tiny_async_connect(thiz->fd, ip, port);
+        if (RET_FAILED(ret))
         {
-            thiz->onActive(thiz);
+            LOG_E(TAG, "SocketChannel_Connect failed");
+            break;
         }
 
+        thiz->onActive(thiz);
     } while (0);
 
     return ret;

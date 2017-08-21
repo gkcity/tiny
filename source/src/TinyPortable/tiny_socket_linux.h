@@ -19,6 +19,7 @@
 #include <tiny_inline.h>
 #include <tiny_lor.h>
 #include <tiny_inet.h>
+#include <tiny_ret.h>
 
 /* According to POSIX.1-2001, POSIX.1-2008 */
 #include <sys/select.h>
@@ -58,6 +59,9 @@ int tiny_socket_join_group(int fd, const char *ip, const char *group);
 
 TINY_LOR
 int tiny_socket_leave_group(int fd);
+
+TINY_LOR
+TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port);
 
 
 TINY_END_DECLS

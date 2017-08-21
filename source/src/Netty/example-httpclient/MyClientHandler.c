@@ -92,7 +92,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(channel);
 
-    LOG_D(TAG, "_channelActive\n");
+    LOG_D(TAG, "_channelActive");
 
     if (RET_SUCCEEDED(HttpMessage_Construct(&request)))
     {

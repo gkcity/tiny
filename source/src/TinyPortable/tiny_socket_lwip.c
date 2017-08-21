@@ -93,3 +93,27 @@ int tiny_socket_leave_group(int fd)
 
     return 0;
 }
+
+TINY_LOR
+TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    do
+    {
+        int result = 0;
+        struct sockaddr_in remote;
+        memset(&remote, 0, sizeof(struct sockaddr_in));
+        remote.sin_family = AF_INET;
+        remote.sin_addr.s_addr = inet_addr(ip);
+        remote.sin_port = htons(port);
+
+        result = tiny_connect(fd, (const struct sockaddr *) &remote, sizeof(struct sockaddr_in));
+        if (result < 0)
+        {
+            ret = (errno == EINPROGRESS) ? TINY_RET_PENDING : TINY_RET_E_SOCKET_CONNECTING;
+        }
+    } while (0);
+
+    return ret;
+}

@@ -123,3 +123,30 @@ int tiny_socket_join_group(int fd, const char *ip, const char *group)
 
     return ret;
 }
+
+TINY_LOR
+TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    do
+    {
+        int err = 0;
+        struct sockaddr_in addr;
+
+        memset(&addr, 0, sizeof (addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(port);
+        addr.sin_addr.s_addr = inet_addr(ip);
+
+        err = connect(thiz->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr));
+        if (err == SOCKET_ERROR)
+        {
+            ret = (WSAGetLastError() == WSAEWOULDBLOCK) ? TINY_RET_PENDING : TINY_RET_E_SOCKET_CONNECTING;
+        }
+    } while(0);
+
+    return ret;
+}
