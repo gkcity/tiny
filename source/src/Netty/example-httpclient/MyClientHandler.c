@@ -114,7 +114,11 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 
     LOG_D(TAG, "_channelRead: %d %s", response->status_line.code, response->status_line.status);
 
-//    if (RET_SUCCEEDED(HttpMessage_Construct(&response)))
+    printf("content length: %d\n", response->content.buf_size);
+    printf("content: %s\n", response->content.buf);
+
+
+    //    if (RET_SUCCEEDED(HttpMessage_Construct(&response)))
 //    {
 //        HttpMessage_SetResponse(&response, 200, "OK");
 //        HttpMessage_SetVersion(&response, 1, 1);
@@ -133,7 +137,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 //        HttpMessage_Dispose(&response);
 //    }
 
-    Channel_Close(channel);
+//    Channel_Close(channel);
 
     return true;
 }

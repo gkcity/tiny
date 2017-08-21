@@ -95,7 +95,7 @@ static TinyRet StreamClientChannel_OnWrite(Channel *thiz, Selector *selector)
     int error = 0;
     socklen_t len = sizeof(error);
 
-    LOG_D(TAG, "connect receive write");
+    LOG_D(TAG, "StreamClientChannel_OnWrite");
 
     if (Selector_IsWriteable(selector, thiz->fd))
     {
@@ -219,7 +219,13 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
         ret = tiny_async_connect(thiz->fd, ip, port);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "SocketChannel_Connect failed");
+            LOG_E(TAG, "tiny_async_connect failed");
+            break;
+        }
+
+        if (TINY_RET_CODE(ret) == CODE_PENDING)
+        {
+            LOG_E(TAG, "connecting is pending");
             break;
         }
 
@@ -236,4 +242,3 @@ TinyRet StreamClientChannel_Close(Channel *thiz)
     Channel_Close(thiz);
     return TINY_RET_OK;
 }
-

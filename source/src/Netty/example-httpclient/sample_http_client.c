@@ -3,6 +3,7 @@
 #include <channel/stream/StreamClientChannel.h>
 #include <channel/SocketChannel.h>
 #include <codec-http/HttpMessageCodec.h>
+#include <channel/ChannelIdleStateHandler.h>
 #include "MyClientHandler.h"
 
 #define TAG "HttpServerExample"
@@ -10,8 +11,10 @@
 static void HttpClientInitializer(Channel *channel, void *ctx)
 {
     printf("HttpClientInitializer: %s\n", channel->id);
+    SocketChannel_AddLast(channel, ChannelIdleStateHandler(3, 4, 5));
+    SocketChannel_AddLast(channel, HttpMessageCodec());
     SocketChannel_AddLast(channel, MyClientHandler());
-    SocketChannel_AddBefore(channel, MyClientHandler_Name, HttpMessageCodec());
+//    SocketChannel_AddBefore(channel, MyClientHandler_Name, HttpMessageCodec());
 }
 
 int main()
@@ -35,8 +38,7 @@ int main()
     ret = StreamClientChannel_Connect(client, "127.0.0.1", 8080);
     if (RET_FAILED(ret))
     {
-        // printf("StreamClientChannel_Connect failed: %d\n", TINY_RET_CODE(ret));
-        printf("StreamClientChannel_Connect failed: %s\n", tiny_ret_to_str(ret));
+        printf("StreamClientChannel_Connect failed: %d\n", TINY_RET_CODE(ret));
         return 0;
     }
 
