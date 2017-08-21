@@ -34,7 +34,10 @@ TINY_LOR
 static bool _channelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
 
 TINY_LOR
-static int64_t _channelGetNextTimeout(Channel *channel, void *ctx);
+static TinyRet _channelGetTimeout(Channel *channel, ChannelTimer *timer, void *ctx);
+
+TINY_LOR
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event);
 
 TINY_LOR
 ChannelHandler * ChannelIdleStateHandler(uint32_t readerIdle, uint32_t writerIdle, uint32_t allIdle)
@@ -78,7 +81,8 @@ static TinyRet ChannelIdleStateHandler_Construct(ChannelHandler *thiz, uint32_t 
     thiz->outType = DATA_RAW;
     thiz->channelRead = _channelRead;
     thiz->channelWrite = _channelWrite;
-    thiz->getNextTimeout = _channelGetNextTimeout;
+    thiz->getTimeout = _channelGetTimeout;
+    thiz->channelEvent = _channelEvent;
 
     ChannelIdles_Initialize(&thiz->idles, readerIdle, writerIdle, allIdle);
 
@@ -116,9 +120,17 @@ static bool _channelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
 }
 
 TINY_LOR
-static int64_t _channelGetNextTimeout(Channel *channel, void *ctx)
+static TinyRet _channelGetTimeout(Channel *channel, ChannelTimer *timer, void *ctx)
 {
     LOG_D(TAG, "_channelGetNextTimeout, channelId: %s", channel->id);
 
-    return ChannelIdles_GetNextTimeout(&((ChannelHandler *)ctx)->idles);
+    return ChannelIdles_GetTimeout(&((ChannelHandler *)ctx)->idles, timer);
+}
+
+TINY_LOR
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event)
+{
+    LOG_D(TAG, "_channelEvent, channelId: %s", channel->id);
+
+    ChannelIdles_OnEvent(&thiz->idles, event);
 }

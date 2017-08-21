@@ -81,11 +81,11 @@ void SocketChannel_OnRegister(Channel *thiz, Selector *selector);
 
 TINY_API
 TINY_LOR
-void SocketChannel_OnEventTriggered(Channel *thiz, void *event);
+void SocketChannel_OnEventTriggered(Channel *thiz, ChannelTimer *timer);
 
 TINY_API
 TINY_LOR
-int64_t SocketChannel_GetNextTimeout(Channel *thiz, void *ctx);
+TinyRet SocketChannel_GetTimeout(Channel *thiz, ChannelTimer *timer, void *ctx);
 
 TINY_API
 TINY_LOR

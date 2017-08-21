@@ -107,7 +107,7 @@ void SocketChannel_OnInactive(Channel *thiz)
 }
 
 TINY_LOR
-void SocketChannel_OnEventTriggered(Channel *thiz, void *event)
+void SocketChannel_OnEventTriggered(Channel *thiz, ChannelTimer *timer)
 {
     RETURN_IF_FAIL(thiz);
 
@@ -116,26 +116,27 @@ void SocketChannel_OnEventTriggered(Channel *thiz, void *event)
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
         if (handler->channelEvent != NULL)
         {
-            handler->channelEvent(handler, thiz, event);
+            handler->channelEvent(handler, thiz, timer);
         }
     }
 }
 
 TINY_LOR
-int64_t SocketChannel_GetNextTimeout(Channel *thiz, void *ctx)
+TinyRet SocketChannel_GetTimeout(Channel *thiz, ChannelTimer *timer, void *ctx)
 {
-    RETURN_VAL_IF_FAIL(thiz, 0);
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(timer, TINY_RET_E_ARG_NULL);
 
     for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
-        if (handler->getNextTimeout != NULL)
+        if (handler->getTimeout != NULL)
         {
-            return handler->getNextTimeout(thiz, handler);
+            return handler->getTimeout(thiz, timer, handler);
         }
     }
 
-    return 0;
+    return TINY_RET_E_NOT_IMPLEMENTED;
 }
 
 TINY_LOR
@@ -193,7 +194,7 @@ static TinyRet SocketChannel_Construct(Channel *thiz)
         thiz->onActive = SocketChannel_OnActive;
         thiz->onInactive = SocketChannel_OnInactive;
         thiz->onEventTriggered = SocketChannel_OnEventTriggered;
-        thiz->getNextTimeout = SocketChannel_GetNextTimeout;
+        thiz->getTimeout = SocketChannel_GetTimeout;
     } while (0);
 
     return ret;

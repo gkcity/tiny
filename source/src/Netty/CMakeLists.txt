@@ -25,6 +25,7 @@ SET(Channel_Header
         channel/ChannelIdles.h
         channel/ChannelIdleStateHandler.h
         channel/ChannelInitializer.h
+        channel/ChannelTimer.h
         channel/SocketChannel.h
         channel/stream/StreamServerChannel.h
         channel/stream/StreamServerChannelContext.h

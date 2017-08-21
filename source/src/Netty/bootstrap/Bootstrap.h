@@ -17,30 +17,18 @@
 
 #include <tiny_typedef.h>
 #include <tiny_ret.h>
-#include "channel/Channel.h"
+#include <channel/Channel.h>
+#include <channel/ChannelTimer.h>
 #include <selector/Selector.h>
 
 TINY_BEGIN_DECLS
 
 
-typedef enum _TimerType
-{
-    TIMER_TYPE_NONE             = 0,
-    TIMER_TYPE_CHANNEL_TIMER    = 1,
-} TimerType;
-
-typedef struct _TimerConfiguration
-{
-    TimerType                   type;
-    int                         index;
-    int64_t                     us;
-} TimerConfiguration;
-
 typedef struct _Bootstrap
 {
     Selector                    selector;
     TinyList                    channels;
-    TimerConfiguration          timerConfiguration;
+    ChannelTimer                timer;
 } Bootstrap;
 
 TINY_API

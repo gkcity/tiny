@@ -22,10 +22,24 @@
 #define TAG     "StreamClientChannel"
 
 TINY_LOR
-static int64_t StreamClientChannel_GetConnectingTimeout(Channel *thiz, void *ctx)
+static TinyRet StreamClientChannel_GetConnectingTimeout(Channel *thiz, ChannelTimer *timer, void *ctx)
 {
-    return ((StreamClientChannelContext *) thiz->ctx)->connectingTimeout * 1000000;
+    timer->timeout = ((StreamClientChannelContext *) thiz->ctx)->connectingTimeout * 1000000;
+    timer->idleType = IDLE_ALL;
+    return TINY_RET_OK;
 }
+
+#if 0
+TINY_LOR
+static void StreamClientChannel_OnConnectingTimeout(Channel *thiz, void *event)
+{
+    RETURN_IF_FAIL(thiz);
+
+    LOG_D(TAG, "StreamClientChannel_OnConnectingTimeout");
+
+    Channel_Close(thiz);
+}
+#endif
 
 TINY_LOR
 static void StreamClientChannel_Dispose(Channel *thiz)
@@ -98,16 +112,6 @@ static TinyRet StreamClientChannel_OnReadWrite(Channel *thiz, Selector *selector
 }
 
 TINY_LOR
-static void StreamClientChannel_OnConnectingTimeout(Channel *thiz, void *event)
-{
-    RETURN_IF_FAIL(thiz);
-
-    LOG_D(TAG, "StreamClientChannel_OnConnectingTimeout");
-
-    Channel_Close(thiz);
-}
-
-TINY_LOR
 static void StreamClientChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
@@ -122,8 +126,7 @@ static void StreamClientChannel_OnActive(Channel *thiz)
     thiz->onActive = SocketChannel_OnActive;
     thiz->onReadWrite = SocketChannel_OnReadWrite;
     thiz->onRegister = SocketChannel_OnRegister;
-    thiz->onEventTriggered = SocketChannel_OnEventTriggered;
-    thiz->getNextTimeout = SocketChannel_GetNextTimeout;
+    thiz->getTimeout = SocketChannel_GetTimeout;
     thiz->onActive(thiz);
 }
 
@@ -140,8 +143,8 @@ static TinyRet StreamClientChannel_Construct(Channel *thiz)
         thiz->onRemove = StreamClientChannel_OnRemove;
         thiz->onActive = StreamClientChannel_OnActive;
         thiz->onReadWrite = StreamClientChannel_OnReadWrite;
-        thiz->onEventTriggered = StreamClientChannel_OnConnectingTimeout;
-        thiz->getNextTimeout = StreamClientChannel_GetConnectingTimeout;
+
+        thiz->getTimeout = StreamClientChannel_GetConnectingTimeout;
 
         thiz->ctx = StreamClientChannelContext_New();
         if (thiz->ctx == NULL)

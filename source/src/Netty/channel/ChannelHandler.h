@@ -55,7 +55,7 @@ struct _ChannelHandler
     ChannelRead                 channelRead;
     ChannelWrite                channelWrite;
     ChannelEvent                channelEvent;
-    ChannelTimeoutGetter        getNextTimeout;
+    ChannelTimeoutGetter        getTimeout;
     ChannelIdles                idles;
     void                      * data;
 };

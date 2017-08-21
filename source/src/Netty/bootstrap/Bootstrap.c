@@ -39,9 +39,6 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
 
     do
     {
-        thiz->timerConfiguration.type = TIMER_TYPE_NONE;
-        thiz->timerConfiguration.index = 0;
-
         ret = Selector_Construct(&thiz->selector);
         if (RET_FAILED(ret))
         {
@@ -156,28 +153,33 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
 
     LOG_D(TAG, "_PreSelect");
 
-    thiz->timerConfiguration.type = TIMER_TYPE_NONE;
-    thiz->timerConfiguration.us = (int64_t) 3600000000;
-    thiz->timerConfiguration.index = 0;
+    for (uint32_t i = 0; i < thiz->channels.size; ++i)
+    {
+        Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
+        if (Channel_IsClosed(channel))
+        {
+            TinyList_RemoveAt(&thiz->channels, i);
+            break;
+        }
+    }
+
+    thiz->timer.valid = false;
 
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
         Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
         channel->onRegister(channel, selector);
 
-        if (channel->getNextTimeout != NULL)
+        if (channel->getTimeout != NULL)
         {
-            int64_t idle = channel->getNextTimeout(channel, NULL);
-            if (idle > 0 && idle < thiz->timerConfiguration.us)
+            if (RET_SUCCEEDED(channel->getTimeout(channel, &thiz->timer, NULL)))
             {
-                thiz->timerConfiguration.type = TIMER_TYPE_CHANNEL_TIMER;
-                thiz->timerConfiguration.index = i;
-                thiz->timerConfiguration.us = idle;
+                thiz->timer.fd = channel->fd;
             }
         }
     }
 
-    thiz->selector.us = thiz->timerConfiguration.type == TIMER_TYPE_NONE ? 0 : thiz->timerConfiguration.us;
+    thiz->selector.us = (thiz->timer.valid) ? thiz->timer.timeout : 0;
 
     return ret;
 }
@@ -221,21 +223,16 @@ TINY_LOR
 static TinyRet _OnSelectTimeout(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
-    Channel *channel = NULL;
 
     LOG_D(TAG, "_OnSelectTimeout");
 
-    switch (thiz->timerConfiguration.type)
+    for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
-        case TIMER_TYPE_CHANNEL_TIMER:
-            LOG_D(TAG, "TIMER TYPE: channel timer");
-            channel = (Channel *)TinyList_GetAt(&thiz->channels, thiz->timerConfiguration.index);
-            channel->onEventTriggered(channel, NULL);
-            break;
-
-        default:
-            LOG_D(TAG, "TIMER TYPE: unknown: %d", thiz->timerConfiguration.type);
-            break;
+        Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
+        if (channel->fd == thiz->timer.fd)
+        {
+            channel->onEventTriggered(channel, &thiz->timer);
+        }
     }
 
     return TINY_RET_OK;

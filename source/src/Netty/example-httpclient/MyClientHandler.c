@@ -144,7 +144,25 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 
 static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event)
 {
-    LOG_D(TAG, "_channelEvent: %s", channel->id);
+    ChannelTimer *timer = (ChannelTimer *)event;
 
-    Channel_Close(channel);
+    LOG_E(TAG, "_channelEvent: %s", channel->id);
+
+    switch (timer->idleType)
+    {
+        case IDLE_READER:
+            LOG_E(TAG, "IDLE_READER");
+            break;
+
+        case IDLE_WRITER:
+            LOG_E(TAG, "IDLE_WRITER");
+            break;
+
+        case IDLE_ALL:
+            LOG_E(TAG, "IDLE_ALL");
+            break;
+    }
+
+//    printf("connection is timeout, close the connection\n");
+//    Channel_Close(channel);
 }

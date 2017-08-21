@@ -21,17 +21,25 @@
 TINY_BEGIN_DECLS
 
 
+typedef enum _ChannelIdleType
+{
+    IDLE_READER         = 0,
+    IDLE_WRITER         = 1,
+    IDLE_ALL            = 2,
+} ChannelIdleType;
+
 typedef struct _ChannelIdle
 {
-    uint32_t        interval;
-    uint64_t        triggerPoint;
+    ChannelIdleType     type;
+    uint32_t            interval;
+    uint64_t            triggerPoint;
 } ChannelIdle;
 
 typedef struct _ChannelIdles
 {
-    ChannelIdle     reader;
-    ChannelIdle     writer;
-    ChannelIdle     all;
+    ChannelIdle         reader;
+    ChannelIdle         writer;
+    ChannelIdle         all;
 } ChannelIdles;
 
 TINY_LOR
@@ -44,7 +52,10 @@ TINY_LOR
 void ChannelIdles_OnWrite(ChannelIdles *thiz);
 
 TINY_LOR
-int64_t ChannelIdles_GetNextTimeout(ChannelIdles *thiz);
+TinyRet ChannelIdles_GetTimeout(ChannelIdles *thiz, void *ctx);
+
+TINY_LOR
+void ChannelIdles_OnEvent(ChannelIdles *thiz, void *event);
 
 
 TINY_END_DECLS
