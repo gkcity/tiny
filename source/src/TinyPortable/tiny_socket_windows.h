@@ -20,7 +20,9 @@
 #include <tiny_lor.h>
 #include <tiny_ret.h>
 
-#include <WinSock2.h>
+#include <winsock2.h>
+#include <Windows.h>
+#include <ws2tcpip.h>
 
 TINY_BEGIN_DECLS
 
@@ -35,10 +37,10 @@ TINY_BEGIN_DECLS
 #define tiny_connect                connect
 
 TINY_LOR
-void tiny_socket_initialize();
+void tiny_socket_initialize(void);
 
 TINY_LOR
-void tiny_socket_finalize();
+void tiny_socket_finalize(void);
 
 TINY_LOR
 int tiny_socket_set_block(int fd, bool block);
@@ -57,6 +59,9 @@ int tiny_send(int fd, const void *data, size_t size, int flags);
 
 TINY_LOR
 int tiny_socket_join_group(int fd, const char *ip, const char *group);
+
+TINY_LOR
+int tiny_socket_leave_group(int fd);
 
 TINY_LOR
 TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port);

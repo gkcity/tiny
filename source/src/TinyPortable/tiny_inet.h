@@ -17,13 +17,14 @@
 
 
 #ifdef LWIP_SOCKET
-	#include <lwip/inet.h>
+    #include <lwip/inet.h>
 #else
 	#ifdef WIN32
-		#include <Windows.h>
+        #include <winsock2.h>
+        #include <Windows.h>
     #else
-		#include <netinet/in.h>
-		#include <arpa/inet.h>
+        #include <netinet/in.h>
+        #include <arpa/inet.h>
 	#endif
 #endif
 

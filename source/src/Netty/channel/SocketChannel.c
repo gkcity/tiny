@@ -313,8 +313,10 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
 
         if (reuse)
         {
-            int err = 1;
+            char err = 1;
 
+		#ifdef _WIN32
+		#else
             value = tiny_setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEPORT, (char *)&err, sizeof(err));
             if (value < 0)
             {
@@ -322,6 +324,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
                 ret = TINY_RET_E_SOCKET_SETSOCKOPT;
                 break;
             }
+		#endif
 
             value = tiny_setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEADDR, &err, sizeof(err));
             if (value < 0)

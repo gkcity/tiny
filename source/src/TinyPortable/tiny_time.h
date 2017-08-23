@@ -27,6 +27,8 @@
     #endif
 #else
     #ifdef WIN32
+	    #include <winsock2.h>
+		#include <windows.h>
         #include <time.h>
     #else
         #include <time.h>

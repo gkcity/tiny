@@ -22,3 +22,4 @@ ADD_DEFINITIONS(-D_UNICODE)
 #
 #----------------------------------------------------------------------------
 ADD_DEFINITIONS(-DTINY_DEBUG)
+ADD_DEFINITIONS(-DTINY_STATIC)

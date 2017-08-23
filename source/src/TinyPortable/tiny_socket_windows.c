@@ -13,9 +13,12 @@
  */
 
 #include "tiny_socket_windows.h"
+#include "tiny_log.h"
+
+#define TAG		"tiny_socket_windows"
 
 TINY_LOR
-void tiny_socket_init()
+void tiny_socket_initialize(void)
 {
     static bool initialized = false;
     WORD wVersionRequested;
@@ -34,7 +37,7 @@ void tiny_socket_init()
 }
 
 TINY_LOR
-void tiny_socket_finalize()
+void tiny_socket_finalize(void)
 {
 
 }
@@ -125,11 +128,17 @@ int tiny_socket_join_group(int fd, const char *ip, const char *group)
 }
 
 TINY_LOR
+int tiny_socket_leave_group(int fd) 
+{
+	return 0;
+}
+
+TINY_LOR
 TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
 {
     TinyRet ret = TINY_RET_OK;
 
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(ip, TINY_RET_E_ARG_NULL);
 
     do
     {
@@ -141,7 +150,7 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
         addr.sin_port = htons(port);
         addr.sin_addr.s_addr = inet_addr(ip);
 
-        err = connect(thiz->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr));
+        err = connect(fd, (struct sockaddr*)&addr, sizeof(struct sockaddr));
         if (err == SOCKET_ERROR)
         {
             switch (WSAGetLastError())

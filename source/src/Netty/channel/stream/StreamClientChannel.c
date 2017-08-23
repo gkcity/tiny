@@ -90,7 +90,7 @@ static TinyRet StreamClientChannel_OnReadWrite(Channel *thiz, Selector *selector
     // [2] socket is readable and writeable if connection occur error.
     if (Selector_IsReadable(selector, thiz->fd) || Selector_IsWriteable(selector, thiz->fd))
     {
-        int error = 0;
+        char error = 0;
         socklen_t len = sizeof(error);
 
         if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
