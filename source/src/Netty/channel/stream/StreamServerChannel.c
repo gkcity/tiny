@@ -76,7 +76,7 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
         int fd = 0;
         struct sockaddr_in addr;
         socklen_t len = (socklen_t) sizeof(addr);
-        const char *ip = NULL;
+        char ip[TINY_IP_LEN];
         uint16_t port = 0;
 
         printf("StreamServerChannel_OnRead FD: %d\n", thiz->fd);
@@ -88,7 +88,13 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
             return TINY_RET_E_INTERNAL;
         }
 
-        ip = inet_ntoa(addr.sin_addr);
+        memset(ip, 0, TINY_IP_LEN);
+
+        inet_ntop(AF_INET, &addr.sin_addr, ip, TINY_IP_LEN);
+
+        //const char *ip = NULL;
+        //ip = inet_ntoa(addr.sin_addr);
+
         port = ntohs(addr.sin_port);
 
         printf("accept a new connection: %s:%d, FD:%d\n", ip, port, fd);

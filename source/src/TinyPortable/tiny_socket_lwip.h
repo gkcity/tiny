@@ -63,7 +63,7 @@ TINY_LOR
 bool tiny_socket_has_error(int fd);
 
 #define inet_ntop(af,src,dst,size) \
-    (((af) == AF_INET) ? ipaddr_ntoa_r((src),(dst),(size)) : NULL)
+    (((af) == AF_INET) ? ipaddr_ntoa_r(((struct ip_addr *)src),(dst),(size)) : NULL)
 
 #define inet_pton(af,src,dst) \
     (((af) == AF_INET) ? inet_aton((src),(dst)) : 0)
