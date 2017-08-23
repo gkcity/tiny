@@ -13,7 +13,9 @@
  */
 
 #include "tiny_socket_linux.h"
+#include "tiny_log.h"
 
+#define TAG		"tiny_socket_linux"
 TINY_LOR
 int tiny_socket_set_block(int fd, bool block)
 {
@@ -116,4 +118,25 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
     } while (0);
 
     return ret;
+}
+
+TINY_LOR
+bool tiny_socket_has_error(int fd)
+{
+    char error = 0;
+    socklen_t len = sizeof(error);
+
+    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+    {
+        LOG_E(TAG, "getsockopt failed.");
+        return true;
+    }
+
+    if (error != 0)
+    {
+        LOG_E(TAG, "connect error: %d", error);
+        return true;
+    }
+
+    return false;
 }

@@ -174,3 +174,24 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
 
     return ret;
 }
+
+TINY_LOR
+bool tiny_socket_has_error(int fd)
+{
+    DWORD error = 0;
+    socklen_t len = sizeof(error);
+
+    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&error, &len) < 0)
+    {
+        LOG_E(TAG, "getsockopt failed.");
+        return true;
+    }
+
+    if (error != 0)
+    {
+        LOG_E(TAG, "connect error: %d", error);
+        return true;
+    }
+
+    return false;
+}

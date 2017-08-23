@@ -90,18 +90,9 @@ static TinyRet StreamClientChannel_OnReadWrite(Channel *thiz, Selector *selector
     // [2] socket is readable and writeable if connection occur error.
     if (Selector_IsReadable(selector, thiz->fd) || Selector_IsWriteable(selector, thiz->fd))
     {
-        char error = 0;
-        socklen_t len = sizeof(error);
-
-        if (getsockopt(thiz->fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+        if (tiny_socket_has_error(thiz->fd)) 
         {
-            LOG_E(TAG, "getsockopt failed.");
-            return TINY_RET_E_INTERNAL;
-        }
-
-        if (error != 0)
-        {
-            LOG_E(TAG, "connect error: %d", error);
+            LOG_E(TAG, "tiny_socket_has_error!");
             return TINY_RET_E_SOCKET_DISCONNECTED;
         }
 

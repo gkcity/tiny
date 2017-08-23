@@ -59,6 +59,8 @@ int tiny_socket_leave_group(int fd);
 TINY_LOR
 TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port);
 
+TINY_LOR
+bool tiny_socket_has_error(int fd);
 
 #define inet_ntop(af,src,dst,size) \
     (((af) == AF_INET) ? ipaddr_ntoa_r((src),(dst),(size)) : NULL)
