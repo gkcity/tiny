@@ -14,6 +14,7 @@
 
 #include "tiny_socket_windows.h"
 #include "tiny_log.h"
+#include "tiny_debug.h"
 
 #define TAG		"tiny_socket_windows"
 

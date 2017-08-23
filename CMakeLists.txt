@@ -223,6 +223,8 @@ SET_TARGET_PROPERTIES(tiny_static PROPERTIES LINKER_LANGUAGE C)
 #----------------------------------------------------------------------------
 # shared library
 #----------------------------------------------------------------------------
+MESSAGE(STATUS "link library: ${DEPENDENCE_LIB}")
 ADD_LIBRARY(tiny SHARED ${SRC})
 SET_TARGET_PROPERTIES(tiny PROPERTIES OUTPUT_NAME "tiny")
 SET_TARGET_PROPERTIES(tiny PROPERTIES LINKER_LANGUAGE C)
+TARGET_LINK_LIBRARIES(tiny ${DEPENDENCE_LIB})

@@ -17,7 +17,7 @@
 
 
 #ifdef _MSC_VER
-#   if (defined tiny_shared_EXPORTS)
+#   if (defined tiny_EXPORTS)
 #       define TINY_EXPORT _declspec(dllexport)
 #   else
 #       define TINY_EXPORT _declspec(dllimport)
