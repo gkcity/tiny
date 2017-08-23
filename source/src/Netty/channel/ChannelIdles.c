@@ -165,5 +165,8 @@ void ChannelIdles_OnEvent(ChannelIdles *thiz, void *event)
         case CHANNEL_TIMER_ALL:
             ChannelIdle_Update(&thiz->all, current);
             break;
+
+        default:
+           break;
     }
 }

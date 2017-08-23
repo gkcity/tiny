@@ -16,11 +16,11 @@ ADD_DEFINITIONS(-DLWIP_SOCKET)
 ADD_DEFINITIONS(-DLWIP_TIMEVAL_PRIVATE=1)
 ADD_DEFINITIONS(-DESP)
 ADD_DEFINITIONS(-DICACHE_FLASH)
-INCLUDE_DIRECTORIES("/home/ouyang/extdisk/github.ouyang/espressif/ESP8266_RTOS_SDK/include")
-INCLUDE_DIRECTORIES("/home/ouyang/extdisk/github.ouyang/espressif/ESP8266_RTOS_SDK/include/lwip")
-INCLUDE_DIRECTORIES("/home/ouyang/extdisk/github.ouyang/espressif/ESP8266_RTOS_SDK/include/lwip/ipv4")
-INCLUDE_DIRECTORIES("/home/ouyang/extdisk/github.ouyang/espressif/ESP8266_RTOS_SDK/include/lwip/ipv6")
-INCLUDE_DIRECTORIES("/home/ouyang/extdisk/github.ouyang/espressif/ESP8266_RTOS_SDK/include/espressif")
+INCLUDE_DIRECTORIES("/opt/ESP8266_RTOS_SDK/include")
+INCLUDE_DIRECTORIES("/opt/ESP8266_RTOS_SDK/include/lwip")
+INCLUDE_DIRECTORIES("/opt/ESP8266_RTOS_SDK/include/lwip/ipv4")
+INCLUDE_DIRECTORIES("/opt/ESP8266_RTOS_SDK/include/lwip/ipv6")
+INCLUDE_DIRECTORIES("/opt/ESP8266_RTOS_SDK/include/espressif")
 
 #----------------------------------------------------------------------------
 #
