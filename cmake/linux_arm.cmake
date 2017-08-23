@@ -17,6 +17,7 @@ ADD_DEFINITIONS(-O3)
 ADD_DEFINITIONS(-fPIC)
 ADD_DEFINITIONS(-std=c99)
 ADD_DEFINITIONS(-D_GNU_SOURCE)
+ADD_DEFINITIONS(-D__LINUX__)
 
 #----------------------------------------------------------------------------
 #
@@ -24,3 +25,10 @@ ADD_DEFINITIONS(-D_GNU_SOURCE)
 #
 #----------------------------------------------------------------------------
 ADD_DEFINITIONS(-DTINY_DEBUG)
+
+#----------------------------------------------------------------------------
+#
+# TinyThread
+#
+#----------------------------------------------------------------------------
+SET(TINY_THREAD_ENABLED 1)

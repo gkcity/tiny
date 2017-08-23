@@ -90,11 +90,10 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
 
         memset(ip, 0, TINY_IP_LEN);
 
-        inet_ntop(AF_INET, &addr.sin_addr, ip, TINY_IP_LEN);
-
         //const char *ip = NULL;
         //ip = inet_ntoa(addr.sin_addr);
 
+        inet_ntop(AF_INET, &addr.sin_addr, ip, TINY_IP_LEN);
         port = ntohs(addr.sin_port);
 
         printf("accept a new connection: %s:%d, FD:%d\n", ip, port, fd);
