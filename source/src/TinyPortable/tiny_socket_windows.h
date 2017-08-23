@@ -36,36 +36,47 @@ TINY_BEGIN_DECLS
 #define tiny_sendto                 sendto
 #define tiny_connect                connect
 
+TINY_API
 TINY_LOR
 void tiny_socket_initialize(void);
 
+TINY_API
 TINY_LOR
 void tiny_socket_finalize(void);
 
+TINY_API
 TINY_LOR
 int tiny_socket_set_block(int fd, bool block);
 
+TINY_API
 TINY_LOR
 int tiny_bind(int fd, const struct sockaddr *addr, socklen_t len);
 
+TINY_API
 TINY_LOR
 int tiny_listen(int fd, int backlog);
 
+TINY_API
 TINY_LOR
 int tiny_recv(int fd, void *mem, size_t len, int flags);
 
+TINY_API
 TINY_LOR
 int tiny_send(int fd, const void *data, size_t size, int flags);
 
+TINY_API
 TINY_LOR
 int tiny_socket_join_group(int fd, const char *ip, const char *group);
 
+TINY_API
 TINY_LOR
 int tiny_socket_leave_group(int fd);
 
+TINY_API
 TINY_LOR
 TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port);
 
+TINY_API
 TINY_LOR
 bool tiny_socket_has_error(int fd);
 

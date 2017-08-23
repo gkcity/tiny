@@ -17,6 +17,7 @@
 
 #include <tiny_typedef.h>
 #include <tiny_lor.h>
+#include <tiny_api.h>
 
 #ifdef ESP
     #if LWIP_TIMEVAL_PRIVATE
@@ -42,6 +43,7 @@ TINY_BEGIN_DECLS
 TINY_LOR
 int tiny_gettimeofday(struct timeval *tv, void *tz);
 
+TINY_API
 TINY_LOR
 uint64_t tiny_current_microsecond(void);
 

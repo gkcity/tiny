@@ -26,6 +26,7 @@ typedef enum _ChannelTimerType
     CHANNEL_TIMER_READER        = 0,
     CHANNEL_TIMER_WRITER        = 1,
     CHANNEL_TIMER_ALL           = 2,
+    CHANNEL_TIMER_OTHER         = 3,
 } ChannelTimerType;
 
 typedef struct _ChannelTimer
