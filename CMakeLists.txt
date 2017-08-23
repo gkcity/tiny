@@ -181,6 +181,20 @@ SET(Netty_Source
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.c
         )
 
+SET(TinyThread_Header
+        ${SOURCE_ROOT}/TinyThread/TinyCondition.h
+        ${SOURCE_ROOT}/TinyThread/TinyMutex.h
+        ${SOURCE_ROOT}/TinyThread/TinySemaphore.h
+        ${SOURCE_ROOT}/TinyThread/TinyThread.h
+    )
+
+SET(TinyThread_Source
+        ${SOURCE_ROOT}/TinyThread/TinyCondition.c
+        ${SOURCE_ROOT}/TinyThread/TinyMutex.c
+        ${SOURCE_ROOT}/TinyThread/TinySemaphore.c
+        ${SOURCE_ROOT}/TinyThread/TinyThread.c
+    )
+
 SOURCE_GROUP(TinyBase\\headers              FILES     ${TinyBase_Header})
 SOURCE_GROUP(TinyBase\\sources              FILES     ${TinyBase_Source})
 SOURCE_GROUP(TinyPortable\\headers          FILES     ${TinyPortable_Header})
@@ -195,8 +209,32 @@ SOURCE_GROUP(TinyJson\\headers              FILES     ${TinyJson_Header})
 SOURCE_GROUP(TinyJson\\sources              FILES     ${TinyJson_Source})
 SOURCE_GROUP(Netty\\headers                 FILES     ${Netty_Header})
 SOURCE_GROUP(Netty\\sources                 FILES     ${Netty_Source})
+SOURCE_GROUP(TinyThread\\headers            FILES     ${TinyThread_Header})
+SOURCE_GROUP(TinyThread\\sources            FILES     ${TinyThread_Source})
 
-SET(SRC
+IF(TINY_THREAD_ENABLED EQUAL 1)
+    MESSAGE(STATUS "TinyThread enabled")
+    SET(SRC
+        ${TinyBase_Header}
+        ${TinyBase_Source}
+        ${TinyPortable_Header}
+        ${TinyPortable_Source}
+        ${TinyContainer_Header}
+        ${TinyContainer_Source}
+        ${TinyLog_Header}
+        ${TinyLog_Source}
+        ${TinyStringUtil_Header}
+        ${TinyStringUtil_Source}
+        ${TinyJson_Header}
+        ${TinyJson_Source}
+        ${Netty_Header}
+        ${Netty_Source}
+        ${TinyThread_Header}
+        ${TinyThread_Source}
+        )
+ELSE()
+    MESSAGE(STATUS "TinyThread disabled")
+    SET(SRC
         ${TinyBase_Header}
         ${TinyBase_Source}
         ${TinyPortable_Header}
@@ -212,6 +250,7 @@ SET(SRC
         ${Netty_Header}
         ${Netty_Source}
         )
+ENDIF()
 
 #----------------------------------------------------------------------------
 # static library
