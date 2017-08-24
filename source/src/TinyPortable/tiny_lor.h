@@ -21,8 +21,12 @@
  */
 
 #ifdef ESP
+    #ifndef ICACHE_FLASH
+        #define ICACHE_FLASH
+    #endif
     #include <espressif/c_types.h>
-    #define TINY_LOR ICACHE_FLASH_ATTR
+    #define TINY_LOR            ICACHE_FLASH_ATTR
+    #define TINY_LOR_VAR        ICACHE_RODATA_ATTR
 #else
     #define TINY_LOR
 #endif
