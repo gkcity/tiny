@@ -20,7 +20,7 @@
 //    return (long) (0x1111000022223333);
 //}
 
-#if 0
+#if 1
 TINY_LOR
 time_t tiny_time(time_t *t)
 {
