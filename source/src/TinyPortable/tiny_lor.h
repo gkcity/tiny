@@ -29,6 +29,7 @@
     #define TINY_LOR_VAR        ICACHE_RODATA_ATTR
 #else
     #define TINY_LOR
+    #define TINY_LOR_VAR
 #endif
 
 
