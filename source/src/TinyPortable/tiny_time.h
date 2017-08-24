@@ -40,6 +40,7 @@
 TINY_BEGIN_DECLS
 
 
+TINY_API
 TINY_LOR
 int tiny_gettimeofday(struct timeval *tv, void *tz);
 

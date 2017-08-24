@@ -116,15 +116,3 @@ int tiny_getstrtime(char buf[], int len)
     return 0;
 }
 #endif
-
-
-TINY_LOR
-uint64_t tiny_current_microsecond(void)
-{
-    struct timeval tv;
-
-    memset(&tv, 0, sizeof(struct timeval));
-    tiny_gettimeofday(&tv, NULL);
-
-    return (uint64_t)(tv.tv_sec * 1000 * 1000 + tv.tv_usec);
-}

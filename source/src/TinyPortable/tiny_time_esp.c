@@ -14,6 +14,13 @@
 
 #include "tiny_time.h"
 #include <sys/unistd.h>
+#include <espressif/esp_system.h>
+
+TINY_LOR
+uint64_t tiny_current_microsecond(void)
+{
+    return system_get_time();
+}
 
 //long tiny_time(void *t)
 //{
