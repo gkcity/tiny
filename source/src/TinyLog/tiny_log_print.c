@@ -36,6 +36,7 @@
 #define LOG_COLOR_WHITE         "\033[1;37m"
 
 #ifdef TINY_DEBUG
+#ifndef ESP
 
 TINY_LOR
 static char get_priority(int prio)
@@ -110,7 +111,7 @@ int __tiny_log_write(int prio, const char *tag, const char *text)
 {
     char log[LOG_HEAD + LOG_BUF_SIZE];
     char date[128] = {0};
-    
+
     tiny_getstrtime(date, 128);
 
     tiny_snprintf(log,
@@ -156,4 +157,5 @@ int __tiny_log_vprint(int prio, const char *tag, const char *fmt, va_list ap)
     return __tiny_log_write(prio, tag, buf);
 }
 
+#endif /* ESP */
 #endif /* TINY_DEBUG */

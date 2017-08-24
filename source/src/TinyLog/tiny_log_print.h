@@ -17,14 +17,17 @@
 #include "tiny_base.h"
 #include "tiny_api.h"
 
+
 TINY_BEGIN_DECLS
 
 #ifdef TINY_DEBUG
+#ifndef ESP
 
 /*
  * mi log priority values, in ascending priority order.
  */
-typedef enum _tiny_log_priority {
+typedef enum _tiny_log_priority
+{
     TINY_LOG_UNKNOWN = 0,
     TINY_LOG_VERBOSE,
     TINY_LOG_DEBUG,
@@ -61,6 +64,7 @@ TINY_API
 TINY_LOR
 int __tiny_log_vprint(int prio, const char *tag, const char *fmt, va_list ap);
 
+#endif /* ESP */
 #endif /* TINY_DEBUG */
 
 TINY_END_DECLS

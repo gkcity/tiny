@@ -13,6 +13,7 @@
 #ifndef __tiny_log_H__
 #define __tiny_log_H__
 
+
 #ifdef __ANDROID__
     #include <android/log.h>
     #define LOG_D(tag, format, ...) __android_log_print(ANDROID_LOG_DEBUG, tag, format, ##__VA_ARGS__)
@@ -22,12 +23,20 @@
     #define LOG_W(tag, format, ...) __android_log_print(ANDROID_LOG_WARN, tag, format, ##__VA_ARGS__)
 #else
     #ifdef TINY_DEBUG
-        #include "tiny_log_print.h"
-        #define LOG_D(tag, format, ...) __tiny_log_print(TINY_LOG_DEBUG, tag, format, ##__VA_ARGS__)
-        #define LOG_E(tag, format, ...) __tiny_log_print(TINY_LOG_ERROR, tag, format, ##__VA_ARGS__)
-        #define LOG_I(tag, format, ...) __tiny_log_print(TINY_LOG_INFO, tag, format, ##__VA_ARGS__)
-        #define LOG_V(tag, format, ...) __tiny_log_print(TINY_LOG_VERBOSE, tag, format, ##__VA_ARGS__)
-        #define LOG_W(tag, format, ...) __tiny_log_print(TINY_LOG_WARN, tag, format, ##__VA_ARGS__)
+        #ifdef ESP
+            #define LOG_D(tag, format, ...) printf(format, ##__VA_ARGS__)
+            #define LOG_E(tag, format, ...) printf(format, ##__VA_ARGS__)
+            #define LOG_I(tag, format, ...) printf(format, ##__VA_ARGS__)
+            #define LOG_V(tag, format, ...) printf(format, ##__VA_ARGS__)
+            #define LOG_W(tag, format, ...) printf(format, ##__VA_ARGS__)
+        #else
+            #include "tiny_log_print.h"
+            #define LOG_D(tag, format, ...) __tiny_log_print(TINY_LOG_DEBUG, tag, format, ##__VA_ARGS__)
+            #define LOG_E(tag, format, ...) __tiny_log_print(TINY_LOG_ERROR, tag, format, ##__VA_ARGS__)
+            #define LOG_I(tag, format, ...) __tiny_log_print(TINY_LOG_INFO, tag, format, ##__VA_ARGS__)
+            #define LOG_V(tag, format, ...) __tiny_log_print(TINY_LOG_VERBOSE, tag, format, ##__VA_ARGS__)
+            #define LOG_W(tag, format, ...) __tiny_log_print(TINY_LOG_WARN, tag, format, ##__VA_ARGS__)
+        #endif
     #else
         #define LOG_D(tag, format, ...)
         #define LOG_E(tag, format, ...)
