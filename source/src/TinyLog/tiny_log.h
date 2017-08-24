@@ -24,11 +24,11 @@
 #else
     #ifdef TINY_DEBUG
         #ifdef ESP
-            #define LOG_D(tag, format, ...) printf(format, ##__VA_ARGS__)
-            #define LOG_E(tag, format, ...) printf(format, ##__VA_ARGS__)
-            #define LOG_I(tag, format, ...) printf(format, ##__VA_ARGS__)
-            #define LOG_V(tag, format, ...) printf(format, ##__VA_ARGS__)
-            #define LOG_W(tag, format, ...) printf(format, ##__VA_ARGS__)
+            #define LOG_D(tag, format, ...) {printf(format, ##__VA_ARGS__); printf("\n");}
+            #define LOG_E(tag, format, ...) {printf(format, ##__VA_ARGS__); printf("\n");}
+            #define LOG_I(tag, format, ...) {printf(format, ##__VA_ARGS__); printf("\n");}
+            #define LOG_V(tag, format, ...) {printf(format, ##__VA_ARGS__); printf("\n");}
+            #define LOG_W(tag, format, ...) {printf(format, ##__VA_ARGS__); printf("\n");}
         #else
             #include "tiny_log_print.h"
             #define LOG_D(tag, format, ...) __tiny_log_print(TINY_LOG_DEBUG, tag, format, ##__VA_ARGS__)
