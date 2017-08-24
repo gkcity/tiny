@@ -14,7 +14,8 @@
 #define __TINY_JSON_H__
 
 #include <tiny_lor.h>
-#include "tiny_base.h"
+#include <tiny_base.h>
+#include <tiny_api.h>
 
 TINY_BEGIN_DECLS
 
@@ -45,6 +46,7 @@ typedef enum _JsonResult
 } JsonResult;
 
 /*  Parses first JSON value in a string, returns NULL in case of error */
+TINY_API
 TINY_LOR
 JsonElement *json_parse_string(const char *string);
 
@@ -61,20 +63,25 @@ JsonElement *json_parse_string(const char *string);
 //char *json_serialize_to_string(const JsonElement *value);
 
 /* Pretty serialization */
+TINY_API
 TINY_LOR
 size_t json_serialization_size_pretty(const JsonElement *value); /* returns 0 on fail */
 
+TINY_API
 TINY_LOR
 JsonResult json_serialize_to_buffer_pretty(const JsonElement *value, char *buf, size_t buf_size_in_bytes);
 
+TINY_API
 TINY_LOR
 char *json_serialize_to_string_pretty(const JsonElement *value);
 
 /* frees string from json_serialize_to_string and json_serialize_to_string_pretty */
+TINY_API
 TINY_LOR
 void json_free_serialized_string(char *string);
 
 /* Comparing */
+TINY_API
 TINY_LOR
 JsonResult json_value_equals(const JsonElement *a, const JsonElement *b);
 
@@ -88,27 +95,34 @@ JsonResult json_value_equals(const JsonElement *a, const JsonElement *b);
    Empty objects ({}) validate all objects, empty arrays ([]) validate all arrays,
    null validates values of every type.
  */
+TINY_API
 TINY_LOR
 JsonResult json_validate(const JsonElement *schema, const JsonElement *value);
 
 /*
  * JSON Object
  */
+TINY_API
 TINY_LOR
 JsonElement *json_object_get_value(const JsonObject *object, const char *name);
 
+TINY_API
 TINY_LOR
 const char *json_object_get_string(const JsonObject *object, const char *name);
 
+TINY_API
 TINY_LOR
 JsonObject *json_object_get_object(const JsonObject *object, const char *name);
 
+TINY_API
 TINY_LOR
 JsonArray *json_object_get_array(const JsonObject *object, const char *name);
 
+TINY_API
 TINY_LOR
 double json_object_get_number(const JsonObject *object, const char *name); /* returns 0 on fail */
 
+TINY_API
 TINY_LOR
 int json_object_get_boolean(const JsonObject *object, const char *name); /* returns -1 on fail */
 
@@ -116,6 +130,7 @@ int json_object_get_boolean(const JsonObject *object, const char *name); /* retu
  just like in structs or c++/java/c# objects (e.g. objectA.objectB.value).
  Because valid names in JSON can contain dots, some values may be inaccessible
  this way. */
+TINY_API
 TINY_LOR
 JsonElement *json_object_dotget_value(const JsonObject *object, const char *name);
 
@@ -135,15 +150,18 @@ JsonElement *json_object_dotget_value(const JsonObject *object, const char *name
 //int json_object_dotget_boolean(const JsonObject *object, const char *name); /* returns -1 on fail */
 
 /* Functions to get available names */
+TINY_API
 TINY_LOR
 size_t json_object_get_count(const JsonObject *object);
 
+TINY_API
 TINY_LOR
 const char *json_object_get_name(const JsonObject *object, size_t index);
 
 //TINY_LOR
 //JsonElement *json_object_get_value_at(const JsonObject *object, size_t index);
 
+TINY_API
 TINY_LOR
 JsonElement *json_object_get_wrapping_value(const JsonObject *object);
 
@@ -152,6 +170,7 @@ JsonElement *json_object_get_wrapping_value(const JsonObject *object);
 //TINY_LOR
 //int json_object_has_value(const JsonObject *object, const char *name);
 
+TINY_API
 TINY_LOR
 int json_object_has_value_of_type(const JsonObject *object, const char *name, JsonElementType type);
 
@@ -163,15 +182,19 @@ int json_object_has_value_of_type(const JsonObject *object, const char *name, Js
 
 /* Creates new name-value pair or frees and replaces old value with a new one.
  * json_object_set_value does not copy passed value so it shouldn't be freed afterwards. */
+TINY_API
 TINY_LOR
 JsonResult json_object_set_value(JsonObject *object, const char *name, JsonElement *value);
 
+TINY_API
 TINY_LOR
 JsonResult json_object_set_string(JsonObject *object, const char *name, const char *string);
 
+TINY_API
 TINY_LOR
 JsonResult json_object_set_number(JsonObject *object, const char *name, double number);
 
+TINY_API
 TINY_LOR
 JsonResult json_object_set_boolean(JsonObject *object, const char *name, int boolean);
 
@@ -180,6 +203,7 @@ JsonResult json_object_set_boolean(JsonObject *object, const char *name, int boo
 
 /* Works like dotget functions, but creates whole hierarchy if necessary.
  * json_object_dotset_value does not copy passed value so it shouldn't be freed afterwards. */
+TINY_API
 TINY_LOR
 JsonResult json_object_dotset_value(JsonObject *object, const char *name, JsonElement *value);
 
@@ -196,10 +220,14 @@ JsonResult json_object_dotset_value(JsonObject *object, const char *name, JsonEl
 //JsonResult json_object_dotset_null(JsonObject *object, const char *name);
 
 /* Frees and removes name-value pair */
-TINY_LOR JsonResult json_object_remove(JsonObject *object, const char *name);
+TINY_API
+TINY_LOR
+JsonResult json_object_remove(JsonObject *object, const char *name);
 
 /* Works like dotget function, but removes name-value pair only on exact match. */
-TINY_LOR JsonResult json_object_dotremove(JsonObject *object, const char *key);
+TINY_API
+TINY_LOR
+JsonResult json_object_dotremove(JsonObject *object, const char *key);
 
 /* Removes all name-value pairs in object */
 //TINY_LOR JsonResult json_object_clear(JsonObject *object);
@@ -207,12 +235,14 @@ TINY_LOR JsonResult json_object_dotremove(JsonObject *object, const char *key);
 /*
  *JSON Array
  */
+TINY_API
 TINY_LOR
 JsonElement *json_array_get_value(const JsonArray *array, size_t index);
 
 //TINY_LOR
 //const char *json_array_get_string(const JsonArray *array, size_t index);
 
+TINY_API
 TINY_LOR
 JsonObject *json_array_get_object(const JsonArray *array, size_t index);
 
@@ -225,9 +255,11 @@ JsonObject *json_array_get_object(const JsonArray *array, size_t index);
 //TINY_LOR
 //int json_array_get_boolean(const JsonArray *array, size_t index); /* returns -1 on fail */
 
+TINY_API
 TINY_LOR
 size_t json_array_get_count(const JsonArray *array);
 
+TINY_API
 TINY_LOR
 JsonElement *json_array_get_wrapping_value(const JsonArray *array);
 
@@ -260,9 +292,11 @@ JsonElement *json_array_get_wrapping_value(const JsonArray *array);
 
 /* Appends new value at the end of array.
  * json_array_append_value does not copy passed value so it shouldn't be freed afterwards. */
+TINY_API
 TINY_LOR
 JsonResult json_array_append_value(JsonArray *array, JsonElement *value);
 
+TINY_API
 TINY_LOR
 JsonResult json_array_append_string(JsonArray *array, const char *string);
 
@@ -278,44 +312,59 @@ JsonResult json_array_append_string(JsonArray *array, const char *string);
 /*
  *JSON Value
  */
+TINY_API
 TINY_LOR
 JsonElement *json_value_init_object(void);
 
+TINY_API
 TINY_LOR
 JsonElement *json_value_init_array(void);
 
+TINY_API
 TINY_LOR
 JsonElement *json_value_init_string(const char *string); /* copies passed string */
+
+TINY_API
 TINY_LOR
 JsonElement *json_value_init_number(double number);
 
+TINY_API
 TINY_LOR
 JsonElement *json_value_init_boolean(int boolean);
 
+TINY_API
 TINY_LOR
 JsonElement *json_value_init_null(void);
 
+TINY_API
 TINY_LOR
 JsonElement *json_value_deep_copy(const JsonElement *value);
 
+TINY_API
 TINY_LOR
 void json_value_free(JsonElement *value);
 
+TINY_API
 TINY_LOR
 JsonElementType json_value_get_type(const JsonElement *value);
 
+TINY_API
 TINY_LOR
 JsonObject *json_value_get_object(const JsonElement *value);
 
+TINY_API
 TINY_LOR
 JsonArray *json_value_get_array(const JsonElement *value);
 
+TINY_API
 TINY_LOR
 const char *json_value_get_string(const JsonElement *value);
 
+TINY_API
 TINY_LOR
 double json_value_get_number(const JsonElement *value);
 
+TINY_API
 TINY_LOR
 int json_value_get_boolean(const JsonElement *value);
 

@@ -16,7 +16,7 @@
 #define __HTTP_CONTENT_H__
 
 #include <tiny_lor.h>
-#include "tiny_base.h"
+#include <tiny_base.h>
 
 TINY_BEGIN_DECLS
 
@@ -30,9 +30,11 @@ typedef struct _HttpContent
     uint32_t     data_size;
 } HttpContent;
 
+TINY_API
 TINY_LOR
 TinyRet HttpContent_Construct(HttpContent *thiz);
 
+TINY_API
 TINY_LOR
 TinyRet HttpContent_Dispose(HttpContent *thiz);
 
@@ -45,9 +47,11 @@ TinyRet HttpContent_Dispose(HttpContent *thiz);
 //TINY_LOR
 //void HttpContent_Copy(HttpContent *dst, HttpContent *src);
 
+TINY_API
 TINY_LOR
 TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size);
 
+TINY_API
 TINY_LOR
 uint32_t HttpContent_AddBytes(HttpContent *thiz, const char *data, uint32_t size);
 

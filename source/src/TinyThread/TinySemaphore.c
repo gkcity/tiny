@@ -13,6 +13,9 @@
 #include "TinySemaphore.h"
 #include <tiny_malloc.h>
 #include <tiny_log.h>
+#include <tiny_snprintf.h>
+#include <tiny_time.h>
+
 
 #define TAG     "TinySemaphore"
 
@@ -38,11 +41,11 @@ bool ctx_gen_ipc_name(const char *name, char *full_name, uint32_t len)
 
     if (name == NULL)
     {
-        uint64_t usec = tiny_getusec();
+        uint64_t usec = tiny_current_microsecond();
     #ifdef __MAC_OSX__
         tiny_snprintf(full_name, len, "%s%s%llu", dir, slash, usec);
     #else
-        tiny_snprintf(full_name, len, "%s%s%lu", dir, slash, usec);
+        tiny_snprintf(full_name, len, "%s%s%lu", dir, slash, (unsigned long)usec);
     #endif
     }
     else

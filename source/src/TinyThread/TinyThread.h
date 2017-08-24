@@ -17,6 +17,8 @@
 #include "tiny_api.h"
 
 #ifdef _WIN32
+#include <winsock2.h>
+#include <Windows.h>
 #else
 #include <pthread.h> 
 #endif

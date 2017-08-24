@@ -16,6 +16,8 @@
 #define __TINY_MUTEX_H__
 
 #ifdef _WIN32
+#include <winsock2.h>
+#include <Windows.h>
 #else
 #include <pthread.h>
 #endif
@@ -26,14 +28,14 @@
 TINY_BEGIN_DECLS
 
 #ifdef _WIN32
-    typedef CRITICAL_SECTION    ct_mutex_t;
+    typedef CRITICAL_SECTION    tiny_mutex_t;
 #else /* Linux */
-    typedef pthread_mutex_t     ct_mutex_t;
+    typedef pthread_mutex_t     tiny_mutex_t;
 #endif /* _WIN32 */
 
 typedef struct _TinyMutex
 {
-    ct_mutex_t    mutex;
+    tiny_mutex_t    mutex;
 } TinyMutex;
 
 TINY_API TinyMutex * TinyMutex_New(void);

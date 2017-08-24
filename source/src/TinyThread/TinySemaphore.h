@@ -30,6 +30,8 @@ TINY_BEGIN_DECLS
 #endif
 
 #ifdef _WIN32
+#include <winsock2.h>
+#include <Windows.h>
 #define MAX_SEM_SIZE    128
 typedef HANDLE          tiny_sem_t;
 #endif /* _WIN32 */

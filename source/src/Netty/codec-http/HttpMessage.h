@@ -15,7 +15,8 @@
 #ifndef __HTTP_MESSAGE_H__
 #define __HTTP_MESSAGE_H__
 
-#include "tiny_base.h"
+#include <tiny_base.h>
+#include <tiny_api.h>
 #include "HttpHeader.h"
 #include "HttpContent.h"
 

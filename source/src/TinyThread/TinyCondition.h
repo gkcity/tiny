@@ -21,16 +21,16 @@ TINY_BEGIN_DECLS
 
 
 #ifdef _WIN32
-typedef HANDLE              ct_cond_t;
+typedef HANDLE              tiny_cond_t;
 #else /* Linux */
-typedef pthread_cond_t      ct_cond_t;
+typedef pthread_cond_t      tiny_cond_t;
 #endif /* _WIN32 */
 
 typedef struct _TinyCondition
 {
-    TinyMutex      mutex;
-    ct_cond_t    job;
-    bool         is_ready;
+    TinyMutex       mutex;
+    tiny_cond_t     job;
+    bool            is_ready;
 } TinyCondition;
 
 TINY_API TinyCondition * TinyCondition_New(void);

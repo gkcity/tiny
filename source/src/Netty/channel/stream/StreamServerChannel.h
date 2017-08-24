@@ -17,15 +17,18 @@
 
 #include <tiny_typedef.h>
 #include <tiny_ret.h>
+#include <tiny_api.h>
 #include "channel/Channel.h"
 #include "channel/ChannelInitializer.h"
 
 TINY_BEGIN_DECLS
 
 
+TINY_API
 TINY_LOR
 Channel * StreamServerChannel_New(int maxConnections);
 
+TINY_API
 TINY_LOR
 void StreamServerChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx);
 
