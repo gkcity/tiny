@@ -172,28 +172,28 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
         ret = SocketChannel_Open(thiz, TYPE_UDP);
         if (RET_FAILED(ret))
         {
-            printf("SocketChannel_Open failed: %d\n", TINY_RET_CODE(ret));
+            LOG_D(TAG, "SocketChannel_Open failed: %d", TINY_RET_CODE(ret));
             break;
         }
 
         ret = SocketChannel_Bind(thiz, port, reuse);
         if (RET_FAILED(ret))
         {
-            printf("SocketChannel_Bind failed: %d\n", TINY_RET_CODE(ret));
+            LOG_D(TAG, "SocketChannel_Bind failed: %d", TINY_RET_CODE(ret));
             break;
         }
 
         ret = SocketChannel_JoinGroup(thiz, ip, group);
         if (RET_FAILED(ret))
         {
-            printf("SocketChannel_JoinGroup failed: %d\n", TINY_RET_CODE(ret));
+            LOG_D(TAG, "SocketChannel_JoinGroup failed: %d", TINY_RET_CODE(ret));
             break;
         }
 
         ret = SocketChannel_SetBlock(thiz, false);
         if (RET_FAILED(ret))
         {
-            printf("SocketChannel_SetBlock failed: %d\n", TINY_RET_CODE(ret));
+            LOG_D(TAG, "SocketChannel_SetBlock failed: %d", TINY_RET_CODE(ret));
             break;
         }
 

@@ -141,3 +141,37 @@ bool tiny_socket_has_error(int fd)
 
     return false;
 }
+
+TINY_LOR
+int tiny_socket_reuse_port(int fd)
+{
+    int ret = 0;
+    int error = 1;
+
+    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&error, sizeof(error));
+    if (ret < 0)
+    {
+        LOG_E(TAG, "tiny_setsockopt failed: %d", ret);
+    }
+
+    LOG_D(TAG, "tiny_socket_reuse_port, error = %d", error);
+
+    return ret;
+}
+
+TINY_LOR
+int tiny_socket_reuse_address(int fd)
+{
+    int ret = 0;
+    int error = 1;
+
+    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &error, sizeof(error));
+    if (ret < 0)
+    {
+        LOG_E(TAG, "tiny_setsockopt failed: %d", ret);
+    }
+
+    LOG_D(TAG, "tiny_socket_reuse_address, error = %d", error);
+
+    return ret;
+}

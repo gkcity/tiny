@@ -46,13 +46,13 @@ static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector)
     {
         StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
-        printf("StreamServerChannel_OnRegister Server FD: %d\n", thiz->fd);
+        LOG_D(TAG, "StreamServerChannel_OnRegister Server FD: %d", thiz->fd);
 
         for (uint32_t i = 0; i < ctx->channels.size; ++i)
         {
             Channel *c = (Channel *) TinyList_GetAt(&ctx->channels, i);
             Selector_Register(selector, c->fd, SELECTOR_OP_READ);
-            printf("StreamServerChannel_OnRegister Connection FD: %d\n", c->fd);
+            LOG_D(TAG, "StreamServerChannel_OnRegister Connection FD: %d", c->fd);
         }
     }
 }
@@ -79,7 +79,7 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
         char ip[TINY_IP_LEN];
         uint16_t port = 0;
 
-        printf("StreamServerChannel_OnRead FD: %d\n", thiz->fd);
+        LOG_D(TAG, "StreamServerChannel_OnRead FD: %d", thiz->fd);
 
         memset(&addr, 0, sizeof(addr));
         fd = tiny_accept(thiz->fd, (struct sockaddr *)&addr, &len);
@@ -96,7 +96,7 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
         inet_ntop(AF_INET, &addr.sin_addr, ip, TINY_IP_LEN);
         port = ntohs(addr.sin_port);
 
-        printf("accept a new connection: %s:%d, FD:%d\n", ip, port, fd);
+        LOG_D(TAG, "accept a new connection: %s:%d, FD: %d", ip, port, fd);
 
         newChannel = SocketChannel_New();
         if (newChannel == NULL)

@@ -196,3 +196,27 @@ bool tiny_socket_has_error(int fd)
 
     return false;
 }
+
+TINY_LOR
+int tiny_socket_reuse_port(int fd)
+{
+    return 0;
+}
+
+TINY_LOR
+int tiny_socket_reuse_address(int fd)
+{
+    int ret = 0;
+    char error = 1;
+
+    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &error, sizeof(error));
+    if (ret < 0)
+    {
+        LOG_E(TAG, "tiny_setsockopt failed: %d", ret);
+        break;
+    }
+
+    LOG_D(TAG, "tiny_socket_reuse_address, error = %d", error);
+
+    return ret;
+}

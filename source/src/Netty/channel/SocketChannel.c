@@ -157,7 +157,7 @@ TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector)
 
     memset(buf, 0, CHANNEL_RECV_BUF_SIZE);
 
-    ret = tiny_recv(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0);
+    ret = (int) tiny_recv(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0);
     if (ret > 0)
     {
         SocketChannel_StartRead(thiz, DATA_RAW, buf, (uint32_t) ret);
@@ -298,13 +298,11 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "SocketChannel_Bind: %d", port);
-
-    printf("SocketChannel_Bind: %d\n", port);
+    LOG_D(TAG, "SocketChannel_Bind: %d reuse: %s", port, reuse ? "yes" : "no");
 
     do
     {
-        int value = 0;
+        int result = 0;
         struct sockaddr_in  self_addr;
         memset(&self_addr, 0, sizeof(self_addr));
         self_addr.sin_family = AF_INET;
@@ -313,37 +311,32 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
 
         if (reuse)
         {
-            char err = 1;
-
-		#ifdef _WIN32
-		#else
-            value = tiny_setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEPORT, (char *)&err, sizeof(err));
-            if (value < 0)
+            result = tiny_socket_reuse_port(thiz->fd);
+            if (result != 0)
             {
-                //LOG_D(TAG, "setsockopt: %s", strerror(errno));
+                LOG_D(TAG, "tiny_socket_reuse_port failed: %d", result);
                 ret = TINY_RET_E_SOCKET_SETSOCKOPT;
                 break;
             }
-		#endif
 
-            value = tiny_setsockopt(thiz->fd, SOL_SOCKET, SO_REUSEADDR, &err, sizeof(err));
-            if (value < 0)
+            result = tiny_socket_reuse_address(thiz->fd);
+            if (result != 0)
             {
-                //LOG_D(TAG, "setsockopt: %s", strerror(errno));
+                LOG_D(TAG, "tiny_socket_reuse_address failed: %d", result);
                 ret = TINY_RET_E_SOCKET_SETSOCKOPT;
                 break;
             }
         }
 
-        value = tiny_bind(thiz->fd, (struct sockaddr *)&self_addr, sizeof(self_addr));
-        if (value < 0)
+        result = tiny_bind(thiz->fd, (struct sockaddr *)&self_addr, sizeof(self_addr));
+        if (result < 0)
         {
             LOG_D(TAG, "tiny_bind failed: %s", strerror(errno));
             ret = TINY_RET_E_SOCKET_BIND;
             break;
         }
 
-        printf("SocketChannel_Bind OK, port: %d \n", port);
+        LOG_D(TAG, "SocketChannel_Bind OK, port: %d", port);
 
         thiz->local.socket.address = self_addr.sin_addr.s_addr;
         thiz->local.socket.port = port;
@@ -503,7 +496,7 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         if (handler == NULL)
         {
             LOG_D(TAG, "tiny_send: %d", len);
-            int sent = tiny_send(thiz->fd, data, len, 0);
+            int sent = (int) tiny_send(thiz->fd, data, len, 0);
             if (sent != len)
             {
                 Channel_Close(thiz);
@@ -527,6 +520,7 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         }
 
         LOG_D(TAG, "%s.channelWrite", handler->name);
+
         if (handler->channelWrite(handler, thiz, handler->inType, data, len))
         {
             break;

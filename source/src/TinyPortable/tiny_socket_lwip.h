@@ -62,6 +62,13 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port);
 TINY_LOR
 bool tiny_socket_has_error(int fd);
 
+TINY_LOR
+int tiny_socket_reuse_port(int fd);
+
+TINY_LOR
+int tiny_socket_reuse_address(int fd);
+
+
 #define inet_ntop(af,src,dst,size) \
     (((af) == AF_INET) ? ipaddr_ntoa_r(((struct ip_addr *)src),(dst),(size)) : NULL)
 

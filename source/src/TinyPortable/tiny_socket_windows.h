@@ -80,6 +80,14 @@ TINY_API
 TINY_LOR
 bool tiny_socket_has_error(int fd);
 
+TINY_API
+TINY_LOR
+int tiny_socket_reuse_port(int fd);
+
+TINY_API
+TINY_LOR
+int tiny_socket_reuse_address(int fd);
+
 
 TINY_END_DECLS
 
