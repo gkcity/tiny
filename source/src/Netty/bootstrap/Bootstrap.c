@@ -126,7 +126,7 @@ TinyRet Bootstrap_Sync(Bootstrap *thiz)
 TINY_LOR
 TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
 {
-    LOG_D(TAG, "Bootstrap_Shutdown");
+    LOG_D(TAG, "Bootstrap_Shutdown: %d", thiz->channels.size);
 
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
@@ -148,10 +148,9 @@ static void _OnChannelRemoved(void * data, void *ctx)
 TINY_LOR
 static TinyRet _PreSelect(Selector *selector, void *ctx)
 {
-    TinyRet ret = TINY_RET_OK;
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_D(TAG, "_PreSelect");
+    LOG_D(TAG, "_PreSelect, channels: %d", thiz->channels.size);
 
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
@@ -161,6 +160,14 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
             TinyList_RemoveAt(&thiz->channels, i);
             break;
         }
+    }
+
+    LOG_D(TAG, "channels: %d", thiz->channels.size);
+
+    if (thiz->channels.size == 0)
+    {
+        LOG_E(TAG, "Channels is empty");
+        return TINY_RET_E_NOT_FOUND;
     }
 
     thiz->timer.valid = false;
@@ -181,7 +188,7 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
 
     thiz->selector.us = (thiz->timer.valid) ? thiz->timer.timeout : 0;
 
-    return ret;
+    return TINY_RET_OK;
 }
 
 TINY_LOR

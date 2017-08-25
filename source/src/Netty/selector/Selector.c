@@ -146,6 +146,7 @@ static TinyRet _Selector_LoopOnce(Selector *thiz)
     ret = thiz->onPreSelect(thiz, thiz->ctx);
     if (ret != TINY_RET_OK)
     {
+        LOG_D(TAG, "onPreSelect failed");
         return ret;
     }
 
@@ -178,6 +179,8 @@ TinyRet Selector_Loop(Selector *thiz)
             break;
         }
     }
+
+    LOG_E(TAG, "Selector_Loop Finished!");
 
     return TINY_RET_OK;
 }
