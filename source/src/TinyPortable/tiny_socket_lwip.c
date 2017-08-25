@@ -124,20 +124,27 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
 TINY_LOR
 bool tiny_socket_has_error(int fd)
 {
-    char error = 0;
+#if 0
+    int error = 1;
     socklen_t len = sizeof(error);
 
+    LOG_D(TAG, "tiny_socket_has_error ?");
+
+    // BUG!!! ESP8266 will be crashed
     if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
     {
-        LOG_E(TAG, "getsockopt failed.");
+        LOG_E(TAG, "tiny_socket_has_error -> getsockopt failed.");
         return true;
     }
 
     if (error != 0)
     {
-        LOG_E(TAG, "connect error: %d", error);
+        LOG_E(TAG, "tiny_socket_has_error: %d", error);
         return true;
     }
+#endif
+
+    LOG_D(TAG, "tiny_socket_has_error: no");
 
     return false;
 }

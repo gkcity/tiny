@@ -90,7 +90,7 @@ static TinyRet StreamClientChannel_OnReadWrite(Channel *thiz, Selector *selector
     // [2] socket is readable and writeable if connection occur error.
     if (Selector_IsReadable(selector, thiz->fd) || Selector_IsWriteable(selector, thiz->fd))
     {
-        if (tiny_socket_has_error(thiz->fd)) 
+        if (tiny_socket_has_error(thiz->fd))
         {
             LOG_E(TAG, "tiny_socket_has_error!");
             return TINY_RET_E_SOCKET_DISCONNECTED;
@@ -107,7 +107,7 @@ static void StreamClientChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    LOG_D(TAG, "connected");
+    LOG_D(TAG, "StreamClientChannel_OnActive");
 
     if (thiz->ctx != NULL)
     {
