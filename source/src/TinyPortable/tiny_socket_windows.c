@@ -207,16 +207,16 @@ TINY_LOR
 int tiny_socket_reuse_address(int fd)
 {
     int ret = 0;
-    char error = 1;
+    char optval = 1;
 
-    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &error, sizeof(error));
+    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
     if (ret < 0)
     {
         LOG_E(TAG, "tiny_setsockopt failed: %d", ret);
         break;
     }
 
-    LOG_D(TAG, "tiny_socket_reuse_address, error = %d", error);
+    LOG_D(TAG, "tiny_socket_reuse_address, error = %d", optval);
 
     return ret;
 }
