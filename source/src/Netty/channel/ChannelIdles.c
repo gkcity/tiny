@@ -121,7 +121,7 @@ TinyRet ChannelIdles_GetTimeout(ChannelIdles *thiz, void *ctx)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(timer, TINY_RET_E_ARG_NULL);
 
-    printf("\n---------------------------------------------------------\n");
+//    printf("\n---------------------------------------------------------\n");
 
 //    LOG_D(TAG, "current: %d.%d.%d", (int) (current / 1000000), (int) (current % 1000000) / 1000, (int) (current % 1000));
 
