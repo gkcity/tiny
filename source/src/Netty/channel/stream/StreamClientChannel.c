@@ -29,18 +29,6 @@ static TinyRet StreamClientChannel_GetConnectingTimeout(Channel *thiz, ChannelTi
     return TINY_RET_OK;
 }
 
-#if 0
-TINY_LOR
-static void StreamClientChannel_OnConnectingTimeout(Channel *thiz, void *event)
-{
-    RETURN_IF_FAIL(thiz);
-
-    LOG_D(TAG, "StreamClientChannel_OnConnectingTimeout");
-
-    Channel_Close(thiz);
-}
-#endif
-
 TINY_LOR
 static void StreamClientChannel_Dispose(Channel *thiz)
 {
@@ -54,6 +42,8 @@ static void StreamClientChannel_Dispose(Channel *thiz)
     {
         StreamClientChannel_Close(thiz);
     }
+
+    SocketChannel_Dispose(thiz);
 }
 
 TINY_LOR

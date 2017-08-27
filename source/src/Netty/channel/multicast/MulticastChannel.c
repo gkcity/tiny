@@ -33,6 +33,8 @@ static void MulticastChannel_Dispose(Channel *thiz)
         MulticastChannelContext_Delete((MulticastChannelContext *)thiz->ctx);
         thiz->ctx = NULL;
     }
+
+    SocketChannel_Dispose(thiz);
 }
 
 TINY_LOR

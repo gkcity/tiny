@@ -30,6 +30,8 @@ static void StreamServerChannel_Dispose(Channel *thiz)
         StreamServerChannelContext_Delete((StreamServerChannelContext *)thiz->ctx);
         thiz->ctx = NULL;
     }
+
+    SocketChannel_Dispose(thiz);
 }
 
 TINY_LOR
