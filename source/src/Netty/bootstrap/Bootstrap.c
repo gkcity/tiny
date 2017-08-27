@@ -32,6 +32,27 @@ TINY_LOR
 static TinyRet _OnSelectTimeout(Selector *selector, void *ctx);
 
 TINY_LOR
+TinyRet Bootstrap_InitializeLoopbackChannel(Bootstrap *thiz)
+{
+    Channel * loopback = NULL;
+
+    loopback = SocketChannel_New();
+    if (loopback == NULL)
+    {
+        return TINY_RET_E_NEW;
+    }
+
+    SocketChannel_Open(loopback, TYPE_UDP);
+    SocketChannel_Bind(loopback, 0, false);
+    SocketChannel_SetBlock(loopback, false);
+    SocketChannel_AddLast(loopback, LoopbackChannelHandler(&thiz->channels));
+
+    thiz->loopbackPort = loopback->local.socket.port;
+
+    return TinyList_AddTail(&thiz->channels, loopback);
+}
+
+TINY_LOR
 TinyRet Bootstrap_Construct(Bootstrap *thiz)
 {
     TinyRet ret = TINY_RET_OK;
@@ -58,18 +79,11 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
         }
         TinyList_SetDeleteListener(&thiz->channels, _OnChannelRemoved, NULL);
 
-        thiz->loopback = SocketChannel_New();
-        if (thiz->loopback == NULL)
+        ret = Bootstrap_InitializeLoopbackChannel(thiz);
+        if (RET_FAILED(ret))
         {
-            ret = TINY_RET_E_NEW;
             break;
         }
-
-        SocketChannel_Open(thiz->loopback, TYPE_UDP);
-        SocketChannel_Bind(thiz->loopback, 0, false);
-        SocketChannel_SetBlock(thiz->loopback, false);
-        SocketChannel_AddLast(thiz->loopback, LoopbackChannelHandler(&thiz->channels));
-        TinyList_AddTail(&thiz->channels, thiz->loopback);
     } while (0);
 
     return ret;
@@ -84,9 +98,6 @@ void Bootstrap_Dispose(Bootstrap *thiz)
 
     Selector_Dispose(&thiz->selector);
     TinyList_Dispose(&thiz->channels);
-
-    thiz->loopback->onRemove(thiz->loopback);
-    thiz->loopback = NULL;
 }
 
 TINY_LOR
@@ -145,9 +156,9 @@ TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
     memset(&to, 0, sizeof(to));
     to.sin_family = AF_INET;
     to.sin_addr.s_addr = inet_addr("127.0.0.1");
-    to.sin_port = htons(thiz->loopback->local.socket.port);
+    to.sin_port = htons(thiz->loopbackPort);
     ret = (int)tiny_sendto(channel->fd, BOOTSTRAP_SHUTDOWN, length, 0, (struct sockaddr *)&to, (socklen_t)to_len);
-    LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopback->local.socket.port, ret);
+    LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopbackPort, ret);
 
     SocketChannel_Delete(channel);
 

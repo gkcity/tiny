@@ -29,7 +29,7 @@ typedef struct _Bootstrap
     Selector                    selector;
     TinyList                    channels;
     ChannelTimer                timer;
-    Channel                   * loopback;
+    uint16_t                    loopbackPort;
 } Bootstrap;
 
 TINY_API
