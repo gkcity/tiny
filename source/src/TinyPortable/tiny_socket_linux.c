@@ -16,6 +16,7 @@
 #include "tiny_log.h"
 
 #define TAG		"tiny_socket_linux"
+
 TINY_LOR
 int tiny_socket_set_block(int fd, bool block)
 {
@@ -173,4 +174,19 @@ int tiny_socket_reuse_address(int fd)
     LOG_D(TAG, "tiny_socket_reuse_address, error = %d", optval);
 
     return ret;
+}
+
+TINY_LOR
+uint16_t tiny_socket_get_port(int fd)
+{
+    uint16_t port = 0;
+    struct sockaddr_in sin;
+    socklen_t len = (socklen_t) sizeof(sin);
+
+    if (getsockname(fd, (struct sockaddr *)&sin, &len) == 0)
+    {
+        port = ntohs(sin.sin_port);
+    }
+
+    return port;
 }

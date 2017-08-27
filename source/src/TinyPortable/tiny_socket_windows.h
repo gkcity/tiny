@@ -88,6 +88,9 @@ TINY_API
 TINY_LOR
 int tiny_socket_reuse_address(int fd);
 
+TINY_LOR
+uint16_t tiny_socket_get_port(int fd);
+
 
 TINY_END_DECLS
 

@@ -171,7 +171,7 @@ static TinyRet _Selector_LoopOnce(Selector *thiz)
 TINY_LOR
 TinyRet Selector_Loop(Selector *thiz)
 {
-    while (1)
+    while (true)
     {
         TinyRet ret = _Selector_LoopOnce(thiz);
         if (RET_FAILED(ret))

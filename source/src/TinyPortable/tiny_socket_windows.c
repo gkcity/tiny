@@ -94,7 +94,6 @@ int tiny_send(int fd, const void *data, size_t size, int flags)
 TINY_LOR
 int tiny_socket_join_group(int fd, const char *ip, const char *group)
 {
-    //    struct sockaddr_in addr;
     int ret = NO_ERROR;
 
     do {
@@ -112,7 +111,6 @@ int tiny_socket_join_group(int fd, const char *ip, const char *group)
         // Setup the v4 option values and ip_mreq structure
         memset(&ipMreqV4, 0, sizeof(struct ip_mreq));
         ipMreqV4.imr_multiaddr.s_addr = inet_addr(group);
-        //ipMreqV4.imr_interface.s_addr = htonl(ip);
         ipMreqV4.imr_interface.s_addr = inet_addr(ip);
 
         ret = setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&ipMreqV4, sizeof(ipMreqV4));
@@ -219,4 +217,19 @@ int tiny_socket_reuse_address(int fd)
     LOG_D(TAG, "tiny_socket_reuse_address, error = %d", optval);
 
     return ret;
+}
+
+TINY_LOR
+uint16_t tiny_socket_get_port(int fd)
+{
+    uint16_t port = 0;
+    struct sockaddr_in sin;
+    socklen_t len = (socklen_t) sizeof(sin);
+
+    if (getsockname(fd, (struct sockaddr *)&sin, &len) == 0)
+    {
+        port = ntohs(sin.sin_port);
+    }
+
+    return port;
 }
