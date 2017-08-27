@@ -256,6 +256,10 @@ static void on_item_delete_listener(void * data, void *ctx)
     TinyMap * thiz = (TinyMap *)ctx;
     TinyMapItem * item = (TinyMapItem *)data;
 
-    thiz->data_delete_listener(item->value, thiz->data_delete_listener_ctx);
+    if (thiz->data_delete_listener != NULL) 
+    {
+        thiz->data_delete_listener(item->value, thiz->data_delete_listener_ctx);
+    }
+
     tiny_free(item);
 }
