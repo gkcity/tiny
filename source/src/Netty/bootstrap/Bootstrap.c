@@ -191,8 +191,6 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
         }
     }
 
-    LOG_D(TAG, "channels: %d", thiz->channels.size);
-
     if (thiz->channels.size == 0)
     {
         LOG_E(TAG, "Channels is empty");
@@ -239,16 +237,6 @@ static TinyRet _PostSelect(Selector *selector, void *ctx)
                 Channel_Close(channel);
                 continue;
             }
-        }
-    }
-
-    for (uint32_t i = 0; i < thiz->channels.size; ++i)
-    {
-        Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
-        if (Channel_IsClosed(channel))
-        {
-            TinyList_RemoveAt(&thiz->channels, i);
-            break;
         }
     }
 
