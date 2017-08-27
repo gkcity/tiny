@@ -213,7 +213,6 @@ int tiny_socket_reuse_address(int fd)
     if (ret < 0)
     {
         LOG_E(TAG, "tiny_setsockopt failed: %d", ret);
-        break;
     }
 
     LOG_D(TAG, "tiny_socket_reuse_address, error = %d", optval);

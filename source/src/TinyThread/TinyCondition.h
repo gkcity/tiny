@@ -33,14 +33,26 @@ typedef struct _TinyCondition
     bool            is_ready;
 } TinyCondition;
 
-TINY_API TinyCondition * TinyCondition_New(void);
-TINY_API TinyRet TinyCondition_Construct(TinyCondition *thiz);
-TINY_API TinyRet TinyCondition_Dispose(TinyCondition *thiz);
-TINY_API void TinyCondition_Delete(TinyCondition *thiz);
+TINY_API
+TinyCondition * TinyCondition_New(void);
 
-TINY_API bool TinyCondition_Wait(TinyCondition *thiz);
-TINY_API bool TinyCondition_NotifyOne(TinyCondition *thiz);
-TINY_API bool TinyCondition_NotifyAll(TinyCondition *thiz);
+TINY_API
+TinyRet TinyCondition_Construct(TinyCondition *thiz);
+
+TINY_API
+TinyRet TinyCondition_Dispose(TinyCondition *thiz);
+
+TINY_API
+void TinyCondition_Delete(TinyCondition *thiz);
+
+TINY_API
+bool TinyCondition_Wait(TinyCondition *thiz);
+
+TINY_API
+bool TinyCondition_NotifyOne(TinyCondition *thiz);
+
+TINY_API
+bool TinyCondition_NotifyAll(TinyCondition *thiz);
 
 
 TINY_END_DECLS

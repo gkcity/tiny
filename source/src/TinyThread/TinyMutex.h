@@ -38,13 +38,23 @@ typedef struct _TinyMutex
     tiny_mutex_t    mutex;
 } TinyMutex;
 
-TINY_API TinyMutex * TinyMutex_New(void);
-TINY_API TinyRet TinyMutex_Construct(TinyMutex *thiz);
-TINY_API TinyRet TinyMutex_Dispose(TinyMutex *thiz);
-TINY_API void TinyMutex_Delete(TinyMutex *thiz);
+TINY_API
+TinyMutex * TinyMutex_New(void);
 
-TINY_API bool TinyMutex_Lock(TinyMutex *thiz);
-TINY_API bool TinyMutex_Unlock(TinyMutex *thiz);
+TINY_API
+TinyRet TinyMutex_Construct(TinyMutex *thiz);
+
+TINY_API
+TinyRet TinyMutex_Dispose(TinyMutex *thiz);
+
+TINY_API
+void TinyMutex_Delete(TinyMutex *thiz);
+
+TINY_API
+bool TinyMutex_Lock(TinyMutex *thiz);
+
+TINY_API
+bool TinyMutex_Unlock(TinyMutex *thiz);
 
 
 TINY_END_DECLS

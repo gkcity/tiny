@@ -55,15 +55,29 @@ typedef struct _TinyThread
     void *                  thread_param;
 } TinyThread;
 
-TINY_API TinyThread * TinyThread_New(void);
-TINY_API TinyRet TinyThread_Construct(TinyThread *thiz);
-TINY_API TinyRet TinyThread_Initialize(TinyThread *thiz, ThreadLoop loop, void *param, const char *name);
-TINY_API TinyRet TinyThread_Dispose(TinyThread *thiz);
-TINY_API void TinyThread_Delete(TinyThread *thiz);
+TINY_API
+TinyThread * TinyThread_New(void);
 
-TINY_API const char * TinyThread_GetName(TinyThread *thiz);
-TINY_API bool TinyThread_Start(TinyThread *thiz);
-TINY_API bool TinyThread_Join(TinyThread *thiz);
+TINY_API
+TinyRet TinyThread_Construct(TinyThread *thiz);
+
+TINY_API
+TinyRet TinyThread_Initialize(TinyThread *thiz, ThreadLoop loop, void *param, const char *name);
+
+TINY_API
+TinyRet TinyThread_Dispose(TinyThread *thiz);
+
+TINY_API
+void TinyThread_Delete(TinyThread *thiz);
+
+TINY_API
+const char * TinyThread_GetName(TinyThread *thiz);
+
+TINY_API
+bool TinyThread_Start(TinyThread *thiz);
+
+TINY_API
+bool TinyThread_Join(TinyThread *thiz);
 
 
 TINY_END_DECLS

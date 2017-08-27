@@ -53,13 +53,23 @@ typedef struct _TinySemaphore
     tiny_sem_t           sem;
 } TinySemaphore;
 
-TINY_API TinySemaphore * TinySemaphore_New(void);
-TINY_API TinyRet TinySemaphore_Construct(TinySemaphore *thiz);
-TINY_API TinyRet TinySemaphore_Dispose(TinySemaphore *thiz);
-TINY_API void TinySemaphore_Delete(TinySemaphore *thiz);
+TINY_API
+TinySemaphore * TinySemaphore_New(void);
 
-TINY_API bool TinySemaphore_Wait(TinySemaphore *thiz);
-TINY_API bool TinySemaphore_Post(TinySemaphore *thiz);
+TINY_API
+TinyRet TinySemaphore_Construct(TinySemaphore *thiz);
+
+TINY_API
+TinyRet TinySemaphore_Dispose(TinySemaphore *thiz);
+
+TINY_API
+void TinySemaphore_Delete(TinySemaphore *thiz);
+
+TINY_API
+bool TinySemaphore_Wait(TinySemaphore *thiz);
+
+TINY_API
+bool TinySemaphore_Post(TinySemaphore *thiz);
 
 
 TINY_END_DECLS
