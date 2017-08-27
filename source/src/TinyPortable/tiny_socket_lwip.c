@@ -153,15 +153,15 @@ TINY_LOR
 int tiny_socket_reuse_port(int fd)
 {
     int ret = 0;
-    int optval = 1;
+    int reuseport = 1;
 
-    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&optval, sizeof(optval));
+    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&reuseport, sizeof(reuseport));
     if (ret < 0)
     {
         LOG_E(TAG, "tiny_setsockopt failed: %d", ret);
     }
 
-    LOG_D(TAG, "tiny_socket_reuse_port, error = %d", optval);
+    LOG_D(TAG, "tiny_socket_reuse_port, reuseport = %d", reuseport);
 
     return ret;
 }
@@ -170,15 +170,15 @@ TINY_LOR
 int tiny_socket_reuse_address(int fd)
 {
     int ret = 0;
-    int optval = 1;
+    int reuseaddr = 1;
 
-    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+    ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
     if (ret < 0)
     {
         LOG_E(TAG, "tiny_setsockopt failed: %d", ret);
     }
 
-    LOG_D(TAG, "tiny_socket_reuse_address, error = %d", optval);
+    LOG_D(TAG, "tiny_socket_reuse_address, reuseaddr = %d", reuseaddr);
 
     return ret;
 }

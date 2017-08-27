@@ -179,13 +179,15 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
 
     LOG_D(TAG, "_PreSelect, channels: %d", thiz->channels.size);
 
-    for (uint32_t i = 0; i < thiz->channels.size; ++i)
+    for (int i = (thiz->channels.size - 1); i >= 0; --i)
     {
         Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
+
+        LOG_D(TAG, "channel[%d]: %s, fd: %d", i, channel->id, channel->fd);
+
         if (Channel_IsClosed(channel))
         {
             TinyList_RemoveAt(&thiz->channels, i);
-            break;
         }
     }
 

@@ -48,8 +48,7 @@ static TinyRet SocketChannel_Dispose(Channel *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "Channel_Dispose");
-
+    LOG_D(TAG, "SocketChannel_Dispose: %s", thiz->id);
     TinyList_Dispose(&thiz->handlers);
 
     return TINY_RET_OK;
@@ -336,12 +335,11 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
             break;
         }
 
-        LOG_D(TAG, "SocketChannel_Bind OK, port: %d", port);
-
         thiz->local.socket.address = self_addr.sin_addr.s_addr;
-        thiz->local.socket.port = tiny_socket_get_port(thiz->fd);;
+        thiz->local.socket.port = (port > 0) ? port : tiny_socket_get_port(thiz->fd);;
+        tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::127.0.0.1::%d", thiz->fd, thiz->local.socket.port);
 
-        tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::127.0.0.1::%d", thiz->fd,port);
+        LOG_D(TAG, "SocketChannel_Bind OK: %s", thiz->id);
     } while (0);
 
     return ret;
