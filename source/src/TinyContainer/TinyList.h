@@ -119,7 +119,7 @@ TinyRet TinyList_RemoveAll(TinyList * thiz);
 
 TINY_API
 TINY_LOR
-void * TinyList_GetAt(TinyList * thiz, int pos);
+void * TinyList_GetAt(const TinyList * thiz, int pos);
 
 TINY_API
 TINY_LOR
