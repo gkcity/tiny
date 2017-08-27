@@ -160,6 +160,7 @@ TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
     ret = (int)tiny_sendto(channel->fd, BOOTSTRAP_SHUTDOWN, length, 0, (struct sockaddr *)&to, (socklen_t)to_len);
     LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopbackPort, ret);
 
+    Channel_Close(channel);
     SocketChannel_Delete(channel);
 
     return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
@@ -182,11 +183,9 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
     for (int i = (thiz->channels.size - 1); i >= 0; --i)
     {
         Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
-
-        LOG_D(TAG, "channel[%d]: %s, fd: %d", i, channel->id, channel->fd);
-
         if (Channel_IsClosed(channel))
         {
+            LOG_D(TAG, "remove channel[%d]: %s, fd: %d", i, channel->id, channel->fd);
             TinyList_RemoveAt(&thiz->channels, i);
         }
     }
@@ -202,15 +201,7 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
         Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
-        channel->onRegister(channel, selector);
-
-        if (channel->getTimeout != NULL)
-        {
-            if (RET_SUCCEEDED(channel->getTimeout(channel, &thiz->timer, NULL)))
-            {
-                thiz->timer.fd = channel->fd;
-            }
-        }
+        channel->onRegister(channel, selector, &thiz->timer);
     }
 
     thiz->selector.us = (thiz->timer.valid) ? thiz->timer.timeout : 0;
@@ -253,10 +244,7 @@ static TinyRet _OnSelectTimeout(Selector *selector, void *ctx)
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
         Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
-        if (channel->fd == thiz->timer.fd)
-        {
-            channel->onEventTriggered(channel, &thiz->timer);
-        }
+        channel->onEventTriggered(channel, &thiz->timer);
     }
 
     return TINY_RET_OK;

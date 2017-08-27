@@ -83,6 +83,9 @@ TINY_LOR
 void ChannelIdles_Initialize(ChannelIdles *thiz, uint32_t readerIdle, uint32_t writerIdle, uint32_t allIdle)
 {
     uint64_t current = tiny_current_microsecond();
+
+    LOG_D(TAG, "ChannelIdles_Initialize: R: %d W: %d A: %d", readerIdle, writerIdle, allIdle);
+
     ChannelIdle_Initialize(&thiz->reader, CHANNEL_TIMER_READER, readerIdle, current);
     ChannelIdle_Initialize(&thiz->writer, CHANNEL_TIMER_WRITER, writerIdle, current);
     ChannelIdle_Initialize(&thiz->all, CHANNEL_TIMER_ALL, allIdle, current);

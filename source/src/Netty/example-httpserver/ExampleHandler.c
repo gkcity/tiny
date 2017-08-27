@@ -105,7 +105,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 			SocketChannel_StartWrite(channel, DATA_RAW, response.content.buf, response.content.buf_size);
 		}
 
-        Channel_Close(channel);
+//        Channel_Close(channel);
         HttpMessage_Dispose(&response);
     }
 

@@ -45,12 +45,20 @@ static void MulticastChannel_Delete(Channel *thiz)
 }
 
 TINY_LOR
-static void MulticastChannel_OnRegister(Channel *thiz, Selector *selector)
+static void MulticastChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer)
 {
     if (Channel_IsActive(thiz))
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
         LOG_D(TAG, "MulticastChannel_OnRegister: %d", thiz->fd);
+
+        if (thiz->getTimeout != NULL)
+        {
+            if (RET_SUCCEEDED(thiz->getTimeout(thiz, timer, NULL)))
+            {
+                timer->fd = thiz->fd;
+            }
+        }
     }
 }
 

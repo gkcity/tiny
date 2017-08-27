@@ -42,7 +42,7 @@ static void StreamServerChannel_Delete(Channel *thiz)
 }
 
 TINY_LOR
-static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector)
+static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer)
 {
     if (Channel_IsActive(thiz))
     {
@@ -50,11 +50,31 @@ static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector)
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
         LOG_D(TAG, "StreamServerChannel_OnRegister Server FD: %d", thiz->fd);
 
+        // remove closed channel
+        for (int i = (ctx->channels.size - 1); i >= 0; --i)
+        {
+            Channel* child = (Channel *)TinyList_GetAt(&ctx->channels, i);
+            if (Channel_IsClosed(child))
+            {
+                LOG_D(TAG, "remove channel[%d]: %s, fd: %d", i, child->id, child->fd);
+                TinyList_RemoveAt(&ctx->channels, i);
+            }
+        }
+
         for (uint32_t i = 0; i < ctx->channels.size; ++i)
         {
-            Channel *c = (Channel *) TinyList_GetAt(&ctx->channels, i);
-            Selector_Register(selector, c->fd, SELECTOR_OP_READ);
-            LOG_D(TAG, "StreamServerChannel_OnRegister Connection FD: %d", c->fd);
+            Channel *child = (Channel *) TinyList_GetAt(&ctx->channels, i);
+            Selector_Register(selector, child->fd, SELECTOR_OP_READ);
+
+            LOG_D(TAG, "StreamServerChannel_OnRegister Connnection FD: %d", child->fd);
+
+            if (child->getTimeout != NULL)
+            {
+                if (RET_SUCCEEDED(child->getTimeout(child, timer, NULL)))
+                {
+                    timer->fd = child->fd;
+                }
+            }
         }
     }
 }
@@ -82,19 +102,16 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
         uint16_t port = 0;
 
         LOG_D(TAG, "StreamServerChannel_OnRead FD: %d", thiz->fd);
+        LOG_D(TAG, "socklen_t: %d", len);
 
         memset(&addr, 0, sizeof(addr));
         fd = tiny_accept(thiz->fd, (struct sockaddr *)&addr, &len);
-        if (fd <= 0)
+        if (fd < 0)
         {
             return TINY_RET_E_INTERNAL;
         }
 
         memset(ip, 0, TINY_IP_LEN);
-
-        //const char *ip = NULL;
-        //ip = inet_ntoa(addr.sin_addr);
-
         inet_ntop(AF_INET, &addr.sin_addr, ip, TINY_IP_LEN);
         port = ntohs(addr.sin_port);
 
@@ -159,11 +176,29 @@ static void StreamServerChannel_OnInactive(Channel *thiz)
 }
 
 TINY_LOR
+static void StreamServerChannel_OnEventTriggered(Channel *thiz, ChannelTimer *timer)
+{
+    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
+
+    RETURN_IF_FAIL(thiz);
+
+    LOG_D(TAG, "StreamServerChannel_OnEventTriggered");
+
+    for (uint32_t i = 0; i < ctx->channels.size; ++i)
+    {
+        Channel *channel = (Channel *)TinyList_GetAt(&ctx->channels, i);
+        channel->onEventTriggered(channel, timer);
+    }
+}
+
+TINY_LOR
 static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
 {
     TinyRet ret = TINY_RET_OK;
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    LOG_D(TAG, "StreamServerChannel_Construct");
 
     do
     {
@@ -171,6 +206,7 @@ static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
         thiz->onRemove = StreamServerChannel_OnRemove;
         thiz->onInactive = StreamServerChannel_OnInactive;
         thiz->onReadWrite = StreamServerChannel_OnReadWrite;
+        thiz->onEventTriggered = StreamServerChannel_OnEventTriggered;
 
         thiz->ctx = StreamServerChannelContext_New();
         if (thiz->ctx == NULL)

@@ -42,7 +42,7 @@ typedef void (*ChannelActive)(ChannelHandler *thiz, Channel *channel);
 typedef void (*ChannelInactive)(ChannelHandler *thiz, Channel *channel);
 typedef bool (*ChannelRead)(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
 typedef bool (*ChannelWrite)(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
-typedef void (*ChannelEvent)(ChannelHandler *thiz, Channel *channel, void *event);
+typedef void (*ChannelEvent)(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer);
 
 struct _ChannelHandler
 {

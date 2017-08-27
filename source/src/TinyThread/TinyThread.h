@@ -27,7 +27,7 @@ TINY_BEGIN_DECLS
 
 
 #ifdef _WIN32
-typedef void *              ThreadHandler;
+typedef HANDLE              ThreadHandler;
 typedef unsigned long       ThreadId;
 #else /* Linux */
 typedef int                 ThreadHandler;

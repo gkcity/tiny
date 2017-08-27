@@ -30,7 +30,7 @@ TINY_BEGIN_DECLS
 struct _Channel;
 typedef struct _Channel Channel;
 
-typedef void (* ChannelHandleRegister)(Channel *channel, Selector *selector);
+typedef void (* ChannelHandleRegister)(Channel *channel, Selector *selector, ChannelTimer *timer);
 typedef void (* ChannelHandleRemove)(Channel *channel);
 typedef void (* ChannelHandleActive)(Channel *thiz);
 typedef void (* ChannelHandleInactive)(Channel *thiz);
@@ -60,7 +60,7 @@ struct _Channel
 
 #define Channel_IsActive(thiz)      ((thiz)->fd >= 0)
 #define Channel_IsClosed(thiz)      ((thiz)->fd < 0)
-#define Channel_Close(thiz)         {tiny_socket_close((thiz)->fd); (thiz)->fd = -1;}
+#define Channel_Close(thiz)         { if (thiz->fd != -1) {tiny_socket_close((thiz)->fd); (thiz)->fd = -1;} }
 
 
 TINY_END_DECLS

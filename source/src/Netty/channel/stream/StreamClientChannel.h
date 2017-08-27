@@ -39,7 +39,7 @@ TINY_LOR
 void StreamClientChannel_Delete(Channel *thiz);
 
 TINY_LOR
-bool StreamClientChannel_isConnected(Channel* thiz);
+bool StreamClientChannel_IsConnected(Channel* thiz);
 
 
 TINY_END_DECLS

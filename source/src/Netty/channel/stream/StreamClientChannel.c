@@ -38,7 +38,7 @@ static void StreamClientChannel_Dispose(Channel *thiz)
         thiz->ctx = NULL;
     }
 
-    if (StreamClientChannel_isConnected(thiz))
+    if (StreamClientChannel_IsConnected(thiz))
     {
         StreamClientChannel_Close(thiz);
     }
@@ -54,12 +54,20 @@ void StreamClientChannel_Delete(Channel *thiz)
 }
 
 TINY_LOR
-static void StreamClientChannel_OnRegister(Channel *thiz, Selector *selector)
+static void StreamClientChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer)
 {
     if (Channel_IsActive(thiz))
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_ALL);
         LOG_D(TAG, "StreamClientChannel_OnRegister: %d", thiz->fd);
+
+        if (thiz->getTimeout != NULL)
+        {
+            if (RET_SUCCEEDED(thiz->getTimeout(thiz, timer, NULL)))
+            {
+                timer->fd = thiz->fd;
+            }
+        }
     }
 }
 
@@ -229,7 +237,7 @@ TinyRet StreamClientChannel_Close(Channel *thiz)
 }
 
 TINY_LOR
-bool StreamClientChannel_isConnected(Channel *thiz)
+bool StreamClientChannel_IsConnected(Channel *thiz)
 {
     return (thiz->fd >= 0);
 }

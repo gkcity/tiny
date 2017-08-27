@@ -80,7 +80,7 @@ TinyRet SocketChannel_LeaveGroup(Channel *thiz);
 
 TINY_API
 TINY_LOR
-void SocketChannel_OnRegister(Channel *thiz, Selector *selector);
+void SocketChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer);
 
 TINY_API
 TINY_LOR

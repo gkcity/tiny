@@ -62,11 +62,19 @@ void SocketChannel_Delete(Channel *thiz)
 }
 
 TINY_LOR
-void SocketChannel_OnRegister(Channel *thiz, Selector *selector)
+void SocketChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer)
 {
     if (Channel_IsActive(thiz))
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
+
+        if (thiz->getTimeout != NULL)
+        {
+            if (RET_SUCCEEDED(thiz->getTimeout(thiz, timer, NULL)))
+            {
+                timer->fd = thiz->fd;
+            }
+        }
     }
 }
 
@@ -95,6 +103,8 @@ void SocketChannel_OnInactive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
+    LOG_D(TAG, "SocketChannel_OnInactive");
+
     for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
@@ -110,12 +120,17 @@ void SocketChannel_OnEventTriggered(Channel *thiz, ChannelTimer *timer)
 {
     RETURN_IF_FAIL(thiz);
 
-    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
+    LOG_D(TAG, "SocketChannel_OnEventTriggered");
+
+    if (thiz->fd == timer->fd)
     {
-        ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
-        if (handler->channelEvent != NULL)
+        for (uint32_t i = 0; i < thiz->handlers.size; ++i)
         {
-            handler->channelEvent(handler, thiz, timer);
+            ChannelHandler *handler = (ChannelHandler *)TinyList_GetAt(&thiz->handlers, i);
+            if (handler->channelEvent != NULL)
+            {
+                handler->channelEvent(handler, thiz, timer);
+            }
         }
     }
 }
@@ -150,7 +165,7 @@ TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector)
 
     if (! Selector_IsReadable(selector, thiz->fd))
     {
-        printf("SocketChannel is not readable: %d\n", thiz->fd);
+        //printf("SocketChannel is not readable: %d\n", thiz->fd);
         return TINY_RET_OK;
     }
 
