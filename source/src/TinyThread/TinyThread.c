@@ -155,8 +155,6 @@ bool TinyThread_Start(TinyThread *thiz)
     thiz->thread_handler = (int)thiz->thread_id;
 #endif
 
-    thiz->status = ThreadRunning;
-
     return true;
 }
 
@@ -185,8 +183,6 @@ bool TinyThread_Join(TinyThread *thiz)
         }
 #endif
 
-        thiz->status = ThreadStop;
-
         LOG_D(TAG, "finished: %s", thiz->name);
     }
 
@@ -196,7 +192,9 @@ bool TinyThread_Join(TinyThread *thiz)
 static void * thread_run(void *param)
 {
     TinyThread *thiz = (TinyThread *)param;
+    thiz->status = ThreadRunning;
     thiz->loop(thiz->thread_param);
+    thiz->status = ThreadStop;
 
     return NULL;
 }

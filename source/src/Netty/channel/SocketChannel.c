@@ -339,7 +339,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
         LOG_D(TAG, "SocketChannel_Bind OK, port: %d", port);
 
         thiz->local.socket.address = self_addr.sin_addr.s_addr;
-        thiz->local.socket.port = port;
+        thiz->local.socket.port = tiny_socket_get_port(thiz->fd);;
 
         tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::127.0.0.1::%d", thiz->fd,port);
     } while (0);

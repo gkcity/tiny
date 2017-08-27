@@ -13,8 +13,9 @@
  */
 
 #include <tiny_log.h>
-#include <tiny_malloc.h>
+#include <channel/SocketChannel.h>
 #include "Bootstrap.h"
+#include "LoopbackChannelHandler.h"
 
 #define TAG     "Bootstrap"
 
@@ -55,8 +56,20 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
         {
             break;
         }
-
         TinyList_SetDeleteListener(&thiz->channels, _OnChannelRemoved, NULL);
+
+        thiz->loopback = SocketChannel_New();
+        if (thiz->loopback == NULL)
+        {
+            ret = TINY_RET_E_NEW;
+            break;
+        }
+
+        SocketChannel_Open(thiz->loopback, TYPE_UDP);
+        SocketChannel_Bind(thiz->loopback, 0, false);
+        SocketChannel_SetBlock(thiz->loopback, false);
+        SocketChannel_AddLast(thiz->loopback, LoopbackChannelHandler(&thiz->channels));
+        TinyList_AddTail(&thiz->channels, thiz->loopback);
     } while (0);
 
     return ret;
@@ -71,6 +84,9 @@ void Bootstrap_Dispose(Bootstrap *thiz)
 
     Selector_Dispose(&thiz->selector);
     TinyList_Dispose(&thiz->channels);
+
+    thiz->loopback->onRemove(thiz->loopback);
+    thiz->loopback = NULL;
 }
 
 TINY_LOR
@@ -110,32 +126,32 @@ TinyRet Bootstrap_Sync(Bootstrap *thiz)
 
     LOG_D(TAG, "Bootstrap_Sync");
 
-//    for (uint32_t i = 0; i < thiz->channels.size; ++i)
-//    {
-//        Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
-//
-//        if (channel->onActive != NULL)
-//        {
-//            channel->onActive(channel);
-//        }
-//    }
-
     return Selector_Loop(&thiz->selector);
 }
 
 TINY_LOR
 TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
 {
-    LOG_D(TAG, "Bootstrap_Shutdown: %d", thiz->channels.size);
+    int ret = 0;
+    uint32_t length = (uint32_t)strlen(BOOTSTRAP_SHUTDOWN);
 
-    for (uint32_t i = 0; i < thiz->channels.size; ++i)
-    {
-        Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
-        channel->onInactive(channel);
-        Channel_Close(channel);
-    }
+    struct sockaddr_in to;
+    socklen_t to_len = sizeof(to);
 
-    return TINY_RET_OK;
+    Channel *channel = SocketChannel_New();
+    SocketChannel_Open(channel, TYPE_UDP);
+    SocketChannel_Bind(channel, 0, false);
+
+    memset(&to, 0, sizeof(to));
+    to.sin_family = AF_INET;
+    to.sin_addr.s_addr = inet_addr("127.0.0.1");
+    to.sin_port = htons(thiz->loopback->local.socket.port);
+    ret = (int)tiny_sendto(channel->fd, BOOTSTRAP_SHUTDOWN, length, 0, (struct sockaddr *)&to, (socklen_t)to_len);
+    LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopback->local.socket.port, ret);
+
+    SocketChannel_Delete(channel);
+
+    return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
 }
 
 TINY_LOR

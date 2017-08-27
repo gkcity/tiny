@@ -40,7 +40,7 @@ ChannelHandler * ExampleHandler(void)
 
         if (RET_FAILED(ExampleHandler_Construct(thiz)))
         {
-            ExampleHandler_Dispose(thiz);
+            ExampleHandler_Delete(thiz);
             thiz = NULL;
             break;
         }

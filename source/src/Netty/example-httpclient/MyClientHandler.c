@@ -41,7 +41,7 @@ ChannelHandler * MyClientHandler(void)
 
         if (RET_FAILED(MyClientHandler_Construct(thiz)))
         {
-            MyClientHandler_Dispose(thiz);
+            MyClientHandler_Delete(thiz);
             thiz = NULL;
             break;
         }
