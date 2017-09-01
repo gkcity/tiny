@@ -37,7 +37,7 @@ TINY_LOR
 static TinyRet _channelGetTimeout(Channel *channel, ChannelTimer *timer, void *ctx);
 
 TINY_LOR
-static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event);
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer);
 
 TINY_LOR
 ChannelHandler * ChannelIdleStateHandler(uint32_t readerIdle, uint32_t writerIdle, uint32_t allIdle)
@@ -128,9 +128,9 @@ static TinyRet _channelGetTimeout(Channel *channel, ChannelTimer *timer, void *c
 }
 
 TINY_LOR
-static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event)
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer)
 {
     LOG_D(TAG, "_channelEvent, channelId: %s", channel->id);
 
-    ChannelIdles_OnEvent(&thiz->idles, event);
+    ChannelIdles_OnEvent(&thiz->idles, timer);
 }

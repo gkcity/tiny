@@ -14,8 +14,9 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyPortable)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyContainer)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
-INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyJson)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Netty)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyJson)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Bson)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyUmm)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyMd5)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyThread)
@@ -123,18 +124,6 @@ SET(TinyStringUtil_Source
         ${SOURCE_ROOT}/TinyStringUtil/tiny_url_split.c
         )
 
-#---------------------------
-# TinyJson
-#---------------------------
-
-SET(TinyJson_Header
-        ${SOURCE_ROOT}/TinyJson/json.h
-        )
-
-SET(TinyJson_Source
-        ${SOURCE_ROOT}/TinyJson/json.c
-        )
-
 #-----------------------
 # Netty
 #-----------------------
@@ -182,6 +171,34 @@ SET(Netty_Source
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.c
         ${SOURCE_ROOT}/Netty/bootstrap/LoopbackChannelHandler.c
         )
+
+#---------------------------
+# TinyJson
+#---------------------------
+
+SET(TinyJson_Header
+        ${SOURCE_ROOT}/TinyJson/json.h
+        )
+
+SET(TinyJson_Source
+        ${SOURCE_ROOT}/TinyJson/json.c
+        )
+
+#---------------------------
+# Bson
+#---------------------------
+
+SET(Bson_Header
+        ${SOURCE_ROOT}/Bson/bson.h
+        )
+
+SET(Bson_Source
+        ${SOURCE_ROOT}/Bson/bson.c
+        )
+
+#---------------------------
+# TinyThread
+#---------------------------
 
 SET(TinyThread_Header
         ${SOURCE_ROOT}/TinyThread/TinyCondition.h
@@ -233,6 +250,8 @@ IF(TINY_THREAD_ENABLED EQUAL 1)
         ${Netty_Source}
         ${TinyThread_Header}
         ${TinyThread_Source}
+        ${Bson_Header}
+        ${Bson_Source}
         )
 ELSE()
     MESSAGE(STATUS "TinyThread disabled")
@@ -247,10 +266,12 @@ ELSE()
         ${TinyLog_Source}
         ${TinyStringUtil_Header}
         ${TinyStringUtil_Source}
-        ${TinyJson_Header}
-        ${TinyJson_Source}
         ${Netty_Header}
         ${Netty_Source}
+        ${TinyJson_Header}
+        ${TinyJson_Source}
+        ${Bson_Header}
+        ${Bson_Source}
         )
 ENDIF()
 
