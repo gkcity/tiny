@@ -341,9 +341,10 @@ bson_type bson_iterator_next(bson_iterator *i)
 
         default:
         {
-            char msg[] = "unknown type: 000000000000";
-            bson_numstr(msg + 14, (unsigned) (i->cur[0]));
-            LOG_E(TAG, "%s", msg);
+//            char msg[] = "unknown type: 000000000000";
+//            bson_numstr(msg + 14, (unsigned) (i->cur[0]));
+
+            LOG_E(TAG, "unknown type: %d", (unsigned) (i->cur[0]));
             return 0;
         }
     }
@@ -792,12 +793,14 @@ bson_buffer *bson_append_oid(bson_buffer *b, const char *name, const bson_oid_t 
     return b;
 }
 
+#if 0
 bson_buffer *bson_append_new_oid(bson_buffer *b, const char *name)
 {
     bson_oid_t oid;
     bson_oid_gen(&oid);
     return bson_append_oid(b, name, &oid);
 }
+#endif
 
 bson_buffer *bson_append_regex(bson_buffer *b, const char *name, const char *pattern, const char *opts)
 {
