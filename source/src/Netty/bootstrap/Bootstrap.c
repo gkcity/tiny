@@ -160,8 +160,8 @@ TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
     ret = (int)tiny_sendto(channel->fd, BOOTSTRAP_SHUTDOWN, length, 0, (struct sockaddr *)&to, (socklen_t)to_len);
     LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopbackPort, ret);
 
-    Channel_Close(channel);
-    SocketChannel_Delete(channel);
+    channel->close(channel);
+    channel->onRemove(channel);
 
     return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
 }

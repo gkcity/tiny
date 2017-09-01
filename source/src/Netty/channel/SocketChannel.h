@@ -60,6 +60,10 @@ TinyRet SocketChannel_Open(Channel *thiz, ChannelType type);
 
 TINY_API
 TINY_LOR
+void SocketChannel_Close(Channel *thiz);
+
+TINY_API
+TINY_LOR
 TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse);
 
 TINY_API

@@ -32,7 +32,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
             for (uint32_t i = 0; i < list->size; ++i)
             {
                 Channel *c = (Channel *) TinyList_GetAt(list, i);
-                Channel_Close(c);
+                c->close(c);
             }
         }
     }

@@ -22,7 +22,7 @@
 #define TAG     "SocketChannel"
 
 TINY_LOR
-static void _OnChannelRemoved(void * data, void *ctx)
+static void _OnHandlerRemoved(void * data, void *ctx)
 {
     ChannelHandler *handler = (ChannelHandler *)data;
     handler->onRemove(handler);
@@ -83,7 +83,7 @@ void SocketChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    LOG_D(TAG, "SocketChannel_OnActive, handlers: %d", thiz->handlers.size);
+    LOG_D(TAG, "SocketChannel_OnActive: %s, handlers: %d", thiz->id, thiz->handlers.size);
 
     for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
@@ -103,7 +103,7 @@ void SocketChannel_OnInactive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    LOG_D(TAG, "SocketChannel_OnInactive");
+    LOG_D(TAG, "SocketChannel_OnInactive: %s", thiz->id);
 
     for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
@@ -199,7 +199,7 @@ static TinyRet SocketChannel_Construct(Channel *thiz)
             break;
         }
 
-        TinyList_SetDeleteListener(&thiz->handlers, _OnChannelRemoved, NULL);
+        TinyList_SetDeleteListener(&thiz->handlers, _OnHandlerRemoved, NULL);
 
         thiz->fd = -1;
         thiz->onRegister = SocketChannel_OnRegister;
@@ -209,6 +209,7 @@ static TinyRet SocketChannel_Construct(Channel *thiz)
         thiz->onInactive = SocketChannel_OnInactive;
         thiz->onEventTriggered = SocketChannel_OnEventTriggered;
         thiz->getTimeout = SocketChannel_GetTimeout;
+        thiz->close = SocketChannel_Close;
     } while (0);
 
     return ret;
@@ -303,6 +304,14 @@ TinyRet SocketChannel_Open(Channel *thiz, ChannelType type)
     } while (0);
 
     return ret;
+}
+
+TINY_LOR
+void SocketChannel_Close(Channel *thiz)
+{
+    LOG_D(TAG, "SocketChannel_Close: %s", thiz->id);
+
+    Channel_Close(thiz);
 }
 
 TINY_LOR
