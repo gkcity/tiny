@@ -408,11 +408,14 @@ int bson_iterator_int(const bson_iterator *i)
     switch (bson_iterator_type(i))
     {
         case bson_int:
-            return bson_iterator_int_raw(i);
+            return (int) bson_iterator_int_raw(i);
+
         case bson_long:
-            return bson_iterator_long_raw(i);
+            return (int) bson_iterator_long_raw(i);
+
         case bson_double:
-            return bson_iterator_double_raw(i);
+            return (int) bson_iterator_double_raw(i);
+
         default:
             return 0;
     }
@@ -423,11 +426,14 @@ double bson_iterator_double(const bson_iterator *i)
     switch (bson_iterator_type(i))
     {
         case bson_int:
-            return bson_iterator_int_raw(i);
+            return (double) bson_iterator_int_raw(i);
+
         case bson_long:
-            return bson_iterator_long_raw(i);
+            return (double) bson_iterator_long_raw(i);
+
         case bson_double:
             return bson_iterator_double_raw(i);
+
         default:
             return 0;
     }
@@ -439,10 +445,13 @@ int64_t bson_iterator_long(const bson_iterator *i)
     {
         case bson_int:
             return bson_iterator_int_raw(i);
+
         case bson_long:
             return bson_iterator_long_raw(i);
+
         case bson_double:
-            return bson_iterator_double_raw(i);
+            return (int64_t) bson_iterator_double_raw(i);
+
         default:
             return 0;
     }
@@ -595,7 +604,7 @@ bson_buffer *bson_ensure_space(bson_buffer *b, const int bytesNeeded)
 {
     int pos = b->cur - b->buf;
     char *orig = b->buf;
-    int new_size;
+    int new_size = 0;
 
     if (b->finished)
     {
@@ -607,7 +616,7 @@ bson_buffer *bson_ensure_space(bson_buffer *b, const int bytesNeeded)
         return b;
     }
 
-    new_size = 1.5 * (b->bufSize + bytesNeeded);
+    new_size = (int) (1.5 * (b->bufSize + bytesNeeded));
     b->buf = realloc(b->buf, new_size);
     if (!b->buf)
     {
