@@ -1,3 +1,11 @@
+#ifdef _WIN32
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
 #include <tiny_debug.h>
 #include <JsonObject.h>
 #include <JsonArray.h>
@@ -167,6 +175,10 @@ int main(int argc, char *argv[])
     test2();
     test3();
     test4();
+
+#ifdef _WIN32
+    _CrtDumpMemoryLeaks();
+#endif
 
 	return 0;
 }
