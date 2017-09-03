@@ -16,7 +16,7 @@
  */
 
 #include "TinyMap.h"
-#include "../TinyPortable/tiny_malloc.h"
+#include <tiny_malloc.h>
 #include "tiny_log.h"
 
 /*-----------------------------------------------------------------------------

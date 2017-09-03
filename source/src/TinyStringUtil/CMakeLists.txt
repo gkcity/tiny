@@ -10,6 +10,7 @@ SET(String_Header
         tiny_str_get_value.h
         tiny_str_split.h
         tiny_url_split.h
+        tiny_buffer_append.h
     )
 
 SET(String_Source
@@ -18,6 +19,7 @@ SET(String_Source
         tiny_str_get_value.c
         tiny_str_split.c
         tiny_url_split.c
+        tiny_buffer_append.c
     )
 
 SET(SRC
