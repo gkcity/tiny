@@ -68,9 +68,9 @@ void SocketChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *t
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
 
-        if (thiz->getTimeout != NULL)
+        if (thiz->_getTimeout != NULL)
         {
-            if (RET_SUCCEEDED(thiz->getTimeout(thiz, timer, NULL)))
+            if (RET_SUCCEEDED(thiz->_getTimeout(thiz, timer, NULL)))
             {
                 timer->fd = thiz->fd;
             }
@@ -202,14 +202,14 @@ static TinyRet SocketChannel_Construct(Channel *thiz)
         TinyList_SetDeleteListener(&thiz->handlers, _OnHandlerRemoved, NULL);
 
         thiz->fd = -1;
-        thiz->onRegister = SocketChannel_OnRegister;
-        thiz->onReadWrite = SocketChannel_OnReadWrite;
-        thiz->onRemove = SocketChannel_Delete;
-        thiz->onActive = SocketChannel_OnActive;
-        thiz->onInactive = SocketChannel_OnInactive;
-        thiz->onEventTriggered = SocketChannel_OnEventTriggered;
-        thiz->getTimeout = SocketChannel_GetTimeout;
-        thiz->close = SocketChannel_Close;
+        thiz->_onRegister = SocketChannel_OnRegister;
+        thiz->_onReadWrite = SocketChannel_OnReadWrite;
+        thiz->_onRemove = SocketChannel_Delete;
+        thiz->_onActive = SocketChannel_OnActive;
+        thiz->_onInactive = SocketChannel_OnInactive;
+        thiz->_onEventTriggered = SocketChannel_OnEventTriggered;
+        thiz->_getTimeout = SocketChannel_GetTimeout;
+        thiz->_close = SocketChannel_Close;
     } while (0);
 
     return ret;
@@ -258,7 +258,7 @@ void SocketChannel_Initialize(Channel *thiz, ChannelInitializer initializer, voi
     RETURN_IF_FAIL(initializer);
 
     initializer(thiz, ctx);
-    thiz->onActive(thiz);
+    thiz->_onActive(thiz);
 }
 
 TINY_LOR

@@ -25,7 +25,7 @@ static TinyRet MyClientHandler_Dispose(ChannelHandler *thiz);
 static void MyClientHandler_Delete(ChannelHandler *thiz);
 static void _channelActive(ChannelHandler *thiz, Channel *channel);
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
-static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event);
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer);
 
 ChannelHandler * MyClientHandler(void)
 {
@@ -142,10 +142,8 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     return true;
 }
 
-static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event)
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer)
 {
-    ChannelTimer *timer = (ChannelTimer *)event;
-
     LOG_E(TAG, "_channelEvent: %s", channel->id);
 
     switch (timer->type)
@@ -160,6 +158,9 @@ static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event)
 
         case CHANNEL_TIMER_ALL:
             LOG_E(TAG, "IDLE_ALL");
+            break;
+
+        default:
             break;
     }
 

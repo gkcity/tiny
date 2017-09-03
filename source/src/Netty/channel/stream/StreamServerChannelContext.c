@@ -19,7 +19,7 @@ TINY_LOR
 static void _OnChannelRemoved(void * data, void *ctx)
 {
     Channel *channel = (Channel *)data;
-    channel->onRemove(channel);
+    channel->_onRemove(channel);
 }
 
 TINY_LOR

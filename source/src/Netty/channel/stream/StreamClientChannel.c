@@ -61,9 +61,9 @@ static void StreamClientChannel_OnRegister(Channel *thiz, Selector *selector, Ch
         Selector_Register(selector, thiz->fd, SELECTOR_OP_ALL);
         LOG_D(TAG, "StreamClientChannel_OnRegister: %d", thiz->fd);
 
-        if (thiz->getTimeout != NULL)
+        if (thiz->_getTimeout != NULL)
         {
-            if (RET_SUCCEEDED(thiz->getTimeout(thiz, timer, NULL)))
+            if (RET_SUCCEEDED(thiz->_getTimeout(thiz, timer, NULL)))
             {
                 timer->fd = thiz->fd;
             }
@@ -94,7 +94,7 @@ static TinyRet StreamClientChannel_OnReadWrite(Channel *thiz, Selector *selector
             return TINY_RET_E_SOCKET_DISCONNECTED;
         }
 
-        thiz->onActive(thiz);
+        thiz->_onActive(thiz);
     }
 
     return TINY_RET_OK;
@@ -112,11 +112,11 @@ static void StreamClientChannel_OnActive(Channel *thiz)
         ((StreamClientChannelContext *) thiz->ctx)->initializer(thiz, ((StreamClientChannelContext *) thiz->ctx)->initializerContext);
     }
 
-    thiz->onActive = SocketChannel_OnActive;
-    thiz->onReadWrite = SocketChannel_OnReadWrite;
-    thiz->onRegister = SocketChannel_OnRegister;
-    thiz->getTimeout = SocketChannel_GetTimeout;
-    thiz->onActive(thiz);
+    thiz->_onActive = SocketChannel_OnActive;
+    thiz->_onReadWrite = SocketChannel_OnReadWrite;
+    thiz->_onRegister = SocketChannel_OnRegister;
+    thiz->_getTimeout = SocketChannel_GetTimeout;
+    thiz->_onActive(thiz);
 }
 
 TINY_LOR
@@ -128,12 +128,12 @@ static TinyRet StreamClientChannel_Construct(Channel *thiz)
 
     do
     {
-        thiz->onRegister = StreamClientChannel_OnRegister;
-        thiz->onRemove = StreamClientChannel_OnRemove;
-        thiz->onActive = StreamClientChannel_OnActive;
-        thiz->onReadWrite = StreamClientChannel_OnReadWrite;
+        thiz->_onRegister = StreamClientChannel_OnRegister;
+        thiz->_onRemove = StreamClientChannel_OnRemove;
+        thiz->_onActive = StreamClientChannel_OnActive;
+        thiz->_onReadWrite = StreamClientChannel_OnReadWrite;
 
-        thiz->getTimeout = StreamClientChannel_GetConnectingTimeout;
+        thiz->_getTimeout = StreamClientChannel_GetConnectingTimeout;
 
         thiz->ctx = StreamClientChannelContext_New();
         if (thiz->ctx == NULL)
@@ -222,7 +222,7 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
             break;
         }
 
-        thiz->onActive(thiz);
+        thiz->_onActive(thiz);
     } while (0);
 
     return ret;

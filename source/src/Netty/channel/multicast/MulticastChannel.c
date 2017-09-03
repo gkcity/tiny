@@ -52,9 +52,9 @@ static void MulticastChannel_OnRegister(Channel *thiz, Selector *selector, Chann
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
         LOG_D(TAG, "MulticastChannel_OnRegister: %d", thiz->fd);
 
-        if (thiz->getTimeout != NULL)
+        if (thiz->_getTimeout != NULL)
         {
-            if (RET_SUCCEEDED(thiz->getTimeout(thiz, timer, NULL)))
+            if (RET_SUCCEEDED(thiz->_getTimeout(thiz, timer, NULL)))
             {
                 timer->fd = thiz->fd;
             }
@@ -117,12 +117,12 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
         strncpy(thiz->id, "MulticastChannel", CHANNEL_ID_LEN);
         printf("%s\n", thiz->id);
 
-        thiz->onRegister = MulticastChannel_OnRegister;
-        thiz->onRemove = MulticastChannel_OnRemove;
-        thiz->onReadWrite = MulticastChannel_OnReadWrite;
+        thiz->_onRegister = MulticastChannel_OnRegister;
+        thiz->_onRemove = MulticastChannel_OnRemove;
+        thiz->_onReadWrite = MulticastChannel_OnReadWrite;
 
-        thiz->onActive = SocketChannel_OnActive;
-        thiz->onInactive = SocketChannel_OnInactive;
+        thiz->_onActive = SocketChannel_OnActive;
+        thiz->_onInactive = SocketChannel_OnInactive;
 
         thiz->ctx = MulticastChannelContext_New();
         if (thiz->ctx == NULL)

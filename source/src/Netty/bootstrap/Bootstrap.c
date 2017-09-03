@@ -160,8 +160,8 @@ TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
     ret = (int)tiny_sendto(channel->fd, BOOTSTRAP_SHUTDOWN, length, 0, (struct sockaddr *)&to, (socklen_t)to_len);
     LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopbackPort, ret);
 
-    channel->close(channel);
-    channel->onRemove(channel);
+    channel->_close(channel);
+    channel->_onRemove(channel);
 
     return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
 }
@@ -170,7 +170,7 @@ TINY_LOR
 static void _OnChannelRemoved(void * data, void *ctx)
 {
     Channel *channel = (Channel *) data;
-    channel->onRemove(channel);
+    channel->_onRemove(channel);
 }
 
 TINY_LOR
@@ -201,7 +201,7 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
         Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
-        channel->onRegister(channel, selector, &thiz->timer);
+        channel->_onRegister(channel, selector, &thiz->timer);
     }
 
     thiz->selector.us = (thiz->timer.valid) ? thiz->timer.timeout : 0;
@@ -221,10 +221,10 @@ static TinyRet _PostSelect(Selector *selector, void *ctx)
         Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
         if (Channel_IsActive(channel))
         {
-            if (RET_FAILED(channel->onReadWrite(channel, selector)))
+            if (RET_FAILED(channel->_onReadWrite(channel, selector)))
             {
                 LOG_D(TAG, "channel [%d] read or write failed", channel->fd);
-                channel->onInactive(channel);
+                channel->_onInactive(channel);
                 Channel_Close(channel);
                 continue;
             }
@@ -244,7 +244,7 @@ static TinyRet _OnSelectTimeout(Selector *selector, void *ctx)
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
         Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
-        channel->onEventTriggered(channel, &thiz->timer);
+        channel->_onEventTriggered(channel, &thiz->timer);
     }
 
     return TINY_RET_OK;

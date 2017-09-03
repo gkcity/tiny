@@ -24,7 +24,7 @@ static TinyRet ExampleHandler_Construct(ChannelHandler *thiz);
 static TinyRet ExampleHandler_Dispose(ChannelHandler *thiz);
 static void ExampleHandler_Delete(ChannelHandler *thiz);
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
-static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event);
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer);
 
 ChannelHandler * ExampleHandler(void)
 {
@@ -112,7 +112,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     return true;
 }
 
-static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event)
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer)
 {
     LOG_D(TAG, "_channelEvent: %s", channel->id);
 
