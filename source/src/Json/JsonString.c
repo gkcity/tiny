@@ -20,8 +20,9 @@ TINY_LOR
 static TinyRet JsonString_Construct(JsonString *thiz, const char *value)
 {
     memset(thiz, 0, sizeof(JsonString));
-    thiz->length = strlen(value);
-    thiz->value = tiny_malloc(thiz->length);
+
+    thiz->length = strlen(value) + 1;
+    thiz->value = (char *) tiny_malloc(thiz->length);
     if (thiz->value == NULL)
     {
         return TINY_RET_E_NEW;

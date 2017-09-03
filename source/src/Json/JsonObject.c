@@ -81,12 +81,13 @@ void JsonObject_Dispose(JsonObject *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    TinyMap_Dispose(&thiz->data);
-
-    if (thiz->string == NULL)
+    if (thiz->string != NULL)
     {
         tiny_free(thiz->string);
+        thiz->string = NULL;
     }
+
+    TinyMap_Dispose(&thiz->data);
 }
 
 TINY_LOR
@@ -107,13 +108,13 @@ TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
         tiny_free(thiz->string);
     }
 
-    thiz->string = tiny_malloc((size_t)length);
+    thiz->string = tiny_malloc((size_t)length + 1);
     if (thiz->string == NULL)
     {
         return TINY_RET_E_NEW;
     }
 
-    memset(thiz->string, 0, (size_t)length);
+    memset(thiz->string, 0, (size_t)length + 1);
 
     JsonObject_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
 

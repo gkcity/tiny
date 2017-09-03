@@ -94,7 +94,7 @@ static int test3(void)
     ret = JsonObject_PutFloat(home, "temp", 10.0);
     RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
 
-    ret = JsonObject_PutString(home, "name", "hello");
+    ret = JsonObject_PutString(home, "name", "ouyangchengfeng");
     RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
 
     ret = JsonObject_PutBoolean(home, "married", true);

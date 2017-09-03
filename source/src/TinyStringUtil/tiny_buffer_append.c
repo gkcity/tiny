@@ -24,7 +24,7 @@ int tiny_buffer_append(char *buf, uint32_t length, uint32_t offset, const char *
 
     if (buf != NULL)
     {
-        if (size > (length - offset))
+        if (size > (int)(length - offset))
         {
             LOG_E(TAG, "buffer size too small");
             return 0;
