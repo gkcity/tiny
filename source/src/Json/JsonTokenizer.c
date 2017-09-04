@@ -10,6 +10,7 @@
  *
  */
 
+#include <ctype.h>
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <tiny_char_util.h>
@@ -20,12 +21,13 @@
 
 typedef enum _TokenParseResult
 {
-    TOKEN_PARSE_OK = 0,
-    TOKEN_PARSE_OK_BUT_OUT_OF_MEMORY = 1,
-    TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED = 2,
-    TOKEN_PARSE_E_INVALID_VALUE = 3,
-    TOKEN_PARSE_E_EXPECT_VALUE = 4,
-    TOKEN_PARSE_E_INVALID_STRING = 5,
+    TOKEN_PARSE_OK                      = 0,
+    TOKEN_PARSE_OK_BUT_OUT_OF_MEMORY    = 1,
+    TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED  = 2,
+    TOKEN_PARSE_E_INVALID_VALUE         = 3,
+    TOKEN_PARSE_E_EXPECT_VALUE          = 4,
+    TOKEN_PARSE_E_INVALID_STRING        = 5,
+    TOKEN_PARSE_E_INVALID_NUMBER        = 6,
 } TokenParseResult;
 
 TINY_LOR
@@ -200,7 +202,7 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
     do
     {
         uint32_t offset = (uint32_t) (thiz->current - thiz->string);
-        const char *p = thiz->current;
+        const char *start = thiz->current;
 
         thiz->current ++;
 
@@ -236,10 +238,16 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
 
             else if (c == '"')
             {
+                thiz->current ++;
                 break;
             }
 
-            else
+            else if (isprint(c))
+            {
+                thiz->current ++;
+            }
+
+            else 
             {
                 result = TOKEN_PARSE_E_INVALID_STRING;
             }
@@ -255,7 +263,131 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
             break;
         }
 
-        JsonToken * token = JsonToken_New(JSON_TOKEN_STRING, offset, (uint32_t)(thiz->current - p));
+        JsonToken * token = JsonToken_New(JSON_TOKEN_STRING, offset, (uint32_t)(thiz->current - start));
+        if (token == NULL)
+        {
+            result = TOKEN_PARSE_OK_BUT_OUT_OF_MEMORY;
+            break;
+        }
+
+        if (RET_FAILED(TinyList_AddTail(&thiz->tokens, token)))
+        {
+            result = TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
+            break;
+        }
+    } while (false);
+
+    return result;
+}
+
+TINY_LOR
+static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
+{
+    TokenParseResult result = TOKEN_PARSE_OK;
+
+    do
+    {
+        uint32_t offset = (uint32_t)(thiz->current - thiz->string);
+        const char *start = thiz->current;
+        char c = *thiz->current;
+
+        do
+        {
+            if (c == '-')
+            {
+                thiz->current++;
+                c = *thiz->current;
+            }
+
+            if (c == '0')
+            {
+                thiz->current++;
+                c = *thiz->current;
+            }
+            else if (c >= '1' && c <= '9')
+            {
+                thiz->current++;
+                c = *thiz->current;
+
+                while (isdigit(c))
+                {
+                    thiz->current++;
+                    c = *thiz->current;
+                }
+            }
+            else 
+            {
+                result = TOKEN_PARSE_E_INVALID_NUMBER;
+                break;
+            }
+
+            if (c == '.')
+            {
+                thiz->current++;
+                c = *thiz->current;
+            }
+            else if (c == ' ' || c == '\r' || c == '\n' || c == '\t' || c == '}' || c == ']' || c == ',')
+            {
+                break;
+            }
+            else 
+            {
+                result = TOKEN_PARSE_E_INVALID_NUMBER;
+                break;
+            }
+
+            while (isdigit(c))
+            {
+                thiz->current++;
+                c = *thiz->current;
+            }
+
+            if (c == ' ' || c == '\r' || c == '\n' || c == '\t' || c == '}' || c == ']')
+            {
+                break;
+            }
+            else if (c == 'e' || c == 'E')
+            {
+                thiz->current++;
+                c = *thiz->current;
+
+                if (c == '+' || c == '-') 
+                {
+                    while (isdigit(c))
+                    {
+                        thiz->current++;
+                        c = *thiz->current;
+                    }
+
+                    if (c == ' ' || c == '\r' || c == '\n' || c == '\t' || c == '}' || c == ']')
+                    {
+                        break;
+                    }
+                    else 
+                    {
+                        result = TOKEN_PARSE_E_INVALID_NUMBER;
+                        break;
+                    }
+                }
+                else 
+                {
+                    result = TOKEN_PARSE_E_INVALID_NUMBER;
+                    break;
+                }
+            }
+            else 
+            {
+                result = TOKEN_PARSE_E_INVALID_NUMBER;
+                break;
+            }
+        } while (false);
+
+        if (result != TOKEN_PARSE_OK)
+        {
+            break;
+        }
+
+        JsonToken * token = JsonToken_New(JSON_TOKEN_NUMBER, offset, (uint32_t)(thiz->current - start));
         if (token == NULL)
         {
             result = TOKEN_PARSE_OK_BUT_OUT_OF_MEMORY;
@@ -313,6 +445,19 @@ static TokenParseResult JsonTokenizer_ParseToken(JsonTokenizer *thiz)
 
         case '"':
             return JsonTokenizer_ParseString(thiz);
+
+        case '-':
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            return JsonTokenizer_ParseNumber(thiz);
 
         default:
             return TOKEN_PARSE_E_INVALID_VALUE;
@@ -377,6 +522,9 @@ const char * JsonToken_TypeToString(JsonTokenType type)
 
         case JSON_TOKEN_STRING:
             return "String     ";
+
+        case JSON_TOKEN_NUMBER:
+            return "Number     ";
 
         default:
             return "UNDEFINED  ";

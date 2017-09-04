@@ -30,9 +30,7 @@ typedef enum _JsonTokenType
     JSON_TOKEN_TRUE             = 8,
     JSON_TOKEN_FALSE            = 9,
     JSON_TOKEN_STRING           = 10,
-
-//    JSON_TOKEN_NUMBER           = 6,
-//    JSON_TOKEN_END_DOC          = 11
+    JSON_TOKEN_NUMBER           = 11,
 } JsonTokenType;
 
 typedef struct _JsonToken
