@@ -43,6 +43,10 @@ TINY_API
 TINY_LOR
 int is_digit(int c);
 
+TINY_LOR
+TINY_API
+bool is_hex(char c);
+
 
 TINY_END_DECLS
 

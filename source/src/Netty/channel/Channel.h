@@ -62,7 +62,7 @@ struct _Channel
 
 #define Channel_IsActive(thiz)      ((thiz)->fd >= 0)
 #define Channel_IsClosed(thiz)      ((thiz)->fd < 0)
-#define Channel_Close(thiz)         { if (thiz->fd != -1) {tiny_socket_close((thiz)->fd); (thiz)->fd = -1;} }
+#define Channel_Close(thiz)         { if ((thiz)->fd != -1) {tiny_socket_close((thiz)->fd); (thiz)->fd = -1;} }
 
 
 TINY_END_DECLS

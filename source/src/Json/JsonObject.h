@@ -45,6 +45,10 @@ void JsonObject_Dispose(JsonObject *thiz);
 
 TINY_LOR
 TINY_API
+TinyRet JsonObject_Decode(JsonObject *thiz, const char *string);
+
+TINY_LOR
+TINY_API
 TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty);
 
 TINY_LOR

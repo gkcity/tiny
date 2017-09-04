@@ -10,6 +10,8 @@ SET(Json_Header
         JsonString.h
         JsonNumber.h
         JsonObject.h
+        JsonTokenizer.h
+        JsonToken.h
     )
 
 SET(Json_Source
@@ -18,7 +20,9 @@ SET(Json_Source
         JsonString.c
         JsonNumber.c
         JsonObject.c
-    )
+        JsonTokenizer.c
+        JsonToken.c
+        )
 
 SET(SRC
         ${Json_Header}

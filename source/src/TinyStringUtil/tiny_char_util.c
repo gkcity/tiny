@@ -49,6 +49,12 @@ int is_digit(int c)
     return c >= '0' && c <= '9';
 }
 
+TINY_LOR
+bool is_hex(char c)
+{
+    return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+}
+
 //TINY_LOR
 //int tolower_compare(char a, char b)
 //{

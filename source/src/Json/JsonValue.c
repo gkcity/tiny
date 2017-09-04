@@ -26,7 +26,7 @@
 static
 TinyRet JsonValue_Construct(JsonValue *thiz)
 {
-    memset(thiz, 0, sizeof(thiz));
+    memset(thiz, 0, sizeof(JsonValue));
     thiz->type = JSON_UNDEFINED;
 
     return TINY_RET_OK;

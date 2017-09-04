@@ -91,34 +91,12 @@ void JsonObject_Dispose(JsonObject *thiz)
 }
 
 TINY_LOR
-TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
+TinyRet JsonObject_Decode(JsonObject *thiz, const char *string)
 {
-    int length = 0;
-
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(string, TINY_RET_E_ARG_NULL);
 
-    length = JsonObject_ToString(thiz, pretty, 0, NULL, 0, 0);
-    if (length < 0)
-    {
-        return TINY_RET_E_INTERNAL;
-    }
-
-    if (thiz->string != NULL)
-    {
-        tiny_free(thiz->string);
-    }
-
-    thiz->string = tiny_malloc((size_t)length + 1);
-    if (thiz->string == NULL)
-    {
-        return TINY_RET_E_NEW;
-    }
-
-    memset(thiz->string, 0, (size_t)length + 1);
-
-    JsonObject_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
-
-    return TINY_RET_OK;
+    return TINY_RET_E_NOT_IMPLEMENTED;
 }
 
 TINY_LOR
@@ -180,6 +158,37 @@ int JsonObject_ToString(JsonObject *thiz, bool pretty, int depth, char *buf, uin
     size += tiny_buffer_append(buf, length, offset + size, "}");
 
     return size;
+}
+
+TINY_LOR
+TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
+{
+    int length = 0;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    length = JsonObject_ToString(thiz, pretty, 0, NULL, 0, 0);
+    if (length < 0)
+    {
+        return TINY_RET_E_INTERNAL;
+    }
+
+    if (thiz->string != NULL)
+    {
+        tiny_free(thiz->string);
+    }
+
+    thiz->string = tiny_malloc((size_t)length + 1);
+    if (thiz->string == NULL)
+    {
+        return TINY_RET_E_NEW;
+    }
+
+    memset(thiz->string, 0, (size_t)length + 1);
+
+    JsonObject_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
+
+    return TINY_RET_OK;
 }
 
 TINY_LOR
