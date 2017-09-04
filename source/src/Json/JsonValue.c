@@ -150,7 +150,7 @@ JsonValue * JsonValue_NewArray(JsonArray *value)
 }
 
 TINY_LOR
-JsonValue * JsonValue_NewNull(JsonArray *value)
+JsonValue * JsonValue_NewNull()
 {
     JsonValue * thiz = JsonValue_New();
     if (thiz != NULL)

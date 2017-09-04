@@ -18,10 +18,10 @@
 #ifndef __TINY_LIST_H__
 #define __TINY_LIST_H__
 
-#include "tiny_api.h"
-#include "tiny_base.h"
-#include "TinyContainerListener.h"
+#include <tiny_api.h>
+#include <tiny_base.h>
 #include <tiny_lor.h>
+#include "TinyContainerListener.h"
 
 TINY_BEGIN_DECLS
 
@@ -73,13 +73,13 @@ TINY_API
 TINY_LOR
 void TinyList_SetDeleteListener(TinyList * thiz, TinyContainerItemDeleteListener listener, void *ctx);
 
-//TINY_API
-//TINY_LOR
-//void * TinyList_GetHead(TinyList * thiz);
-//
-//TINY_API
-//TINY_LOR
-//void * TinyList_GetTail(TinyList * thiz);
+TINY_API
+TINY_LOR
+void * TinyList_GetHead(TinyList * thiz);
+
+TINY_API
+TINY_LOR
+void * TinyList_GetTail(TinyList * thiz);
 
 TINY_API
 TINY_LOR
@@ -93,14 +93,14 @@ TINY_API
 TINY_LOR
 TinyRet TinyList_RemoveAll(TinyList * thiz);
 
-//TINY_API
-//TINY_LOR
-//TinyRet TinyList_RemoveHead(TinyList * thiz);
-//
-//TINY_API
-//TINY_LOR
-//TinyRet TinyList_RemoveTail(TinyList * thiz);
-//
+TINY_API
+TINY_LOR
+TinyRet TinyList_RemoveHead(TinyList * thiz);
+
+TINY_API
+TINY_LOR
+TinyRet TinyList_RemoveTail(TinyList * thiz);
+
 //TINY_API
 //TINY_LOR
 //int TinyList_GetHeadPosition(TinyList * thiz);

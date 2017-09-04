@@ -87,7 +87,7 @@ JsonValue * JsonValue_NewArray(JsonArray *value);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewNull(JsonArray *value);
+JsonValue * JsonValue_NewNull(void);
 
 TINY_LOR
 TINY_API

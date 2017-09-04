@@ -16,8 +16,8 @@
  */
 
 #include "TinyList.h"
-#include "../TinyPortable/tiny_malloc.h"
-#include "tiny_log.h"
+#include <tiny_malloc.h>
+#include <tiny_log.h>
 
 /*-----------------------------------------------------------------------------
  *
@@ -168,53 +168,53 @@ void TinyList_SetDeleteListener(TinyList * thiz, TinyContainerItemDeleteListener
     thiz->data_delete_listener_ctx = ctx;
 }
 
-//TINY_LOR
-//void * TinyList_GetHead(TinyList * thiz)
-//{
-//    void *data = NULL;
-//
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    do
-//    {
-//        TinyNode * head = thiz->first;
-//        if (head != NULL)
-//        {
-//            data = head->data;
-//            break;
-//        }
-//    }
-//    while (false);
-//
-//    return data;
-//}
-//
-//TINY_LOR
-//void * TinyList_GetTail(TinyList * thiz)
-//{
-//    void *data = NULL;
-//
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    do
-//    {
-//        TinyNode* tail = thiz->first;
-//        if (tail == NULL)
-//        {
-//            break;
-//        }
-//
-//        while (tail->next)
-//        {
-//            tail = tail->next;
-//        }
-//
-//        data = tail->data;
-//    }
-//    while (false);
-//
-//    return data;
-//}
+TINY_LOR
+void * TinyList_GetHead(TinyList * thiz)
+{
+    void *data = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+
+    do
+    {
+        TinyNode * head = thiz->first;
+        if (head != NULL)
+        {
+            data = head->data;
+            break;
+        }
+    }
+    while (false);
+
+    return data;
+}
+
+TINY_LOR
+void * TinyList_GetTail(TinyList * thiz)
+{
+    void *data = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+
+    do
+    {
+        TinyNode* tail = thiz->first;
+        if (tail == NULL)
+        {
+            break;
+        }
+
+        while (tail->next)
+        {
+            tail = tail->next;
+        }
+
+        data = tail->data;
+    }
+    while (false);
+
+    return data;
+}
 
 TINY_LOR
 TinyRet TinyList_AddHead(TinyList * thiz, void *data)
@@ -327,82 +327,82 @@ TinyRet TinyList_RemoveAll(TinyList * thiz)
     return ret;
 }
 
-//TINY_LOR
-//TinyRet TinyList_RemoveHead(TinyList * thiz)
-//{
-//    TinyRet ret = TINY_RET_OK;
-//    TinyNode * head = NULL;
-//
-//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-//
-//    do
-//    {
-//        if (thiz->first == NULL)
-//        {
-//            ret = TINY_RET_OK;
-//            break;
-//        }
-//
-//        head = thiz->first;
-//        if (head)
-//        {
-//            thiz->first = head->next;
-//            if (head->next)
-//            {
-//                head->next->prev = NULL;
-//            }
-//
-//            TinyNode_Delete(thiz, head);
-//        }
-//
-//        ret = TINY_RET_OK;
-//    }
-//    while (false);
-//
-//    return ret;
-//}
-//
-//TINY_LOR
-//TinyRet TinyList_RemoveTail(TinyList * thiz)
-//{
-//    TinyRet ret = TINY_RET_OK;
-//    TinyNode * tail = NULL;
-//
-//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-//
-//    do
-//    {
-//
-//        if (thiz->first == NULL)
-//        {
-//            ret = TINY_RET_OK;
-//            break;
-//        }
-//
-//        tail = thiz->first;
-//        while (tail->next)
-//        {
-//            tail = tail->next;
-//        }
-//
-//        if (tail->prev != NULL)
-//        {
-//            tail->prev->next = NULL;
-//        }
-//        else
-//        {
-//            thiz->first = NULL;
-//        }
-//
-//        TinyNode_Delete(thiz, tail);
-//
-//        ret = TINY_RET_OK;
-//    }
-//    while (false);
-//
-//    return ret;
-//}
-//
+TINY_LOR
+TinyRet TinyList_RemoveHead(TinyList * thiz)
+{
+    TinyRet ret = TINY_RET_OK;
+    TinyNode * head = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    do
+    {
+        if (thiz->first == NULL)
+        {
+            ret = TINY_RET_OK;
+            break;
+        }
+
+        head = thiz->first;
+        if (head)
+        {
+            thiz->first = head->next;
+            if (head->next)
+            {
+                head->next->prev = NULL;
+            }
+
+            TinyNode_Delete(thiz, head);
+        }
+
+        ret = TINY_RET_OK;
+    }
+    while (false);
+
+    return ret;
+}
+
+TINY_LOR
+TinyRet TinyList_RemoveTail(TinyList * thiz)
+{
+    TinyRet ret = TINY_RET_OK;
+    TinyNode * tail = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    do
+    {
+
+        if (thiz->first == NULL)
+        {
+            ret = TINY_RET_OK;
+            break;
+        }
+
+        tail = thiz->first;
+        while (tail->next)
+        {
+            tail = tail->next;
+        }
+
+        if (tail->prev != NULL)
+        {
+            tail->prev->next = NULL;
+        }
+        else
+        {
+            thiz->first = NULL;
+        }
+
+        TinyNode_Delete(thiz, tail);
+
+        ret = TINY_RET_OK;
+    }
+    while (false);
+
+    return ret;
+}
+
 //TINY_LOR
 //int TinyList_GetHeadPosition(TinyList * thiz)
 //{

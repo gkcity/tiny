@@ -28,7 +28,7 @@ typedef struct _JsonArray
 
 TINY_LOR
 TINY_API
-JsonArray * JsonArray_New(JsonValueType type);
+JsonArray * JsonArray_New(void);
 
 TINY_LOR
 TINY_API

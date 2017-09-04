@@ -15,8 +15,8 @@
 #include <tiny_snprintf.h>
 #include <tiny_buffer_append.h>
 #include "JsonObject.h"
-#include "JsonString.h"
 #include "JsonNumber.h"
+#include "JsonTokenizer.h"
 
 #define TAG     "JsonObject"
 
@@ -91,12 +91,27 @@ void JsonObject_Dispose(JsonObject *thiz)
 }
 
 TINY_LOR
-TinyRet JsonObject_Decode(JsonObject *thiz, const char *string)
+TINY_API
+JsonObject * JsonObject_NewString(const char *string)
 {
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-    RETURN_VAL_IF_FAIL(string, TINY_RET_E_ARG_NULL);
+    JsonObject *object = NULL;
+    JsonTokenizer tokenizer;
 
-    return TINY_RET_E_NOT_IMPLEMENTED;
+    RETURN_VAL_IF_FAIL(string, NULL);
+
+    if (RET_FAILED(JsonTokenizer_Construct(&tokenizer)))
+    {
+        return NULL;
+    }
+
+    if (RET_SUCCEEDED(JsonTokenizer_Parse(&tokenizer, string)))
+    {
+        object = JsonTokenizer_ConvertToObject(&tokenizer);
+    }
+
+    JsonTokenizer_Dispose(&tokenizer);
+
+    return object;
 }
 
 TINY_LOR
@@ -327,6 +342,35 @@ TinyRet JsonObject_PutBoolean(JsonObject *thiz, const char *key, bool value)
 }
 
 TINY_LOR
+TinyRet JsonObject_PutNull(JsonObject *thiz, const char *key)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(key, TINY_RET_E_ARG_NULL);
+
+    do
+    {
+        JsonValue * v = JsonValue_NewNull();
+        if (v == NULL)
+        {
+            LOG_E(TAG, "JsonValue_NewNull FAILED!");
+            ret = TINY_RET_E_NEW;
+            break;
+        }
+
+        ret = TinyMap_Insert(&thiz->data, key, v);
+        if (RET_FAILED(ret))
+        {
+            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            JsonValue_Delete(v);
+        }
+    } while (false);
+
+    return ret;
+}
+
+TINY_LOR
 TinyRet JsonObject_PutObject(JsonObject *thiz, const char *key, JsonObject *value)
 {
 	TinyRet ret = TINY_RET_OK;
@@ -384,4 +428,25 @@ TinyRet JsonObject_PutArray(JsonObject *thiz, const char *key, JsonArray *value)
     } while (false);
 
     return ret;
+}
+
+TINY_LOR
+TINY_API
+TinyRet JsonObject_PutNumber(JsonObject *thiz, const char *key, JsonNumber *value)
+{
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(key, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
+
+    switch (value->type)
+    {
+        case JSON_NUMBER_INTEGER:
+            return JsonObject_PutInteger(thiz, key, value->value.intValue);
+
+        case JSON_NUMBER_FLOAT:
+            return JsonObject_PutInteger(thiz, key, value->value.intValue);
+
+        default:
+            return TINY_RET_E_ARG_INVALID;
+    }
 }

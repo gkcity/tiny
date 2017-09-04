@@ -33,6 +33,10 @@ JsonObject * JsonObject_New(void);
 
 TINY_LOR
 TINY_API
+JsonObject * JsonObject_NewString(const char *string);
+
+TINY_LOR
+TINY_API
 void JsonObject_Delete(JsonObject *thiz);
 
 TINY_LOR
@@ -42,10 +46,6 @@ TinyRet JsonObject_Construct(JsonObject *thiz);
 TINY_LOR
 TINY_API
 void JsonObject_Dispose(JsonObject *thiz);
-
-TINY_LOR
-TINY_API
-TinyRet JsonObject_Decode(JsonObject *thiz, const char *string);
 
 TINY_LOR
 TINY_API
@@ -81,11 +81,19 @@ TinyRet JsonObject_PutBoolean(JsonObject *thiz, const char *key, bool value);
 
 TINY_LOR
 TINY_API
+TinyRet JsonObject_PutNull(JsonObject *thiz, const char *key);
+
+TINY_LOR
+TINY_API
 TinyRet JsonObject_PutObject(JsonObject *thiz, const char *key, JsonObject *value);
 
 TINY_LOR
 TINY_API
 TinyRet JsonObject_PutArray(JsonObject *thiz, const char *key, JsonArray *value);
+
+TINY_LOR
+TINY_API
+TinyRet JsonObject_PutNumber(JsonObject *thiz, const char *key, JsonNumber *value);
 
 
 

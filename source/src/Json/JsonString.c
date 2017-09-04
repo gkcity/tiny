@@ -21,15 +21,18 @@ static TinyRet JsonString_Construct(JsonString *thiz, const char *value)
 {
     memset(thiz, 0, sizeof(JsonString));
 
-    thiz->length = strlen(value) + 1;
-    thiz->value = (char *) tiny_malloc(thiz->length);
-    if (thiz->value == NULL)
+    if (value != NULL)
     {
-        return TINY_RET_E_NEW;
-    }
+        thiz->length = strlen(value) + 1;
+        thiz->value = (char *) tiny_malloc(thiz->length);
+        if (thiz->value == NULL)
+        {
+            return TINY_RET_E_NEW;
+        }
 
-    memset(thiz->value, 0, thiz->length);
-    strncpy(thiz->value, value, thiz->length);
+        memset(thiz->value, 0, thiz->length);
+        strncpy(thiz->value, value, thiz->length);
+    }
 
     return TINY_RET_OK;
 }

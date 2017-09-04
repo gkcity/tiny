@@ -16,6 +16,9 @@
 #include <tiny_char_util.h>
 #include "JsonTokenizer.h"
 #include "JsonToken.h"
+#include "JsonNumber.h"
+#include "JsonString.h"
+#include "JsonArray.h"
 
 #define TAG     "JsonTokenizer"
 
@@ -29,6 +32,18 @@ typedef enum _TokenParseResult
     TOKEN_PARSE_E_INVALID_STRING        = 5,
     TOKEN_PARSE_E_INVALID_NUMBER        = 6,
 } TokenParseResult;
+
+typedef enum _TokenAnalystResult
+{
+    TOKEN_ANALYSIS_OK                                = 0,
+    TOKEN_ANALYSIS_E_OBJECT_START_NOT_FOUND          = 1,
+    TOKEN_ANALYSIS_E_OBJECT_END_NOT_FOUND            = 2,
+    TOKEN_ANALYSIS_E_OBJECT_KEY_NOT_FOUND            = 3,
+    TOKEN_ANALYSIS_E_OBJECT_COLON_NOT_FOUND          = 4,
+    TOKEN_ANALYSIS_E_OBJECT_VALUE_NOT_FOUND          = 5,
+    TOKEN_ANALYSIS_E_OBJECT_VALUE_INVALID            = 6,
+    TOKEN_ANALYSIS_E_OBJECT_END_UNNECESSARY_TOKEN    = 10,
+} TokenAnalystResult;
 
 TINY_LOR
 static void _OnTokenDelete (void * data, void *ctx)
@@ -214,25 +229,35 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
             {
                 thiz->current ++;
                 c = *thiz->current;
-                if (c == '"' || c == '\\' || c == '/' || c == 'b' || c == 'f' || c == 'n' || c == 'r' || c == 't')
+
+                switch (c)
                 {
-                    thiz->current ++;
-                }
-                else if (c == 'u')
-                {
-                    thiz->current++;
-                    if (is_hex(thiz->current[0]) && is_hex(thiz->current[1]) && is_hex(thiz->current[2]) && is_hex(thiz->current[3]))
-                    {
-                        thiz->current += 4;
-                    }
-                    else
-                    {
+                    case '"':
+                    case '\\':
+                    case '/':
+                    case 'b':
+                    case 'f':
+                    case 'n':
+                    case 'r':
+                    case 't':
+                        thiz->current ++;
+                        break;
+
+                    case 'u':
+                        thiz->current++;
+                        if (is_hex(thiz->current[0]) && is_hex(thiz->current[1]) && is_hex(thiz->current[2]) && is_hex(thiz->current[3]))
+                        {
+                            thiz->current += 4;
+                        }
+                        else
+                        {
+                            result = TOKEN_PARSE_E_INVALID_STRING;
+                        }
+                        break;
+
+                    default:
                         result = TOKEN_PARSE_E_INVALID_STRING;
-                    }
-                }
-                else
-                {
-                    result = TOKEN_PARSE_E_INVALID_STRING;
+                        break;
                 }
             }
 
@@ -542,5 +567,310 @@ void JsonTokenizer_Print(JsonTokenizer *thiz)
         memcpy(buf, thiz->string + token->offset, token->length);
         printf("token: %s (%d, %d) -> %s\n", JsonToken_TypeToString(token->type), token->offset, token->length, buf);
     }
+
+    printf("\n");
 }
 #endif
+
+
+TINY_LOR
+static JsonArray * JsonTokenizer_ToArray(JsonTokenizer *thiz)
+{
+    JsonArray * array = NULL;
+
+    do
+    {
+        array = JsonArray_New();
+        if (array == NULL)
+        {
+            break;
+        }
+
+        // TODO
+
+    } while (false);
+
+    return array;
+}
+
+TINY_LOR
+static JsonString * JsonTokenizer_ToString(JsonTokenizer *thiz, JsonToken *token)
+{
+    JsonString * string = NULL;
+
+    do
+    {
+        string = JsonString_New(NULL);
+        if (string == NULL)
+        {
+            break;
+        }
+
+        string->value = tiny_malloc(token->length + 1);
+        if (string->value == NULL)
+        {
+            JsonString_Delete(string);
+            string = NULL;
+            break;
+        }
+
+        memset(string->value, 0, token->length + 1);
+        memcpy(string->value, thiz->string + token->offset, token->length);
+        string->length = token->length;
+    } while (false);
+
+    return string;
+}
+
+TINY_LOR
+static JsonNumber * JsonTokenizer_ToNumber(JsonTokenizer *thiz, JsonToken *token)
+{
+    JsonNumber * number = NULL;
+
+    do
+    {
+        char value[128];
+
+        number = JsonNumber_NewInteger(0);
+        if (number == NULL)
+        {
+            break;
+        }
+
+        if (token->length >= 128)
+        {
+            JsonNumber_Delete(number);
+            number = NULL;
+            break;
+        }
+
+        memset(value, 0, 128);
+        memset(value, 0, token->length + 1);
+        memcpy(value, thiz->string + token->offset, token->length);
+    } while (false);
+
+    return number;
+}
+
+TINY_LOR
+static JsonObject * JsonTokenizer_ToObject(JsonTokenizer *thiz)
+{
+    TokenAnalystResult result = TOKEN_ANALYSIS_OK;
+    JsonObject *object = NULL;
+
+    do
+    {
+        JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index++);
+        if (token == NULL)
+        {
+            LOG_D(TAG, "JsonObject start token not found!");
+            break;
+        }
+
+        if (token->type != JSON_TOKEN_OBJECT_START)
+        {
+            LOG_D(TAG, "JsonObject start token invalid: %d", token->type);
+            break;
+        }
+
+        object = JsonObject_New();
+        if (object == NULL)
+        {
+            LOG_D(TAG, "JsonObject_New FAILED!");
+            break;
+        }
+
+        while ((thiz->tokens.size - thiz->index) >= 3)
+        {
+            char k[128];
+            JsonToken *key = TinyList_GetAt(&thiz->tokens, thiz->index++);
+            JsonToken *colon = TinyList_GetAt(&thiz->tokens, thiz->index++);
+            JsonToken *value = TinyList_GetAt(&thiz->tokens, thiz->index);
+
+            if (key == NULL)
+            {
+                LOG_D(TAG, "key not found");
+                result = TOKEN_ANALYSIS_E_OBJECT_KEY_NOT_FOUND;
+                break;
+            }
+
+            if (key->type != JSON_TOKEN_STRING)
+            {
+                LOG_D(TAG, "key type invalid: %d", key->type);
+                result = TOKEN_ANALYSIS_E_OBJECT_KEY_NOT_FOUND;
+                break;
+            }
+
+            if (colon == NULL)
+            {
+                LOG_D(TAG, "':' not found");
+                result = TOKEN_ANALYSIS_E_OBJECT_COLON_NOT_FOUND;
+                break;
+            }
+
+            if (colon->type != JSON_TOKEN_COLON)
+            {
+                LOG_D(TAG, "':' type invalid: %d", colon->type);
+                result = TOKEN_ANALYSIS_E_OBJECT_COLON_NOT_FOUND;
+                break;
+            }
+
+            if (value == NULL)
+            {
+                LOG_D(TAG, "value not found");
+                result = TOKEN_ANALYSIS_E_OBJECT_VALUE_NOT_FOUND;
+                break;
+            }
+
+            memset(k, 0, 128);
+            memcpy(k, thiz->string + key->offset + 1, key->length - 1);
+
+            switch (value->type)
+            {
+                case JSON_TOKEN_OBJECT_START:
+                {
+                    JsonObject *v = JsonTokenizer_ToObject(thiz);
+                    if (v != NULL)
+                    {
+                        JsonObject_PutObject(object, k, v);
+                    }
+                    else
+                    {
+                        result = TOKEN_ANALYSIS_E_OBJECT_VALUE_NOT_FOUND;
+                    }
+                    break;
+                }
+
+                case JSON_TOKEN_OBJECT_END:
+                    result = TOKEN_ANALYSIS_E_OBJECT_VALUE_INVALID;
+                    break;
+
+                case JSON_TOKEN_ARRAY_START:
+                {
+                    JsonArray *v = JsonTokenizer_ToArray(thiz);
+                    if (v != NULL)
+                    {
+                        JsonObject_PutArray(object, k, v);
+                    }
+                    else
+                    {
+                        result = TOKEN_ANALYSIS_E_OBJECT_VALUE_NOT_FOUND;
+                    }
+                    break;
+                }
+
+                case JSON_TOKEN_ARRAY_END:
+                    result = TOKEN_ANALYSIS_E_OBJECT_VALUE_INVALID;
+                    break;
+
+                case JSON_TOKEN_COMMA:
+                    result = TOKEN_ANALYSIS_E_OBJECT_VALUE_INVALID;
+                    break;
+
+                case JSON_TOKEN_COLON:
+                    result = TOKEN_ANALYSIS_E_OBJECT_VALUE_INVALID;
+                    break;
+
+                case JSON_TOKEN_NULL:
+                {
+                    JsonObject_PutNull(object, k);
+                    break;
+                }
+
+                case JSON_TOKEN_TRUE:
+                {
+                    JsonObject_PutBoolean(object, k, true);
+                    break;
+                }
+
+                case JSON_TOKEN_FALSE:
+                {
+                    JsonObject_PutBoolean(object, k, false);
+                    break;
+                }
+
+                case JSON_TOKEN_STRING:
+                {
+                    JsonString *v = JsonTokenizer_ToString(thiz, value);
+                    if (v != NULL)
+                    {
+                        JsonObject_PutString(object, k, v->value);
+                    }
+                    else
+                    {
+                        result = TOKEN_ANALYSIS_E_OBJECT_VALUE_NOT_FOUND;
+                    }
+                    break;
+                }
+
+                case JSON_TOKEN_NUMBER:
+                {
+                    JsonNumber *v = JsonTokenizer_ToNumber(thiz, value);
+                    if (v != NULL)
+                    {
+                        JsonObject_PutNumber(object, k, v);
+                    }
+                    else
+                    {
+                        result = TOKEN_ANALYSIS_E_OBJECT_VALUE_NOT_FOUND;
+                    }
+                    break;
+                }
+            }
+
+            if (result != TOKEN_ANALYSIS_OK)
+            {
+                break;
+            }
+
+            thiz->index++;
+
+            JsonToken *comma = TinyList_GetAt(&thiz->tokens, thiz->index);
+            if (comma->type != JSON_TOKEN_COMMA)
+            {
+                break;
+            }
+
+            thiz->index++;
+        }
+
+        if (result != TOKEN_ANALYSIS_OK)
+        {
+            JsonObject_Delete(object);
+            break;
+        }
+
+        token = TinyList_GetAt(&thiz->tokens, thiz->index++);
+        if (token == NULL)
+        {
+            JsonObject_Delete(object);
+            break;
+        }
+
+        if (token->type != JSON_TOKEN_OBJECT_END)
+        {
+            JsonObject_Delete(object);
+            break;
+        }
+
+        if (thiz->tokens.size > thiz->index)
+        {
+            JsonObject_Delete(object);
+            break;
+        }
+    } while (0);
+
+    return object;
+}
+
+TINY_LOR
+JsonObject * JsonTokenizer_ConvertToObject(JsonTokenizer *thiz)
+{
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+
+    JsonTokenizer_Print(thiz);
+
+    thiz->index = 0;
+
+    return JsonTokenizer_ToObject(thiz);
+}
