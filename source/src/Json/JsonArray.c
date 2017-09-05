@@ -31,13 +31,14 @@ static TinyRet JsonArray_Construct(JsonArray *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    thiz->type = JSON_UNDEFINED;
-
     ret = TinyList_Construct(&thiz->values);
     if (RET_SUCCEEDED(ret))
     {
         TinyList_SetDeleteListener(&thiz->values, _OnJsonValueDelete, thiz);
     }
+
+    thiz->type = JSON_UNDEFINED;
+    thiz->string = NULL;
 
     return ret;
 }
@@ -46,6 +47,12 @@ TINY_LOR
 static void JsonArray_Dispose(JsonArray *thiz)
 {
     RETURN_IF_FAIL(thiz);
+
+    if (thiz->string != NULL)
+    {
+        tiny_free(thiz->string);
+        thiz->string = NULL;
+    }
 
     TinyList_Dispose(&thiz->values);
 }
@@ -80,6 +87,37 @@ void JsonArray_Delete(JsonArray *thiz)
 {
     JsonArray_Dispose(thiz);
     tiny_free(thiz);
+}
+
+TINY_LOR
+TinyRet JsonArray_Encode(JsonArray *thiz, bool pretty)
+{
+    int length = 0;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    length = JsonArray_ToString(thiz, pretty, 0, NULL, 0, 0);
+    if (length < 0)
+    {
+        return TINY_RET_E_INTERNAL;
+    }
+
+    if (thiz->string != NULL)
+    {
+        tiny_free(thiz->string);
+    }
+
+    thiz->string = tiny_malloc((size_t)length + 1);
+    if (thiz->string == NULL)
+    {
+        return TINY_RET_E_NEW;
+    }
+
+    memset(thiz->string, 0, (size_t)length + 1);
+
+    JsonArray_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
+
+    return TINY_RET_OK;
 }
 
 TINY_LOR
@@ -129,6 +167,10 @@ TinyRet JsonArray_AddString(JsonArray *thiz, const char *value)
         }
 
         ret = TinyList_AddTail(&thiz->values, v);
+        if (RET_FAILED(ret))
+        {
+            JsonValue_Delete(v);
+        }
     } while (false);
 
     return ret;
@@ -158,6 +200,10 @@ TinyRet JsonArray_AddInteger(JsonArray *thiz, int value)
         }
 
         ret = TinyList_AddTail(&thiz->values, v);
+        if (RET_FAILED(ret))
+        {
+            JsonValue_Delete(v);
+        }
     } while (false);
 
     return ret;
@@ -187,6 +233,10 @@ TinyRet JsonArray_AddFloat(JsonArray *thiz, float value)
         }
 
         ret = TinyList_AddTail(&thiz->values, v);
+        if (RET_FAILED(ret))
+        {
+            JsonValue_Delete(v);
+        }
     } while (false);
 
     return ret;
@@ -217,6 +267,10 @@ TinyRet JsonArray_AddObject(JsonArray *thiz, JsonObject *value)
         }
 
         ret = TinyList_AddTail(&thiz->values, v);
+        if (RET_FAILED(ret))
+        {
+            JsonValue_Delete(v);
+        }
     } while (false);
 
     return ret;
@@ -247,13 +301,16 @@ TinyRet JsonArray_AddArray(JsonArray *thiz, JsonArray *value)
         }
 
         ret = TinyList_AddTail(&thiz->values, v);
+        if (RET_FAILED(ret))
+        {
+            JsonValue_Delete(v);
+        }
     } while (false);
 
     return ret;
 }
 
 TINY_LOR
-TINY_API
 TinyRet JsonArray_AddValue(JsonArray *thiz, JsonValue *value)
 {
     TinyRet ret = TINY_RET_OK;
@@ -265,6 +322,7 @@ TinyRet JsonArray_AddValue(JsonArray *thiz, JsonValue *value)
     {
         if (thiz->type != value->type)
         {
+            LOG_E(TAG, "JsonArray_AddValue FAILED, type invalid: %d", value->type);
             ret = TINY_RET_E_ARG_INVALID;
             break;
         }

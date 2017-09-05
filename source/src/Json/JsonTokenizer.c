@@ -733,6 +733,7 @@ static JsonArray * JsonTokenizer_PeakArray(JsonTokenizer *thiz)
         if (result != TOKEN_ANALYSIS_OK)
         {
             JsonArray_Delete(array);
+            array = NULL;
             break;
         }
     } while (false);
@@ -898,6 +899,7 @@ static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz)
             value = JsonTokenizer_PeakValue(thiz);
             if (value == NULL)
             {
+                LOG_D(TAG, "JsonValue invalid: %s", key);
                 result = TOKEN_ANALYSIS_E_OBJECT_VALUE_INVALID;
                 break;
             }

@@ -24,6 +24,7 @@ typedef struct _JsonArray
 {
     JsonValueType   type;
     TinyList        values;
+    char          * string;
 } JsonArray;
 
 TINY_LOR
@@ -33,6 +34,10 @@ JsonArray * JsonArray_New(void);
 TINY_LOR
 TINY_API
 void JsonArray_Delete(JsonArray *thiz);
+
+TINY_LOR
+TINY_API
+TinyRet JsonArray_Encode(JsonArray *thiz, bool pretty);
 
 TINY_LOR
 TINY_API
