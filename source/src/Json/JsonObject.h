@@ -95,6 +95,9 @@ TINY_LOR
 TINY_API
 TinyRet JsonObject_PutNumber(JsonObject *thiz, const char *key, JsonNumber *value);
 
+TINY_LOR
+TINY_API
+TinyRet JsonObject_PutValue(JsonObject *thiz, const char *key, JsonValue *value);
 
 
 TINY_END_DECLS

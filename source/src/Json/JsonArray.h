@@ -62,6 +62,10 @@ TINY_LOR
 TINY_API
 TinyRet JsonArray_AddArray(JsonArray *thiz, JsonArray *value);
 
+TINY_LOR
+TINY_API
+TinyRet JsonArray_AddValue(JsonArray *thiz, JsonValue *value);
+
 
 TINY_END_DECLS
 

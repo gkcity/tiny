@@ -91,7 +91,6 @@ void JsonObject_Dispose(JsonObject *thiz)
 }
 
 TINY_LOR
-TINY_API
 JsonObject * JsonObject_NewString(const char *string)
 {
     JsonObject *object = NULL;
@@ -131,7 +130,7 @@ int JsonObject_ToString(JsonObject *thiz, bool pretty, int depth, char *buf, uin
     for (uint32_t i = 0; i < thiz->data.list.size; ++i)
     {
         TinyMapItem *item = TinyList_GetAt(&thiz->data.list, i);
-        char tmp[64];
+        char key[64];
 
         if (pretty)
         {
@@ -141,8 +140,8 @@ int JsonObject_ToString(JsonObject *thiz, bool pretty, int depth, char *buf, uin
             }
         }
 
-        tiny_snprintf(tmp, 64, "\"%s\":", item->key);
-        size += tiny_buffer_append(buf, length, offset + size, tmp);
+        tiny_snprintf(key, 64, "\"%s\":", item->key);
+        size += tiny_buffer_append(buf, length, offset + size, key);
 
         if (pretty)
         {
@@ -381,7 +380,7 @@ TinyRet JsonObject_PutObject(JsonObject *thiz, const char *key, JsonObject *valu
 
     do
     {
-        JsonValue * v = JsonValue_NewObject(value);
+        JsonValue * v = JsonValue_NewValue(JSON_OBJECT, value);
         if (v == NULL)
         {
             LOG_E(TAG, "JsonValue_NewObject FAILED!");
@@ -411,7 +410,7 @@ TinyRet JsonObject_PutArray(JsonObject *thiz, const char *key, JsonArray *value)
 
     do
     {
-        JsonValue * v = JsonValue_NewArray(value);
+        JsonValue * v = JsonValue_NewValue(JSON_ARRAY, value);
         if (v == NULL)
         {
             LOG_E(TAG, "JsonValue_NewArray FAILED!");
@@ -431,22 +430,41 @@ TinyRet JsonObject_PutArray(JsonObject *thiz, const char *key, JsonArray *value)
 }
 
 TINY_LOR
-TINY_API
 TinyRet JsonObject_PutNumber(JsonObject *thiz, const char *key, JsonNumber *value)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(key, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
+
+    do
+    {
+        JsonValue * v = JsonValue_NewValue(JSON_NUMBER, value);
+        if (v == NULL)
+        {
+            LOG_E(TAG, "JsonValue_NewArray FAILED!");
+            ret = TINY_RET_E_NEW;
+            break;
+        }
+
+        ret = TinyMap_Insert(&thiz->data, key, v);
+        if (RET_FAILED(ret))
+        {
+            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            JsonValue_Delete(v);
+        }
+    } while (false);
+
+    return ret;
+}
+
+TINY_LOR
+TinyRet JsonObject_PutValue(JsonObject *thiz, const char *key, JsonValue *value)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(key, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
 
-    switch (value->type)
-    {
-        case JSON_NUMBER_INTEGER:
-            return JsonObject_PutInteger(thiz, key, value->value.intValue);
-
-        case JSON_NUMBER_FLOAT:
-            return JsonObject_PutInteger(thiz, key, value->value.intValue);
-
-        default:
-            return TINY_RET_E_ARG_INVALID;
-    }
+    return TinyMap_Insert(&thiz->data, key, value);
 }

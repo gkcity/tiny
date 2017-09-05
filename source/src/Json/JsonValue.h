@@ -79,15 +79,22 @@ JsonValue * JsonValue_NewBoolean(bool value);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewObject(JsonObject *value);
-
-TINY_LOR
-TINY_API
-JsonValue * JsonValue_NewArray(JsonArray *value);
-
-TINY_LOR
-TINY_API
 JsonValue * JsonValue_NewNull(void);
+
+//TINY_LOR
+//TINY_API
+//JsonValue * JsonValue_NewObject(JsonObject *value);
+//
+//TINY_LOR
+//TINY_API
+//JsonValue * JsonValue_NewArray(JsonArray *value);
+//
+//TINY_LOR
+//TINY_API
+//JsonValue * JsonValue_NewJsonString(JsonString *string);
+
+TINY_LOR
+JsonValue * JsonValue_NewValue(JsonValueType type, void *value);
 
 TINY_LOR
 TINY_API

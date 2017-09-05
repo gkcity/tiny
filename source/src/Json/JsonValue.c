@@ -124,32 +124,6 @@ JsonValue * JsonValue_NewBoolean(bool value)
 }
 
 TINY_LOR
-JsonValue * JsonValue_NewObject(JsonObject *value)
-{
-    JsonValue * thiz = JsonValue_New();
-    if (thiz != NULL)
-    {
-        thiz->type = JSON_OBJECT;
-        thiz->data.object = value;
-    }
-
-    return thiz;
-}
-
-TINY_LOR
-JsonValue * JsonValue_NewArray(JsonArray *value)
-{
-    JsonValue * thiz = JsonValue_New();
-    if (thiz != NULL)
-    {
-        thiz->type = JSON_ARRAY;
-        thiz->data.array = value;
-    }
-
-    return thiz;
-}
-
-TINY_LOR
 JsonValue * JsonValue_NewNull()
 {
     JsonValue * thiz = JsonValue_New();
@@ -161,25 +135,137 @@ JsonValue * JsonValue_NewNull()
     return thiz;
 }
 
+#if 0
+TINY_LOR
+JsonValue * JsonValue_NewObject(JsonObject *value)
+{
+    JsonValue * thiz = NULL;
+
+    if (value != NULL)
+    {
+        thiz = JsonValue_New();
+        if (thiz != NULL)
+        {
+            thiz->type = JSON_OBJECT;
+            thiz->data.object = value;
+        }
+    }
+
+    return thiz;
+}
+
+TINY_LOR
+JsonValue * JsonValue_NewArray(JsonArray *value)
+{
+    JsonValue * thiz = NULL;
+
+    if (value != NULL)
+    {
+        thiz = JsonValue_New();
+        if (thiz != NULL)
+        {
+            thiz->type = JSON_ARRAY;
+            thiz->data.array = value;
+        }
+    }
+
+    return thiz;
+}
+
+TINY_LOR
+JsonValue * JsonValue_NewJsonString(JsonString *string)
+{
+    JsonValue * thiz = NULL;
+
+    if (string != NULL)
+    {
+        thiz = JsonValue_New();
+        if (thiz != NULL)
+        {
+            thiz->type = JSON_STRING;
+            thiz->data.string = string;
+        }
+    }
+
+    return thiz;
+}
+#endif
+
+TINY_LOR
+JsonValue * JsonValue_NewValue(JsonValueType type, void *value)
+{
+    JsonValue * thiz = NULL;
+
+    if (value != NULL)
+    {
+        thiz = JsonValue_New();
+        if (thiz != NULL)
+        {
+            thiz->type = type;
+
+            switch (type)
+            {
+                case JSON_STRING:
+                    thiz->data.string = (JsonString *)value;
+                    break;
+
+                case JSON_NUMBER:
+                    thiz->data.number = (JsonNumber *)value;
+                    break;
+
+                case JSON_OBJECT:
+                    thiz->data.object = (JsonObject *)value;
+                    break;
+
+                case JSON_ARRAY:
+                    thiz->data.array = (JsonArray *)value;
+                    break;
+
+                case JSON_TRUE:
+                case JSON_FALSE:
+                case JSON_NULL:
+                case JSON_UNDEFINED:
+                    JsonValue_Delete(thiz);
+                    thiz = NULL;
+                    break;
+            }
+        }
+    }
+
+    return thiz;
+}
+
 TINY_LOR
 void JsonValue_Delete(JsonValue *thiz)
 {
     switch (thiz->type)
     {
         case JSON_STRING:
-            JsonString_Delete(thiz->data.string);
+            if (thiz->data.string != NULL)
+            {
+                JsonString_Delete(thiz->data.string);
+            }
             break;
 
         case JSON_NUMBER:
-            JsonNumber_Delete(thiz->data.number);
+            if (thiz->data.number != NULL)
+            {
+                JsonNumber_Delete(thiz->data.number);
+            }
             break;
 
         case JSON_OBJECT:
-            JsonObject_Delete(thiz->data.object);
+            if (thiz->data.object != NULL)
+            {
+                JsonObject_Delete(thiz->data.object);
+            }
             break;
 
         case JSON_ARRAY:
-            JsonArray_Delete(thiz->data.array);
+            if (thiz->data.array != NULL)
+            {
+                JsonArray_Delete(thiz->data.array);
+            }
             break;
 
         default:

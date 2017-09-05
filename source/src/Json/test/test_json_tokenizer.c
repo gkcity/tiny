@@ -24,7 +24,7 @@
 "{\"online\":true,\"offline\":false}"
 
 #define JSON_SAMPLE_3 \
-"{\"name\":\"tom\"}"
+"{\"name\":\"tom\",\"age\":1234,\"pi\":3.1415926}"
 
 #define JSON_SAMPLE_4 \
 "{\"type\":\"urn:miot-spec:device:fan:00000A04:zhimi\",\"description\":\"Zhimi Fan\"}"

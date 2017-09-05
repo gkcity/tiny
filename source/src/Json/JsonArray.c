@@ -208,7 +208,7 @@ TinyRet JsonArray_AddObject(JsonArray *thiz, JsonObject *value)
             break;
         }
 
-        JsonValue * v = JsonValue_NewObject(value);
+        JsonValue * v = JsonValue_NewValue(JSON_OBJECT, value);
         if (v == NULL)
         {
             LOG_E(TAG, "JsonValue_NewInteger FAILED!");
@@ -238,7 +238,7 @@ TinyRet JsonArray_AddArray(JsonArray *thiz, JsonArray *value)
             break;
         }
 
-        JsonValue * v = JsonValue_NewArray(value);
+        JsonValue * v = JsonValue_NewValue(JSON_ARRAY, value);
         if (v == NULL)
         {
             LOG_E(TAG, "JsonValue_NewInteger FAILED!");
@@ -247,6 +247,29 @@ TinyRet JsonArray_AddArray(JsonArray *thiz, JsonArray *value)
         }
 
         ret = TinyList_AddTail(&thiz->values, v);
+    } while (false);
+
+    return ret;
+}
+
+TINY_LOR
+TINY_API
+TinyRet JsonArray_AddValue(JsonArray *thiz, JsonValue *value)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
+
+    do
+    {
+        if (thiz->type != value->type)
+        {
+            ret = TINY_RET_E_ARG_INVALID;
+            break;
+        }
+
+        ret = TinyList_AddTail(&thiz->values, value);
     } while (false);
 
     return ret;
