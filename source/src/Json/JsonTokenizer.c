@@ -846,6 +846,12 @@ static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz)
 
             // }
             token = TinyList_GetAt(&thiz->tokens, thiz->index);
+            if (token == NULL)
+            {
+                result = TOKEN_ANALYSIS_E_OBJECT_END_NOT_FOUND;
+                break;
+            }
+
             if (token->type == JSON_TOKEN_OBJECT_END) 
             {
                 thiz->index++;
@@ -944,11 +950,21 @@ JsonObject * JsonTokenizer_ConvertToObject(JsonTokenizer *thiz)
 
     thiz->index = 0;
     object = JsonTokenizer_PeakObject(thiz);
-
-    if (thiz->tokens.size > thiz->index)
+    if (object == NULL)
     {
-        JsonObject_Delete(object);
-        object = NULL;
+        JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index);
+        if (token != NULL) 
+        {
+            LOG_D(TAG, "INVALID JSON: error position is %d", token->offset);
+        }
+    }
+    else
+    {
+        if (thiz->tokens.size > thiz->index)
+        {
+            JsonObject_Delete(object);
+            object = NULL;
+        }
     }
 
     return object;

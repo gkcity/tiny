@@ -241,7 +241,7 @@ TinyRet JsonArray_AddArray(JsonArray *thiz, JsonArray *value)
         JsonValue * v = JsonValue_NewValue(JSON_ARRAY, value);
         if (v == NULL)
         {
-            LOG_E(TAG, "JsonValue_NewInteger FAILED!");
+            LOG_E(TAG, "JsonValue_NewValue FAILED!");
             ret = TINY_RET_E_NEW;
             break;
         }

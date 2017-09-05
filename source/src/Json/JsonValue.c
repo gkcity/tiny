@@ -135,62 +135,6 @@ JsonValue * JsonValue_NewNull()
     return thiz;
 }
 
-#if 0
-TINY_LOR
-JsonValue * JsonValue_NewObject(JsonObject *value)
-{
-    JsonValue * thiz = NULL;
-
-    if (value != NULL)
-    {
-        thiz = JsonValue_New();
-        if (thiz != NULL)
-        {
-            thiz->type = JSON_OBJECT;
-            thiz->data.object = value;
-        }
-    }
-
-    return thiz;
-}
-
-TINY_LOR
-JsonValue * JsonValue_NewArray(JsonArray *value)
-{
-    JsonValue * thiz = NULL;
-
-    if (value != NULL)
-    {
-        thiz = JsonValue_New();
-        if (thiz != NULL)
-        {
-            thiz->type = JSON_ARRAY;
-            thiz->data.array = value;
-        }
-    }
-
-    return thiz;
-}
-
-TINY_LOR
-JsonValue * JsonValue_NewJsonString(JsonString *string)
-{
-    JsonValue * thiz = NULL;
-
-    if (string != NULL)
-    {
-        thiz = JsonValue_New();
-        if (thiz != NULL)
-        {
-            thiz->type = JSON_STRING;
-            thiz->data.string = string;
-        }
-    }
-
-    return thiz;
-}
-#endif
-
 TINY_LOR
 JsonValue * JsonValue_NewValue(JsonValueType type, void *value)
 {

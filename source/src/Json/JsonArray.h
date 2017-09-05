@@ -52,10 +52,6 @@ TinyRet JsonArray_AddFloat(JsonArray *thiz, float value);
 
 TINY_LOR
 TINY_API
-TinyRet JsonArray_AddBoolean(JsonArray *thiz, bool value);
-
-TINY_LOR
-TINY_API
 TinyRet JsonArray_AddObject(JsonArray *thiz, JsonObject *value);
 
 TINY_LOR

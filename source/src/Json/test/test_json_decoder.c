@@ -103,20 +103,19 @@ static int test2(void)
 {
     for (int i = 0; i < 7; ++i)
     {
-        printf("json decode: %s\n", error_samples[i]);
+        printf("[%d]: %s\n", i, error_samples[i]);
         JsonObject *object = JsonObject_NewString(error_samples[i]);
-        if (object == NULL)
+        if (object != NULL)
         {
-            printf("JsonObject_NewString FAILED!\n");
-            break;
+            if (RET_SUCCEEDED(JsonObject_Encode(object, true)))
+            {
+                printf("------------ JSON ENCODE START ----------------------\n");
+                printf("%s\n", object->string);
+                printf("------------ JSON ENCODE END ------------------------\n");
+            }
+
+            JsonObject_Delete(object);
         }
-
-        JsonObject_Encode(object, true);
-        printf("------------ JSON ENCODE START ----------------------\n");
-        printf("%s\n", object->string);
-        printf("------------ JSON ENCODE END ------------------------\n");
-
-        JsonObject_Delete(object);
     }
 
     return 1;
