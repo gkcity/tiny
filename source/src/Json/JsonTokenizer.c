@@ -521,7 +521,7 @@ TinyRet JsonTokenizer_Parse(JsonTokenizer *thiz, const char *string)
         result = JsonTokenizer_ParseToken(thiz);
         if (result != TOKEN_PARSE_OK)
         {
-            printf("JsonTokenizer_ParseToken: %d\n", result);
+            LOG_D(TAG, "JsonTokenizer_ParseToken: %d\n", result);
             break;
         }
     }
@@ -594,8 +594,6 @@ static JsonValue * JsonTokenizer_PeakValue(JsonTokenizer *thiz)
     JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index);
     JsonValue *value = NULL;
 
-    printf("    ");
-
     switch (token->type)
     {
         case JSON_TOKEN_OBJECT_START:
@@ -644,15 +642,12 @@ static JsonValue * JsonTokenizer_PeakValue(JsonTokenizer *thiz)
             break;
     }
 
-    printf("\n");
-
     return value;
 }
 
 TINY_LOR
 static JsonArray * JsonTokenizer_PeakArray(JsonTokenizer *thiz)
 {
-    int start = thiz->index;
     JsonArray * array = NULL;
     
     do
@@ -818,8 +813,6 @@ static JsonNumber * JsonTokenizer_PeakNumber(JsonTokenizer *thiz, JsonToken *tok
 TINY_LOR
 static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz)
 {
-    int start = thiz->index;
-
     JsonObject *object = NULL;
 
     do
@@ -875,7 +868,6 @@ static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz)
 
             memset(key, 0, 128);
             memcpy(key, thiz->string + token->offset + 1, token->length - 2);
-            printf("parse key: %s\n", key);
 
             thiz->index++;
 
@@ -948,7 +940,7 @@ JsonObject * JsonTokenizer_ConvertToObject(JsonTokenizer *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, NULL);
 
-    JsonTokenizer_Print(thiz);
+//    JsonTokenizer_Print(thiz);
 
     thiz->index = 0;
     object = JsonTokenizer_PeakObject(thiz);

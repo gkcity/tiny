@@ -41,6 +41,8 @@ JsonObject * JsonTokenizer_ConvertToObject(JsonTokenizer *thiz);
 
 #ifdef TINY_DEBUG
 void JsonTokenizer_Print(JsonTokenizer *thiz);
+#else
+#define JsonTokenizer_Print(t)
 #endif
 
 
