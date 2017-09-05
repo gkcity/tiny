@@ -300,26 +300,26 @@ TINY_LOR
 TinyRet TinyList_RemoveAll(TinyList * thiz)
 {
     TinyRet ret = TINY_RET_OK;
-    TinyNode * iter = NULL;
-    TinyNode * remove = NULL;
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
     do
     {
+        TinyNode * p = NULL;
+
         if (thiz->first == NULL)
         {
             break;
         }
 
-        iter = thiz->first;
+        p = thiz->first;
         thiz->first = NULL;
 
-        while (iter)
+        while (p)
         {
-            remove = iter;
-            iter = iter->next;
-            TinyNode_Delete(thiz, remove);
+            TinyNode * removed = p;
+            p = p->next;
+            TinyNode_Delete(thiz, removed);
         }
     }
     while (false);
