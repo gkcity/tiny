@@ -59,4 +59,3 @@ void StreamClientChannelContext_Delete(StreamClientChannelContext *thiz)
     StreamClientChannelContext_Dispose(thiz);
     tiny_free(thiz);
 }
-

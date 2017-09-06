@@ -4,7 +4,7 @@
  * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
- * @file   StreamServerChannel.h
+ * @file   StreamClientChannel.h
  *
  * @remark
  *      set tabstop=4
@@ -45,4 +45,3 @@ bool StreamClientChannel_IsConnected(Channel* thiz);
 TINY_END_DECLS
 
 #endif /* __STREAM_CLIENT_CHANNEL_H__ */
-
