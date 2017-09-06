@@ -30,7 +30,7 @@ static TinyRet StreamClientChannel_GetConnectingTimeout(Channel *thiz, ChannelTi
 }
 
 TINY_LOR
-static void StreamClientChannel_Dispose(Channel *thiz)
+void StreamClientChannel_Dispose(Channel *thiz)
 {
     if (thiz->ctx != NULL)
     {
@@ -120,7 +120,7 @@ static void StreamClientChannel_OnActive(Channel *thiz)
 }
 
 TINY_LOR
-static TinyRet StreamClientChannel_Construct(Channel *thiz)
+TinyRet StreamClientChannel_Construct(Channel *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
