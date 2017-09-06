@@ -35,7 +35,7 @@ typedef void (* ChannelHandleRemove)(Channel *channel);
 typedef void (* ChannelHandleActive)(Channel *thiz);
 typedef void (* ChannelHandleInactive)(Channel *thiz);
 typedef void (* ChannelHandleEventTriggered)(Channel *thiz, ChannelTimer *timer);
-typedef void (*ChannelHandleClose)(Channel *thiz);
+typedef void (* ChannelHandleClose)(Channel *thiz);
 typedef TinyRet (* ChannelTimeoutGetter)(Channel *thiz, ChannelTimer *timer, void *ctx);
 typedef TinyRet (* ChannelHandleReadWrite)(Channel* channel, Selector* selector);
 
