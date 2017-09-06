@@ -109,26 +109,26 @@ TinyRet Bootstrap_AddChannel(Bootstrap *thiz, Channel *channel)
     return TinyList_AddTail(&thiz->channels, channel);
 }
 
-//TINY_LOR
-//TinyRet Bootstrap_RemoveChannel(Bootstrap *thiz, Channel *channel)
-//{
-//    TinyRet ret = TINY_RET_E_NOT_FOUND;
-//
-//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-//    RETURN_VAL_IF_FAIL(channel, TINY_RET_E_ARG_NULL);
-//
-//    for (uint32_t i = 0; i < thiz->channels.size; ++i)
-//    {
-//        Channel *c = (Channel *) TinyList_GetAt(&thiz->channels, i);
-//        if (c->fd == channel->fd)
-//        {
-//            ret = TinyList_RemoveAt(&thiz->channels, i);
-//            break;
-//        }
-//    }
-//
-//    return ret;
-//}
+TINY_LOR
+TinyRet Bootstrap_RemoveChannel(Bootstrap *thiz, Channel *channel)
+{
+    TinyRet ret = TINY_RET_E_NOT_FOUND;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(channel, TINY_RET_E_ARG_NULL);
+
+    for (uint32_t i = 0; i < thiz->channels.size; ++i)
+    {
+        Channel *c = (Channel *) TinyList_GetAt(&thiz->channels, i);
+        if (c->fd == channel->fd)
+        {
+            ret = TinyList_RemoveAt(&thiz->channels, i);
+            break;
+        }
+    }
+
+    return ret;
+}
 
 TINY_LOR
 TinyRet Bootstrap_Sync(Bootstrap *thiz)

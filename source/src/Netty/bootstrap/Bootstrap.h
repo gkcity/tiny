@@ -44,9 +44,9 @@ TINY_API
 TINY_LOR
 TinyRet Bootstrap_AddChannel(Bootstrap *thiz, Channel *channel);
 
-//TINY_API
-//TINY_LOR
-//TinyRet Bootstrap_RemoveChannel(Bootstrap *thiz, Channel *channel);
+TINY_API
+TINY_LOR
+TinyRet Bootstrap_RemoveChannel(Bootstrap *thiz, Channel *channel);
 
 TINY_API
 TINY_LOR
