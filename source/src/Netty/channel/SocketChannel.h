@@ -37,6 +37,14 @@ void SocketChannel_Delete(Channel *thiz);
 
 TINY_API
 TINY_LOR
+TinyRet SocketChannel_Construct(Channel *thiz);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_Dispose(Channel *thiz);
+
+TINY_API
+TINY_LOR
 void SocketChannel_SetRemoteInfo(Channel *thiz, const char *ip, uint16_t port);
 
 TINY_API

@@ -44,7 +44,7 @@ static uint16_t _socket_get_port(int fd)
 }
 
 TINY_LOR
-static TinyRet SocketChannel_Dispose(Channel *thiz)
+TinyRet SocketChannel_Dispose(Channel *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
@@ -181,7 +181,7 @@ TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector)
 }
 
 TINY_LOR
-static TinyRet SocketChannel_Construct(Channel *thiz)
+TinyRet SocketChannel_Construct(Channel *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
