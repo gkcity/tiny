@@ -25,6 +25,7 @@ typedef struct _JsonObject
 {
     TinyMap         data;
     char          * string;
+    uint32_t        size;
 } JsonObject;
 
 TINY_LOR

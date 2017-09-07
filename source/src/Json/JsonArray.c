@@ -25,7 +25,7 @@ static void _OnJsonValueDelete (void * data, void *ctx)
 }
 
 TINY_LOR
-static TinyRet JsonArray_Construct(JsonArray *thiz)
+static TinyRet JsonArray_Construct(JsonArray *thiz, JsonValueType type)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -37,7 +37,7 @@ static TinyRet JsonArray_Construct(JsonArray *thiz)
         TinyList_SetDeleteListener(&thiz->values, _OnJsonValueDelete, thiz);
     }
 
-    thiz->type = JSON_UNDEFINED;
+    thiz->type = type;
     thiz->string = NULL;
 
     return ret;
@@ -58,7 +58,7 @@ static void JsonArray_Dispose(JsonArray *thiz)
 }
 
 TINY_LOR
-JsonArray * JsonArray_New(void)
+JsonArray * JsonArray_New(JsonValueType type)
 {
     JsonArray * thiz = NULL;
 
@@ -70,7 +70,7 @@ JsonArray * JsonArray_New(void)
             break;
         }
 
-        if (RET_FAILED(JsonArray_Construct(thiz)))
+        if (RET_FAILED(JsonArray_Construct(thiz, type)))
         {
             LOG_E(TAG, "JsonArray_Construct FAILED");
             JsonArray_Delete(thiz);

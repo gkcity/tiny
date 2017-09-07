@@ -144,10 +144,9 @@ static int test4(void)
     ret = JsonObject_PutBoolean(root, "online", false);
     RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
 
-    JsonArray *array = JsonArray_New();
+    JsonArray *array = JsonArray_New(JSON_STRING);
     RETURN_VAL_IF_FAIL(array != NULL, -1);
 
-    array->type = JSON_STRING;
     JsonArray_AddString(array, "Monday");
     JsonArray_AddString(array, "Tuesday");
     JsonArray_AddString(array, "Wednesday");

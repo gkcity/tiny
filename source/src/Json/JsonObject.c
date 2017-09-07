@@ -199,6 +199,7 @@ TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
     }
 
     memset(thiz->string, 0, (size_t)length + 1);
+    thiz->size = (uint32_t)length;
 
     JsonObject_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
 

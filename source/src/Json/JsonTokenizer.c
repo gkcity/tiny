@@ -667,7 +667,7 @@ static JsonArray * JsonTokenizer_PeakArray(JsonTokenizer *thiz)
             break;
         }
 
-        array = JsonArray_New();
+        array = JsonArray_New(JSON_UNDEFINED);
         if (array == NULL)
         {
             break;
