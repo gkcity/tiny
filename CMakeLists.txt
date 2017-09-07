@@ -15,7 +15,7 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyContainer)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Netty)
-INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyJson)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Json)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Bson)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyUmm)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyMd5)
@@ -173,15 +173,27 @@ SET(Netty_Source
         )
 
 #---------------------------
-# TinyJson
+# Json
 #---------------------------
 
-SET(TinyJson_Header
-        ${SOURCE_ROOT}/TinyJson/json.h
+SET(Json_Header
+        ${SOURCE_ROOT}/Json/JsonValue.h
+        ${SOURCE_ROOT}/Json/JsonArray.h
+        ${SOURCE_ROOT}/Json/JsonString.h
+        ${SOURCE_ROOT}/Json/JsonNumber.h
+        ${SOURCE_ROOT}/Json/JsonObject.h
+        ${SOURCE_ROOT}/Json/JsonTokenizer.h
+        ${SOURCE_ROOT}/Json/JsonToken.h
         )
 
-SET(TinyJson_Source
-        ${SOURCE_ROOT}/TinyJson/json.c
+SET(Json_Source
+        ${SOURCE_ROOT}/Json/JsonValue.c
+        ${SOURCE_ROOT}/Json/JsonArray.c
+        ${SOURCE_ROOT}/Json/JsonString.c
+        ${SOURCE_ROOT}/Json/JsonNumber.c
+        ${SOURCE_ROOT}/Json/JsonObject.c
+        ${SOURCE_ROOT}/Json/JsonTokenizer.c
+        ${SOURCE_ROOT}/Json/JsonToken.c
         )
 
 #---------------------------
@@ -244,14 +256,12 @@ IF(TINY_THREAD_ENABLED EQUAL 1)
         ${TinyLog_Source}
         ${TinyStringUtil_Header}
         ${TinyStringUtil_Source}
-        ${TinyJson_Header}
-        ${TinyJson_Source}
         ${Netty_Header}
         ${Netty_Source}
+        ${Json_Header}
+        ${Json_Source}
         ${TinyThread_Header}
         ${TinyThread_Source}
-        ${Bson_Header}
-        ${Bson_Source}
         )
 ELSE()
     MESSAGE(STATUS "TinyThread disabled")
@@ -268,10 +278,8 @@ ELSE()
         ${TinyStringUtil_Source}
         ${Netty_Header}
         ${Netty_Source}
-        ${TinyJson_Header}
-        ${TinyJson_Source}
-        ${Bson_Header}
-        ${Bson_Source}
+        ${Json_Header}
+        ${Json_Source}
         )
 ENDIF()
 
