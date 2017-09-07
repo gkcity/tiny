@@ -115,7 +115,6 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
     do
     {
         strncpy(thiz->id, "MulticastChannel", CHANNEL_ID_LEN);
-        printf("%s\n", thiz->id);
 
         thiz->_onRegister = MulticastChannel_OnRegister;
         thiz->_onRemove = MulticastChannel_OnRemove;
@@ -173,7 +172,7 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
 {
     TinyRet ret = TINY_RET_OK;
 
-    printf("MulticastChannel_Join: %s %s:%d\n", ip, group, port);
+    LOG_I(TAG, "MulticastChannel_Join: %s %s:%d", ip, group, port);
 
     do
     {
