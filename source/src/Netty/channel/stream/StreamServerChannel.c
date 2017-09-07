@@ -90,7 +90,12 @@ static void StreamServerChannel_OnRemove(Channel *thiz)
 TINY_LOR
 static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector)
 {
-    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
+    StreamServerChannelContext *ctx = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
+
+    ctx = (StreamServerChannelContext *)thiz->ctx;
 
     if (Selector_IsReadable(selector, thiz->fd))
     {
@@ -104,7 +109,7 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
         LOG_D(TAG, "StreamServerChannel_OnRead FD: %d", thiz->fd);
         LOG_D(TAG, "socklen_t: %d", len);
 
-        memset(&addr, 0, len);
+        memset(&addr, 0, sizeof(struct sockaddr_in));
 
         fd = tiny_accept(thiz->fd, (struct sockaddr *)&addr, &len);
         if (fd < 0)

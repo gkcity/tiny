@@ -19,6 +19,9 @@
 TINY_LOR
 static TinyRet JsonString_Construct(JsonString *thiz, const char *value)
 {
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
+
     memset(thiz, 0, sizeof(JsonString));
 
     if (value != NULL)
