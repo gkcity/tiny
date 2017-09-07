@@ -31,14 +31,20 @@ static TinyRet JsonArray_Construct(JsonArray *thiz, JsonValueType type)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    ret = TinyList_Construct(&thiz->values);
-    if (RET_SUCCEEDED(ret))
+    do 
     {
-        TinyList_SetDeleteListener(&thiz->values, _OnJsonValueDelete, thiz);
-    }
+        memset(thiz, 0, sizeof(JsonArray));
+        thiz->type = type;
+        thiz->string = NULL;
 
-    thiz->type = type;
-    thiz->string = NULL;
+        ret = TinyList_Construct(&thiz->values);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
+
+        TinyList_SetDeleteListener(&thiz->values, _OnJsonValueDelete, thiz);
+    } while (false);
 
     return ret;
 }

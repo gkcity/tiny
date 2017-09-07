@@ -65,13 +65,20 @@ TinyRet JsonObject_Construct(JsonObject *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    thiz->string = NULL;
-
-    ret = TinyMap_Construct(&thiz->data);
-    if (RET_SUCCEEDED(ret))
+    do 
     {
+        memset(thiz, 0, sizeof(JsonObject));
+        thiz->string = NULL;
+        thiz->size = 0;
+
+        ret = TinyMap_Construct(&thiz->data);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
+
         TinyMap_SetDeleteListener(&thiz->data, _OnJsonValueDelete, thiz);
-    }
+    } while (0);
 
     return ret;
 }
@@ -94,21 +101,25 @@ TINY_LOR
 JsonObject * JsonObject_NewString(const char *string)
 {
     JsonObject *object = NULL;
-    JsonTokenizer tokenizer;
 
     RETURN_VAL_IF_FAIL(string, NULL);
 
-    if (RET_FAILED(JsonTokenizer_Construct(&tokenizer)))
+    do 
     {
-        return NULL;
-    }
+        JsonTokenizer tokenizer;
 
-    if (RET_SUCCEEDED(JsonTokenizer_Parse(&tokenizer, string)))
-    {
-        object = JsonTokenizer_ConvertToObject(&tokenizer);
-    }
+        if (RET_FAILED(JsonTokenizer_Construct(&tokenizer)))
+        {
+            break;
+        }
 
-    JsonTokenizer_Dispose(&tokenizer);
+        if (RET_SUCCEEDED(JsonTokenizer_Parse(&tokenizer, string)))
+        {
+            object = JsonTokenizer_ConvertToObject(&tokenizer);
+        }
+
+        JsonTokenizer_Dispose(&tokenizer);
+    } while (false);
 
     return object;
 }
@@ -216,7 +227,7 @@ bool JsonObject_ContainsKey(JsonObject *thiz, const char *key)
 }
 
 TINY_LOR
-JsonValue * JsonObject_Get(JsonObject *thiz, const char *key)
+JsonValue * JsonObject_GetValue(JsonObject *thiz, const char *key)
 {
     RETURN_VAL_IF_FAIL(thiz, NULL);
     RETURN_VAL_IF_FAIL(key, NULL);

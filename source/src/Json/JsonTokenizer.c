@@ -904,7 +904,12 @@ static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz)
                 break;
             }
 
-            JsonObject_PutValue(object, key, value);
+            if (RET_FAILED(JsonObject_PutValue(object, key, value))) 
+            {
+                LOG_D(TAG, "JsonObject_PutValue failed");
+                result = TOKEN_ANALYSIS_E_OBJECT_VALUE_INVALID;
+                break;
+            }
 
             // , or }
             token = TinyList_GetAt(&thiz->tokens, thiz->index);
@@ -948,7 +953,7 @@ JsonObject * JsonTokenizer_ConvertToObject(JsonTokenizer *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, NULL);
 
-//    JsonTokenizer_Print(thiz);
+    //JsonTokenizer_Print(thiz);
 
     thiz->index = 0;
     object = JsonTokenizer_PeakObject(thiz);

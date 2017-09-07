@@ -62,7 +62,7 @@ bool JsonObject_ContainsKey(JsonObject *thiz, const char *key);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonObject_Get(JsonObject *thiz, const char *key);
+JsonValue * JsonObject_GetValue(JsonObject *thiz, const char *key);
 
 TINY_LOR
 TINY_API

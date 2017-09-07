@@ -9,6 +9,8 @@
 #include <tiny_debug.h>
 #include <JsonObject.h>
 #include <JsonArray.h>
+#include <JsonString.h>
+#include <JsonNumber.h>
 
 #define TAG			"test"
 
@@ -121,10 +123,105 @@ static int test2(void)
     return 1;
 }
 
+#define JSON_SAMPLE_003 \
+"{\"characteristics\":[{\"aid\":1,\"iid\":9,\"ev\":true}]}"
+
+static int test3(void)
+{
+    printf("json: %s\n", JSON_SAMPLE_003);
+    JsonObject *object = JsonObject_NewString(JSON_SAMPLE_003);
+    if (object != NULL)
+    {
+        if (RET_SUCCEEDED(JsonObject_Encode(object, true)))
+        {
+            printf("------------ JSON ENCODE START ----------------------\n");
+            printf("%s\n", object->string);
+            printf("------------ JSON ENCODE END ------------------------\n");
+        }
+
+        JsonValue *characteristics = JsonObject_GetValue(object, "characteristics");
+        if (characteristics == NULL) 
+        {
+            printf("JsonObject_Get: %s FAILED\n", "characteristics");
+            return 1;
+        }
+
+        if (characteristics->type != JSON_ARRAY) 
+        {
+            printf("characteristics type invalid: %d\n", characteristics->type);
+            return 1;
+        }
+
+        if (characteristics->data.array->values.size != 1) 
+        {
+            printf("characteristics values size: %d\n", characteristics->data.array->values.size);
+            return 1;
+        }
+
+        if (characteristics->data.array->type != JSON_OBJECT)
+        {
+            printf("characteristics values type invalid: %d\n", characteristics->data.array->type);
+            return 1;
+        }
+
+        JsonObject *property = ((JsonValue *)TinyList_GetAt(&characteristics->data.array->values, 0))->data.object;
+        JsonValue *jaid = JsonObject_GetValue(property, "aid");
+        JsonValue *jiid = JsonObject_GetValue(property, "iid");
+        JsonValue *ev = JsonObject_GetValue(property, "ev");
+
+        printf("aid: %d\n", jaid->data.number->value.intValue);
+        printf("iid: %d\n", jiid->data.number->value.intValue);
+        printf("ev: %s\n", ev->type == JSON_TRUE ? "true" : "false");
+
+        JsonObject_Delete(object);
+    }
+
+    return 0;
+}
+
+#define JSON_SAMPLE_004 \
+"{\"name\":\"ouyang\"}"
+
+static int test4(void)
+{
+    printf("json: %s\n", JSON_SAMPLE_004);
+    JsonObject *object = JsonObject_NewString(JSON_SAMPLE_004);
+    if (object != NULL)
+    {
+        if (RET_SUCCEEDED(JsonObject_Encode(object, true)))
+        {
+            printf("------------ JSON ENCODE START ----------------------\n");
+            printf("%s\n", object->string);
+            printf("------------ JSON ENCODE END ------------------------\n");
+        }
+
+        JsonValue *value = JsonObject_GetValue(object, "name");
+        if (value == NULL) 
+        {
+            printf("JsonObject_GetValue failed: %s\n", "name");
+            return 1;
+        }
+
+        if (value->type != JSON_STRING) 
+        {
+            printf("JsonValue.type is not a string\n");
+            return 1;
+        }
+
+        printf("name: %s\n", value->data.string->value);
+
+        JsonObject_Delete(object);
+    }
+
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
-	test1();
+    test1();
     test2();
+    test3();
+    test4();
 
 #ifdef _WIN32
     _CrtDumpMemoryLeaks();

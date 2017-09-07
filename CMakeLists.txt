@@ -16,7 +16,6 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Netty)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Json)
-INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Bson)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyUmm)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyMd5)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyThread)
@@ -199,18 +198,6 @@ SET(Json_Source
         )
 
 #---------------------------
-# Bson
-#---------------------------
-
-SET(Bson_Header
-        ${SOURCE_ROOT}/Bson/bson.h
-        )
-
-SET(Bson_Source
-        ${SOURCE_ROOT}/Bson/bson.c
-        )
-
-#---------------------------
 # TinyThread
 #---------------------------
 
@@ -238,10 +225,10 @@ SOURCE_GROUP(TinyLog\\headers               FILES     ${TinyLog_Header})
 SOURCE_GROUP(TinyLog\\sources               FILES     ${TinyLog_Source})
 SOURCE_GROUP(TinyStringUtil\\headers        FILES     ${TinyStringUtil_Header})
 SOURCE_GROUP(TinyStringUtil\\sources        FILES     ${TinyStringUtil_Source})
-SOURCE_GROUP(TinyJson\\headers              FILES     ${TinyJson_Header})
-SOURCE_GROUP(TinyJson\\sources              FILES     ${TinyJson_Source})
 SOURCE_GROUP(Netty\\headers                 FILES     ${Netty_Header})
 SOURCE_GROUP(Netty\\sources                 FILES     ${Netty_Source})
+SOURCE_GROUP(Json\\headers                  FILES     ${Json_Header})
+SOURCE_GROUP(Json\\sources                  FILES     ${Json_Source})
 SOURCE_GROUP(TinyThread\\headers            FILES     ${TinyThread_Header})
 SOURCE_GROUP(TinyThread\\sources            FILES     ${TinyThread_Source})
 
