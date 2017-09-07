@@ -12,8 +12,7 @@
 
 #include "tiny_log_binary.h"
 
-//#ifdef TINY_DEBUG
-#if 1
+#ifdef TINY_DEBUG
 TINY_LOR
 void tiny_print_binary(const char *title, const uint8_t *data, size_t len, bool wrapLines)
 {

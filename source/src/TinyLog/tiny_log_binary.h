@@ -17,8 +17,7 @@
 
 TINY_BEGIN_DECLS
 
-//#ifdef TINY_DEBUG
-#if 1
+#ifdef TINY_DEBUG
     TINY_LOR
     TINY_API
     void tiny_print_binary(const char *title, const uint8_t *data, size_t len, bool wrapLines);
