@@ -88,8 +88,8 @@ typedef enum _HttpType
 #define PROTOCOL_EVENT                  "EVENT"
 #define PROTOCOL_RTSP                   "RTSP"
 #define HTTP_METHOD_LEN                 32
-#define HTTP_URI_LEN                    1024
-#define HTTP_STATUS_LEN                 256
+#define HTTP_URI_LEN                    512
+#define HTTP_STATUS_LEN                 128
 
 typedef struct _HttpRequestLine
 {

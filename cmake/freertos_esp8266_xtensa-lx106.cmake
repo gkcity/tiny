@@ -40,3 +40,10 @@ ADD_DEFINITIONS(-std=c99)
 #----------------------------------------------------------------------------
 #ADD_DEFINITIONS(-DTINY_DEBUG)
 ADD_DEFINITIONS(-DTINY_STATIC)
+
+#----------------------------------------------------------------------------
+#
+# DISABLE NETTY SHUTDOWN
+#
+#----------------------------------------------------------------------------
+ADD_DEFINITIONS(-DNETTY_SHUTDOWN_DISABLED)

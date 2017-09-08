@@ -16,6 +16,8 @@
 #include <tiny_malloc.h>
 #include "LoopbackChannelHandler.h"
 
+#ifndef NETTY_SHUTDOWN_DISABLED
+
 #define TAG "LoopbackChannelHandler"
 
 TINY_LOR
@@ -99,3 +101,5 @@ ChannelHandler * LoopbackChannelHandler(void *ctx)
 
     return thiz;
 }
+
+#endif /* NETTY_SHUTDOWN_DISABLED */

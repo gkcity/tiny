@@ -21,9 +21,9 @@
 
 #define TAG     "HttpHeader"
 
-#define HTTP_LINE_LEN            256
-#define HTTP_MAX_NAME_LEN        256
-#define HTTP_MAX_VALUE_LEN       256
+#define HTTP_LINE_LEN            128
+#define HTTP_MAX_NAME_LEN        64
+#define HTTP_MAX_VALUE_LEN       64
 
 typedef struct _Header
 {

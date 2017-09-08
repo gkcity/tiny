@@ -25,8 +25,8 @@
 /* HTTP/1.1 0 X */
 #define HTTP_STATUS_LINE_MIN_LEN        14  /* strlen(HTTP/1.1 X 2\r\n) */
 #define HTTP_REQUEST_LINE_MIN_LEN       14  /* X * HTTP/1.1\r\n */
-#define HTTP_HEAD_LEN                   256
-#define HTTP_LINE_LEN                   256
+#define HTTP_HEAD_LEN                   128
+#define HTTP_LINE_LEN                   128
 
 TINY_LOR
 static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes, uint32_t len);

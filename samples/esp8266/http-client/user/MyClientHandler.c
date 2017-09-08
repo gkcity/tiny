@@ -25,7 +25,7 @@ static TinyRet MyClientHandler_Dispose(ChannelHandler *thiz);
 static void MyClientHandler_Delete(ChannelHandler *thiz);
 static void _channelActive(ChannelHandler *thiz, Channel *channel);
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
-static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event);
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer);
 
 ChannelHandler * MyClientHandler(void)
 {
@@ -96,7 +96,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
 
     if (RET_SUCCEEDED(HttpMessage_Construct(&request)))
     {
-        HttpMessage_SetRequest(&request, "GET", "http://127.0.0.1:8080/api/v1/devices");
+        HttpMessage_SetRequest(&request, "GET", "http://10.0.1.9:8080/api/v1/devices");
         HttpMessage_SetVersion(&request, 1, 1);
 
         HttpHeader_Set(&request.header, "App-Id", "9947163763053218");
@@ -142,10 +142,8 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     return true;
 }
 
-static void _channelEvent(ChannelHandler *thiz, Channel *channel, void *event)
+static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer)
 {
-    ChannelTimer *timer = (ChannelTimer *)event;
-
     LOG_E(TAG, "_channelEvent: %s", channel->id);
 
     switch (timer->type)

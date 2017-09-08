@@ -31,6 +31,7 @@ static TinyRet _PostSelect(Selector *selector, void *ctx);
 TINY_LOR
 static TinyRet _OnSelectTimeout(Selector *selector, void *ctx);
 
+#ifndef NETTY_SHUTDOWN_DISABLED
 TINY_LOR
 TinyRet Bootstrap_InitializeLoopbackChannel(Bootstrap *thiz)
 {
@@ -43,7 +44,7 @@ TinyRet Bootstrap_InitializeLoopbackChannel(Bootstrap *thiz)
     }
 
     SocketChannel_Open(loopback, TYPE_UDP);
-    SocketChannel_Bind(loopback, 0, false);
+    SocketChannel_Bind(loopback, 5454, false);
     SocketChannel_SetBlock(loopback, false);
     SocketChannel_AddLast(loopback, LoopbackChannelHandler(&thiz->channels));
 
@@ -51,6 +52,7 @@ TinyRet Bootstrap_InitializeLoopbackChannel(Bootstrap *thiz)
 
     return TinyList_AddTail(&thiz->channels, loopback);
 }
+#endif /* NETTY_SHUTDOWN_DISABLED */
 
 TINY_LOR
 TinyRet Bootstrap_Construct(Bootstrap *thiz)
@@ -79,11 +81,14 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
         }
         TinyList_SetDeleteListener(&thiz->channels, _OnChannelRemoved, NULL);
 
+    #ifndef NETTY_SHUTDOWN_DISABLED
         ret = Bootstrap_InitializeLoopbackChannel(thiz);
         if (RET_FAILED(ret))
         {
             break;
         }
+    #endif /* NETTY_SHUTDOWN_DISABLED */
+
     } while (0);
 
     return ret;
@@ -143,6 +148,7 @@ TinyRet Bootstrap_Sync(Bootstrap *thiz)
 TINY_LOR
 TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
 {
+#ifndef NETTY_SHUTDOWN_DISABLED
     int ret = 0;
     uint32_t length = (uint32_t)strlen(BOOTSTRAP_SHUTDOWN);
 
@@ -164,6 +170,9 @@ TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
     channel->_onRemove(channel);
 
     return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
+#endif
+
+    return TINY_RET_E_NOT_IMPLEMENTED;
 }
 
 TINY_LOR

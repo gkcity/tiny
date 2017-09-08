@@ -21,7 +21,7 @@
 TINY_BEGIN_DECLS
 
 
-#define HTTP_CONTENT_MAX_SIZE   (1024 * 1024 * 8)
+#define HTTP_CONTENT_MAX_SIZE   (1024 * 4)
 
 typedef struct _HttpContent
 {

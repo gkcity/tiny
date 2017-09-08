@@ -22,12 +22,15 @@
 TINY_BEGIN_DECLS
 
 
+#ifndef NETTY_SHUTDOWN_DISABLED
+
 #define LoopbackChannelHandler_Name     "LoopbackChannelHandler"
 #define BOOTSTRAP_SHUTDOWN              "bootstrap-shutdown"
 
 TINY_LOR
 ChannelHandler * LoopbackChannelHandler(void *ctx);
 
+#endif /* NETTY_SHUTDOWN_DISABLED */
 
 TINY_END_DECLS
 
