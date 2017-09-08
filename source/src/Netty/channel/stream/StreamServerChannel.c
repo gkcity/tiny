@@ -48,7 +48,6 @@ static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector, Ch
     {
         StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
-        LOG_D(TAG, "StreamServerChannel_OnRegister Server FD: %d", thiz->fd);
 
         // remove closed channel
         for (int i = (ctx->channels.size - 1); i >= 0; --i)
@@ -65,8 +64,6 @@ static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector, Ch
         {
             Channel *child = (Channel *) TinyList_GetAt(&ctx->channels, i);
             Selector_Register(selector, child->fd, SELECTOR_OP_READ);
-
-            LOG_D(TAG, "StreamServerChannel_OnRegister Connnection FD: %d", child->fd);
 
             if (child->_getTimeout != NULL)
             {

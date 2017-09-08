@@ -24,8 +24,6 @@
     #endif
 #endif
 
-#ifdef TINY_DEBUG
-
 #define BEIJINGTIME     8
 #define DAY             (60*60*24)
 #define YEARFIRST       2001
@@ -35,6 +33,8 @@
 #define YEAR004         (365*4 + 1)
 #define YEAR001         365
 
+#ifndef ESP
+TINY_LOR
 int tiny_getstrtime(char buf[], int len)
 {
     struct timeval tv;
@@ -115,4 +115,4 @@ int tiny_getstrtime(char buf[], int len)
 
     return 0;
 }
-#endif
+#endif /* ESP */

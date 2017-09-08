@@ -35,7 +35,6 @@
 #define LOG_COLOR_LIGHT_GRAY    "\033[0;37m"
 #define LOG_COLOR_WHITE         "\033[1;37m"
 
-#ifdef TINY_DEBUG
 #ifndef ESP
 
 TINY_LOR
@@ -158,4 +157,3 @@ int __tiny_log_vprint(int prio, const char *tag, const char *fmt, va_list ap)
 }
 
 #endif /* ESP */
-#endif /* TINY_DEBUG */

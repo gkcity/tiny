@@ -178,7 +178,7 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_D(TAG, "_PreSelect, channels: %d", thiz->channels.size);
+    LOG_I(TAG, "_PreSelect, channels: %d", thiz->channels.size);
 
     for (int i = (thiz->channels.size - 1); i >= 0; --i)
     {
@@ -214,7 +214,7 @@ static TinyRet _PostSelect(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_D(TAG, "_PostSelect");
+    LOG_I(TAG, "_PostSelect");
 
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
@@ -239,7 +239,7 @@ static TinyRet _OnSelectTimeout(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_D(TAG, "_OnSelectTimeout");
+    LOG_I(TAG, "_OnSelectTimeout");
 
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {

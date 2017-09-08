@@ -825,7 +825,7 @@ TinyRet HttpMessage_SetRequest(HttpMessage *thiz, const char * method, const cha
         ret = url_split(url, ip, TINY_IP_LEN, &port, uri, 512);
         if (RET_FAILED(ret))
         {
-            LOG_W(TAG, "url_split: %s", tiny_ret_to_str(ret));
+            LOG_D(TAG, "url_split: %s", tiny_ret_to_str(ret));
             break;
         }
 

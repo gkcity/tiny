@@ -48,11 +48,9 @@ TINY_API
 TINY_LOR
 uint64_t tiny_current_microsecond(void);
 
-
-#ifdef TINY_DEBUG
+TINY_API
 TINY_LOR
 int tiny_getstrtime(char buf[], int len);
-#endif
 
 
 TINY_END_DECLS

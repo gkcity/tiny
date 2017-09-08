@@ -27,12 +27,6 @@ uint64_t tiny_current_microsecond(void)
 }
 
 TINY_LOR
-time_t tiny_time(time_t *t)
-{
-    return time(t);
-}
-
-TINY_LOR
 int tiny_gettimeofday(struct timeval *tv, void *tz)
 {
     return gettimeofday(tv, tz);

@@ -47,7 +47,7 @@ void Selector_Register(Selector *thiz, int fd, SelectorOperation op)
 {
     RETURN_IF_FAIL(thiz);
 
-    LOG_D(TAG, "Selector_Register: %d, Operation: 0x%x", fd, op);
+    LOG_I(TAG, "Selector_Register: %d, Operation: 0x%x", fd, op);
 
     if ((op & SELECTOR_OP_READ) != 0)
     {
@@ -78,7 +78,7 @@ static TinyRet _Selector_Select(Selector *thiz, int64_t us)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "_Selector_Select, timeout: %ds %dms %dus", (int) (us / 1000000), (int) (us % 1000000) / 1000, (int) (us % 1000));
+    LOG_I(TAG, "_Selector_Select, timeout: %ds %dms %dus", (int) (us / 1000000), (int) (us % 1000000) / 1000, (int) (us % 1000));
 
     if (us == 0)
     {
@@ -134,7 +134,7 @@ static TinyRet _Selector_LoopOnce(Selector *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
-    LOG_D(TAG, "_Selector_LoopOnce");
+    LOG_I(TAG, "_Selector_LoopOnce");
 
     /**
      * Reset
@@ -180,7 +180,7 @@ TinyRet Selector_Loop(Selector *thiz)
         }
     }
 
-    LOG_E(TAG, "Selector_Loop Finished!");
+    LOG_I(TAG, "Selector_Loop Finished!");
 
     return TINY_RET_OK;
 }

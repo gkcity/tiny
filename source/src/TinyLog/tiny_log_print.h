@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef __tiny_log_PRINT_H__
-#define __tiny_log_PRINT_H__
+#ifndef __TINY_LOG_PRINT_H__
+#define __TINY_LOG_PRINT_H__
 
 #include <stdarg.h>
 #include "tiny_base.h"
@@ -20,7 +20,7 @@
 
 TINY_BEGIN_DECLS
 
-#ifdef TINY_DEBUG
+
 #ifndef ESP
 
 /*
@@ -65,8 +65,8 @@ TINY_LOR
 int __tiny_log_vprint(int prio, const char *tag, const char *fmt, va_list ap);
 
 #endif /* ESP */
-#endif /* TINY_DEBUG */
+
 
 TINY_END_DECLS
 
-#endif /* __tiny_log_PRINT_H__ */
+#endif /* __TINY_LOG_PRINT_H__ */

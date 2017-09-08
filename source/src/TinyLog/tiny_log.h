@@ -38,26 +38,22 @@
             #define LOG_W(tag, format, ...) __tiny_log_print(TINY_LOG_WARN, tag, format, ##__VA_ARGS__)
         #endif
     #else
-        #define LOG_D(tag, format, ...)
-        #define LOG_E(tag, format, ...)
-        #define LOG_I(tag, format, ...)
-        #define LOG_V(tag, format, ...)
-        #define LOG_W(tag, format, ...)
+        #ifdef ESP
+            #define LOG_D(tag, format, ...)
+            #define LOG_E(tag, format, ...) {printf(tag); printf("/E "); printf(format, ##__VA_ARGS__); printf("\n");}
+            #define LOG_I(tag, format, ...) {printf(tag); printf("/I "); printf(format, ##__VA_ARGS__); printf("\n");}
+            #define LOG_V(tag, format, ...) {printf(tag); printf("/V "); printf(format, ##__VA_ARGS__); printf("\n");}
+            #define LOG_W(tag, format, ...) {printf(tag); printf("/W "); printf(format, ##__VA_ARGS__); printf("\n");}
+        #else
+            #include "tiny_log_print.h"
+            #define LOG_D(tag, format, ...)
+            #define LOG_E(tag, format, ...) __tiny_log_print(TINY_LOG_ERROR, tag, format, ##__VA_ARGS__)
+            #define LOG_I(tag, format, ...) __tiny_log_print(TINY_LOG_INFO, tag, format, ##__VA_ARGS__)
+            #define LOG_V(tag, format, ...) __tiny_log_print(TINY_LOG_VERBOSE, tag, format, ##__VA_ARGS__)
+            #define LOG_W(tag, format, ...) __tiny_log_print(TINY_LOG_WARN, tag, format, ##__VA_ARGS__)
+        #endif
     #endif /* TINY_DEBUG */
 #endif /* __ANDROID__ */
-
-#ifdef TINY_DEBUG
-    #define LOG_TIME_BEGIN(tag, func) uint64_t usec_##func = tiny_getusec()
-
-    #ifdef __MAC_OSX__
-        #define LOG_TIME_END(tag, func) LOG_D(tag, "%s, consuming: %lldms", #func, (tiny_getusec() - usec_##func) / 1000)
-    #else
-        #define LOG_TIME_END(tag, func) LOG_D(tag, "%s, consuming: %lums", #func, (tiny_getusec() - usec_##func) / 1000)
-    #endif
-#else
-    #define LOG_TIME_BEGIN(tag, func)
-    #define LOG_TIME_END(tag, func)
-#endif
 
 
 #endif /* __tiny_log_H__ */

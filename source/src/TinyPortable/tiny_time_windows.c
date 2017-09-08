@@ -25,12 +25,6 @@ uint64_t tiny_current_microsecond(void)
     return (uint64_t)(tv.tv_sec * 1000 * 1000 + tv.tv_usec);
 }
 
-time_t tiny_time(time_t *t)
-{
-    return time(t);
-}
-
-#if 1
 int tiny_gettimeofday(struct timeval *tv, void *tz)
 {
     time_t clock;
@@ -51,38 +45,3 @@ int tiny_gettimeofday(struct timeval *tv, void *tz)
 
     return (0);
 }
-#endif
-
-#if 0
-int tiny_gettimeofday(struct timeval * tp, struct timezone * tzp)
-{
-	// Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
-	static const uint64_t EPOCH = ((uint64_t)116444736000000000ULL);
-
-	SYSTEMTIME  system_time;
-	FILETIME    file_time;
-	uint64_t    time;
-
-	GetSystemTime(&system_time);
-	SystemTimeToFileTime(&system_time, &file_time);
-	time = ((uint64_t)file_time.dwLowDateTime);
-	time += ((uint64_t)file_time.dwHighDateTime) << 32;
-
-	tp->tv_sec = (long)((time - EPOCH) / 10000000L);
-	tp->tv_usec = (long)(system_time.wMilliseconds * 1000);
-	return 0;
-}
-#endif
-
-#if 0
-int tiny_sleep(int second)
-{
-    Sleep(second * 1000);
-	return 0;
-}
-
-int tiny_usleep(int usecond)
-{
-    return Sleep(usecond);
-}
-#endif

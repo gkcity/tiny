@@ -165,7 +165,6 @@ TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector)
 
     if (! Selector_IsReadable(selector, thiz->fd))
     {
-        //printf("SocketChannel is not readable: %d\n", thiz->fd);
         return TINY_RET_OK;
     }
 
@@ -321,7 +320,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "SocketChannel_Bind: %d reuse: %s", port, reuse ? "yes" : "no");
+    LOG_I(TAG, "SocketChannel_Bind: %d reuse: %s", port, reuse ? "yes" : "no");
 
     do
     {
@@ -337,7 +336,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
             result = tiny_socket_reuse_port(thiz->fd);
             if (result != 0)
             {
-                LOG_D(TAG, "tiny_socket_reuse_port failed: %d", result);
+                LOG_E(TAG, "tiny_socket_reuse_port failed: %d", result);
                 ret = TINY_RET_E_SOCKET_SETSOCKOPT;
                 break;
             }
@@ -345,7 +344,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
             result = tiny_socket_reuse_address(thiz->fd);
             if (result != 0)
             {
-                LOG_D(TAG, "tiny_socket_reuse_address failed: %d", result);
+                LOG_E(TAG, "tiny_socket_reuse_address failed: %d", result);
                 ret = TINY_RET_E_SOCKET_SETSOCKOPT;
                 break;
             }
@@ -354,7 +353,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
         result = tiny_bind(thiz->fd, (struct sockaddr *)&self_addr, sizeof(self_addr));
         if (result < 0)
         {
-            LOG_D(TAG, "tiny_bind failed: %s", strerror(errno));
+            LOG_E(TAG, "tiny_bind failed: %s", strerror(errno));
             ret = TINY_RET_E_SOCKET_BIND;
             break;
         }
@@ -363,7 +362,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
         thiz->local.socket.port = (port > 0) ? port : tiny_socket_get_port(thiz->fd);;
         tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::127.0.0.1::%d", thiz->fd, thiz->local.socket.port);
 
-        LOG_D(TAG, "SocketChannel_Bind OK: %s", thiz->id);
+        LOG_I(TAG, "SocketChannel_Bind OK. channel id: %s", thiz->id);
     } while (0);
 
     return ret;
@@ -465,7 +464,6 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentReader);
         if (handler == NULL)
         {
-            // LOG_D(TAG, "ChannelHandler not found: %d", thiz->currentReader);
             break;
         }
 
@@ -498,8 +496,6 @@ void SocketChannel_StartWrite(Channel *thiz, ChannelDataType type, const void *d
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
     RETURN_IF_FAIL(len);
-
-//    printf("SocketChannel_StartWrite: \n%s\n", (const char *)data);
 
     thiz->currentWriter = thiz->handlers.size - 1;
     SocketChannel_NextWrite(thiz, type, data, len);

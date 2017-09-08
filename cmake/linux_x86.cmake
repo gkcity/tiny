@@ -24,7 +24,7 @@ ADD_DEFINITIONS(-D__LINUX__)
 # DEBUG INFORMATION
 #
 #----------------------------------------------------------------------------
-ADD_DEFINITIONS(-DTINY_DEBUG)
+#ADD_DEFINITIONS(-DTINY_DEBUG)
 
 #----------------------------------------------------------------------------
 #

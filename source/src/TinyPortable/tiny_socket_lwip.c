@@ -34,7 +34,7 @@ int tiny_socket_join_group(int fd, const char *ip, const char *group)
 {
     int ret = 0;
 
-    printf("SocketChannel_JoinGroup: %s group: %s\n", ip, group);
+    LOG_D(TAG, "tiny_socket_join_group: %s group: %s", ip, group);
 
     do
     {
@@ -47,21 +47,21 @@ int tiny_socket_join_group(int fd, const char *ip, const char *group)
         ret = tiny_setsockopt(fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (void *) &mc, sizeof(mc));
         if (ret < 0)
         {
-            printf("add membership failed\n");
+            LOG_E(TAG, "add membership failed\n");
             break;
         }
 
         ret = tiny_setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
         if (ret < 0)
         {
-            printf("set ttl failed\n");
+            LOG_E(TAG, "set ttl failed\n");
             break;
         }
 
         ret = tiny_setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ittl, sizeof(ittl));
         if (ret < 0)
         {
-            printf("set multicast ttl failed\n");
+            LOG_E(TAG, "set multicast ttl failed\n");
             break;
         }
 

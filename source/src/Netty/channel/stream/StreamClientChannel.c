@@ -59,7 +59,6 @@ static void StreamClientChannel_OnRegister(Channel *thiz, Selector *selector, Ch
     if (Channel_IsActive(thiz))
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_ALL);
-        LOG_D(TAG, "StreamClientChannel_OnRegister: %d", thiz->fd);
 
         if (thiz->_getTimeout != NULL)
         {
@@ -187,7 +186,7 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
 {
     TinyRet ret = TINY_RET_OK;
 
-    LOG_D(TAG, "StreamClientChannel_Connect: %s:%d", ip, port);
+    LOG_I(TAG, "StreamClientChannel_Connect: %s:%d", ip, port);
 
     do
     {

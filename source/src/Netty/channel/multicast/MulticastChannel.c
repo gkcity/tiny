@@ -50,7 +50,6 @@ static void MulticastChannel_OnRegister(Channel *thiz, Selector *selector, Chann
     if (Channel_IsActive(thiz))
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
-        LOG_D(TAG, "MulticastChannel_OnRegister: %d", thiz->fd);
 
         if (thiz->_getTimeout != NULL)
         {
