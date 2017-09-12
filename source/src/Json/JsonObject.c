@@ -14,6 +14,7 @@
 #include <tiny_log.h>
 #include <tiny_snprintf.h>
 #include <tiny_buffer_append.h>
+#include <TinyMapItem.h>
 #include "JsonObject.h"
 #include "JsonNumber.h"
 #include "JsonTokenizer.h"
