@@ -149,6 +149,7 @@ SET(Netty_Header
         ${SOURCE_ROOT}/Netty/codec-http/HttpContent.h
         ${SOURCE_ROOT}/Netty/codec-http/HttpHeader.h
         ${SOURCE_ROOT}/Netty/codec-http/HttpMessage.h
+        ${SOURCE_ROOT}/Netty/codec-http/Bytes.h
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.h
         ${SOURCE_ROOT}/Netty/bootstrap/LoopbackChannelHandler.h
         )
@@ -169,6 +170,7 @@ SET(Netty_Source
         ${SOURCE_ROOT}/Netty/codec-http/HttpContent.c
         ${SOURCE_ROOT}/Netty/codec-http/HttpHeader.c
         ${SOURCE_ROOT}/Netty/codec-http/HttpMessage.c
+        ${SOURCE_ROOT}/Netty/codec-http/Bytes.c
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.c
         ${SOURCE_ROOT}/Netty/bootstrap/LoopbackChannelHandler.c
         )

@@ -246,7 +246,6 @@ TinyRet TinyList_AddHead(TinyList * thiz, void *data)
 
         thiz->first = node;
         node->prev = NULL;
-        break;
     }
     while (false);
 

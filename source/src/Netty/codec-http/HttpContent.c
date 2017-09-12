@@ -44,66 +44,6 @@ TinyRet HttpContent_Dispose(HttpContent *thiz)
     return TINY_RET_E_NOT_IMPLEMENTED;
 }
 
-//TINY_LOR
-//HttpContent * HttpContent_New(void)
-//{
-//    HttpContent *thiz = NULL;
-//
-//    do
-//    {
-//        TinyRet ret = TINY_RET_OK;
-//
-//        thiz = (HttpContent *)tiny_malloc(sizeof(HttpContent));
-//        if (thiz == NULL)
-//        {
-//            break;
-//        }
-//
-//        ret = HttpContent_Construct(thiz);
-//        if (RET_FAILED(ret))
-//        {
-//            HttpContent_Delete(thiz);
-//            thiz = NULL;
-//            break;
-//        }
-//    }
-//    while (0);
-//
-//    return thiz;
-//}
-//
-//TINY_LOR
-//void HttpContent_Delete(HttpContent *thiz)
-//{
-//    RETURN_IF_FAIL(thiz);
-//
-//    tiny_free(thiz);
-//}
-//
-//TINY_LOR
-//void HttpContent_Copy(HttpContent *dst, HttpContent *src)
-//{
-//    RETURN_IF_FAIL(dst);
-//    RETURN_IF_FAIL(src);
-//
-//    dst->buf_size = src->buf_size;
-//    dst->data_size = src->data_size;
-//
-//    if (src->buf_size > 0)
-//    {
-//        dst->buf = (char *)tiny_malloc(dst->buf_size);
-//        if (dst->buf != NULL)
-//        {
-//            memset(dst->buf, 0, dst->buf_size);
-//            memcpy(dst->buf, src->buf, src->buf_size);
-//        }
-//        else
-//        {
-//            LOG_E(TAG, "out of memory!");
-//        }
-//    }
-//}
-
 TINY_LOR
 TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size)
 {
@@ -137,46 +77,28 @@ TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size)
     return ret;
 }
 
+
 TINY_LOR
-uint32_t HttpContent_AddBytes(HttpContent *thiz, const char *data, uint32_t size)
+uint32_t HttpContent_LoadBytes(HttpContent *thiz, Bytes *bytes)
 {
-    uint32_t unused_size = thiz->buf_size - thiz->data_size;
+    uint32_t unused_size = 0;
+    uint32_t length_will_be_read = 0;
 
     RETURN_VAL_IF_FAIL(thiz, 0);
-    RETURN_VAL_IF_FAIL(data, 0);
+    RETURN_VAL_IF_FAIL(bytes, 0);
 
-    if (unused_size < size)
+    unused_size= thiz->buf_size - thiz->data_size;
+    length_will_be_read = bytes->length - bytes->offset;
+
+    if (unused_size < length_will_be_read)
     {
-        LOG_E(TAG, "HttpContent_AddBytes failed: content size < data size");
+        LOG_E(TAG, "HttpContent_LoadBytes failed: content size < data size");
         return 0;
     }
 
-    memcpy(thiz->buf + thiz->data_size, data, size);
-    thiz->data_size += size;
+    memcpy(thiz->buf + thiz->data_size, bytes->value + bytes->offset, length_will_be_read);
+    thiz->data_size += length_will_be_read;
+    bytes->offset += length_will_be_read;
 
-    return size;
+    return length_will_be_read;
 }
-
-//TINY_LOR
-//bool HttpContent_IsFull(HttpContent *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, false);
-//
-//    return (thiz->buf_size == thiz->data_size);
-//}
-
-//TINY_LOR
-//uint32_t HttpContent_GetSize(HttpContent * thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return thiz->buf_size;
-//}
-
-//TINY_LOR
-//const char * HttpContent_GetObject(HttpContent * thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return thiz->buf;
-//}

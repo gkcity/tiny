@@ -66,7 +66,7 @@ static TinyRet Selector_LoopOnce(Selector *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
-    LOG_I(TAG, "_Selector_LoopOnce");
+    LOG_I(TAG, "Selector_LoopOnce");
 
     /**
      * Reset

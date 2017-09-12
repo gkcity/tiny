@@ -20,7 +20,6 @@
 
 #define TAG     "HttpMessageCodec"
 
-
 TINY_LOR
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
@@ -47,6 +46,14 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 		if (RET_FAILED(HttpMessage_Parse((HttpMessage *)thiz->data, data, len)))
 		{
 			LOG_D(TAG, "HttpMessage_Parse failed!");
+			HttpMessage_Delete((HttpMessage *)thiz->data);
+			thiz->data = NULL;
+			break;
+		}
+
+		if (((HttpMessage *)thiz->data)->parser_status != HttpParserDone)
+		{
+			LOG_D(TAG, "parser_status != HttpParserDone");
 			HttpMessage_Delete((HttpMessage *)thiz->data);
 			thiz->data = NULL;
 			break;

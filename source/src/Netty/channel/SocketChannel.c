@@ -459,6 +459,8 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
     RETURN_IF_FAIL(data);
     RETURN_IF_FAIL(len);
 
+    LOG_I(TAG, "SocketChannel_NextRead");
+
     while (true)
     {
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentReader);

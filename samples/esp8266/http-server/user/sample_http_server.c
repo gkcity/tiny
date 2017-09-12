@@ -27,7 +27,7 @@ ICACHE_FLASH_ATTR
 static void HttpServerInitializer(Channel *channel, void *ctx)
 {
     printf("HttpServerInitializer: %s\n", channel->id);
-//    SocketChannel_AddLast(channel, ChannelIdleStateHandler(0, 0, 3));
+    SocketChannel_AddLast(channel, ChannelIdleStateHandler(0, 0, 3));
     SocketChannel_AddLast(channel, ExampleHandler());
     SocketChannel_AddBefore(channel, ExampleHandler_Name, HttpMessageCodec());
 }

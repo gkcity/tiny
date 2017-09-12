@@ -162,37 +162,9 @@ TINY_API
 TINY_LOR
 void HttpMessage_SetProtocolIdentifier(HttpMessage * thiz, const char *identifier);
 
-//TINY_API
-//TINY_LOR
-//void HttpMessage_SetIp(HttpMessage *thiz, const char *ip);
-//
-//TINY_API
-//TINY_LOR
-//const char * HttpMessage_GetIp(HttpMessage *thiz);
-//
-//TINY_API
-//TINY_LOR
-//void HttpMessage_SetPort(HttpMessage *thiz, uint16_t port);
-//
-//TINY_API
-//TINY_LOR
-//uint16_t HttpMessage_GetPort(HttpMessage *thiz);
-
-/* Parse bytes & to bytes */
 TINY_API
 TINY_LOR
-TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *bytes, uint32_t len);
-
-//TINY_API TinyRet HttpMessage_ToBytes(HttpMessage *thiz, char **bytes, uint32_t *len);
-//TINY_API uint32_t HttpMessage_ToString(HttpMessage *thiz, char *string, uint32_t len);
-
-//TINY_API
-//TINY_LOR
-//void HttpMessage_SetType(HttpMessage * thiz, HttpType type);
-//
-//TINY_API
-//TINY_LOR
-//HttpType HttpMessage_GetType(HttpMessage * thiz);
+TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *bytes, uint32_t length);
 
 TINY_API
 TINY_LOR
@@ -202,7 +174,6 @@ TINY_API
 TINY_LOR
 uint32_t HttpMessage_GetBytesSizeWithoutContent(HttpMessage *thiz);
 
-/* for request */
 TINY_API
 TINY_LOR
 void HttpMessage_SetMethod(HttpMessage *thiz, const char * method);
@@ -211,92 +182,18 @@ TINY_API
 TINY_LOR
 void HttpMessage_SetUri(HttpMessage *thiz, const char * uri);
 
-//TINY_API
-//TINY_LOR
-//const char * HttpMessage_GetMethod(HttpMessage *thiz);
-//
-//TINY_API
-//TINY_LOR
-//const char * HttpMessage_GetUri(HttpMessage *thiz);
-
-/* for response */
 TINY_API
 TINY_LOR
 void HttpMessage_SetResponse(HttpMessage *thiz, int code, const char *status);
 
-//TINY_API
-//TINY_LOR
-//const char * HttpMessage_GetStatus(HttpMessage *thiz);
-//
-//TINY_API
-//TINY_LOR
-//int HttpMessage_GetStatusCode(HttpMessage *thiz);
-
-/* for version */
 TINY_API
 TINY_LOR
 void HttpMessage_SetVersion(HttpMessage *thiz, int major, int minor);
 
-//TINY_API
-//TINY_LOR
-//int HttpMessage_GetMajorVersion(HttpMessage *thiz);
-//
-//TINY_API
-//TINY_LOR
-//int HttpMessage_GetMinorVersion(HttpMessage *thiz);
-//
-///* for method */
-//TINY_API
-//TINY_LOR
-//bool HttpMessage_IsMethodEqual(HttpMessage *thiz, const char *method);
-
-/* for header */
-//TINY_API
-//TINY_LOR
-//void HttpMessage_SetHeader(HttpMessage *thiz, const char *name, const char *value);
-
-//TINY_API
-//TINY_LOR
-//void HttpMessage_SetHeaderInteger(HttpMessage *thiz, const char *name, uint32_t value);
-
-//TINY_API
-//TINY_LOR
-//const char * HttpMessage_GetHeaderValue(HttpMessage *thiz, const char *name);
-//
-//TINY_API
-//TINY_LOR
-//uint32_t HttpMessage_GetHeaderCount(HttpMessage * thiz);
-//
-//TINY_API
-//TINY_LOR
-//const char * HttpMessage_GetHeaderNameAt(HttpMessage * thiz, uint32_t index);
-//
-//TINY_API
-//TINY_LOR
-//const char * HttpMessage_GetHeaderValueAt(HttpMessage * thiz, uint32_t index);
-
-/* for content */
 TINY_API
 TINY_LOR
 bool HttpMessage_IsContentFull(HttpMessage *thiz);
 
-//TINY_API
-//TINY_LOR
-//const char * HttpMessage_GetContentObject(HttpMessage *thiz);
-
-//TINY_API
-//TINY_LOR
-//uint32_t HttpMessage_GetContentSize(HttpMessage *thiz);
-
-//TINY_API
-//TINY_LOR
-//TinyRet HttpMessage_SetContentSize(HttpMessage *thiz, uint32_t size);
-
-//TINY_API
-//TINY_LOR
-//TinyRet HttpMessage_AddContentObject(HttpMessage *thiz, const char *bytes, uint32_t size);
-
-/* set request */
 TINY_API
 TINY_LOR
 TinyRet HttpMessage_SetRequest(HttpMessage *thiz, const char * method, const char *url);

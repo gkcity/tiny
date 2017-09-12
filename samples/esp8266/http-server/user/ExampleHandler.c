@@ -123,7 +123,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
         SocketChannel_StartWrite(channel,
              DATA_HTTP_MESSAGE,
              HttpMessage_GetBytesWithoutContent(&response),
-              HttpMessage_GetBytesSizeWithoutContent(&response));
+             HttpMessage_GetBytesSizeWithoutContent(&response));
 
         Channel_Close(channel);
         HttpMessage_Dispose(&response);

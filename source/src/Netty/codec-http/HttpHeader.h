@@ -17,14 +17,17 @@
 
 #include <tiny_base.h>
 #include <tiny_api.h>
-#include <TinyList.h>
+#include <TinyMap.h>
+#include "Bytes.h"
 
 TINY_BEGIN_DECLS
 
 
+#define CONTENT_LENGTH      "Content-Length"
+
 typedef struct _HttpHeader
 {
-    TinyList        list;
+    TinyMap         values;
 } HttpHeader;
 
 TINY_API
@@ -40,20 +43,14 @@ TinyRet HttpHeader_Dispose(HttpHeader *thiz);
 //
 //TINY_LOR
 //void HttpHeader_Delete(HttpHeader *thiz);
-//
-//TINY_LOR
-//void HttpHeader_Copy(HttpHeader *dst, HttpHeader *src);
 
 TINY_API
 TINY_LOR
-void HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value);
+TinyRet HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value);
 
 TINY_API
 TINY_LOR
-void HttpHeader_SetInteger(HttpHeader * thiz, const char *name, uint32_t value);
-
-//TINY_LOR
-//uint32_t HttpHeader_GetCount(HttpHeader * thiz);
+TinyRet HttpHeader_SetInteger(HttpHeader * thiz, const char *name, uint32_t value);
 
 TINY_API
 TINY_LOR
@@ -61,15 +58,15 @@ const char * HttpHeader_GetValue(HttpHeader * thiz, const char *name);
 
 TINY_API
 TINY_LOR
-const char * HttpHeader_GetNameAt(HttpHeader * thiz, uint32_t index);
+uint32_t HttpHeader_GetSize(HttpHeader * thiz);
 
 TINY_API
 TINY_LOR
-const char * HttpHeader_GetValueAt(HttpHeader * thiz, uint32_t index);
+TinyRet HttpHeader_GetContentLength(HttpHeader * thiz, uint32_t *length);
 
 TINY_API
 TINY_LOR
-uint32_t HttpHeader_Parse(HttpHeader *thiz, const char *bytes, uint32_t len);
+TinyRet HttpHeader_Parse(HttpHeader *thiz, Bytes *bytes);
 
 
 TINY_END_DECLS

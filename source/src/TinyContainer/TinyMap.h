@@ -26,10 +26,11 @@
 TINY_BEGIN_DECLS
 
 
+#define TINY_MAP_MAX_KEY_LEN             128
+
 typedef struct _TinyMapItem
 {
-    #define     MAX_KEY_LEN             32
-    char        key[MAX_KEY_LEN];
+    char      * key;
     void      * value;
 } TinyMapItem;
 
@@ -55,26 +56,10 @@ TinyRet TinyMap_Dispose(TinyMap *thiz);
 //TINY_API
 //TINY_LOR
 //void TinyMap_Delete(TinyMap *thiz);
-//
-//TINY_API
-//TINY_LOR
-//int TinyMap_Foreach(TinyMap * thiz, TinyContainerItemVisit visit, void * ctx);
 
 TINY_API
 TINY_LOR
 void TinyMap_SetDeleteListener(TinyMap * thiz, TinyContainerItemDeleteListener listener, void *ctx);
-
-//TINY_API
-//TINY_LOR
-//int TinyMap_GetSize(TinyMap *thiz);
-//
-//TINY_API
-//TINY_LOR
-//int TinyMap_GetCount(TinyMap *thiz);
-//
-//TINY_API
-//TINY_LOR
-//void * TinyMap_GetValueAt(TinyMap *thiz, uint32_t index);
 
 TINY_API
 TINY_LOR
@@ -87,10 +72,6 @@ TinyRet TinyMap_Insert(TinyMap *thiz, const char *key, void *value);
 TINY_API
 TINY_LOR
 TinyRet TinyMap_Erase(TinyMap *thiz, const char *key);
-
-//TINY_API
-//TINY_LOR
-//void TinyMap_Clear(TinyMap *thiz);
 
 
 TINY_END_DECLS

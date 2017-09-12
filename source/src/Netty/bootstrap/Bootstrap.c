@@ -23,13 +23,13 @@ TINY_LOR
 static void _OnChannelRemoved(void * data, void *ctx);
 
 TINY_LOR
-static TinyRet _PreSelect(Selector *selector, void *ctx);
+static TinyRet PreSelect(Selector *selector, void *ctx);
 
 TINY_LOR
-static TinyRet _PostSelect(Selector *selector, void *ctx);
+static TinyRet PostSelect(Selector *selector, void *ctx);
 
 TINY_LOR
-static TinyRet _OnSelectTimeout(Selector *selector, void *ctx);
+static TinyRet OnSelectTimeout(Selector *selector, void *ctx);
 
 #ifndef NETTY_SHUTDOWN_DISABLED
 TINY_LOR
@@ -69,9 +69,9 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
             break;
         }
 
-        thiz->selector.onPreSelect = _PreSelect;
-        thiz->selector.onPostSelect = _PostSelect;
-        thiz->selector.onSelectTimeout = _OnSelectTimeout;
+        thiz->selector.onPreSelect = PreSelect;
+        thiz->selector.onPostSelect = PostSelect;
+        thiz->selector.onSelectTimeout = OnSelectTimeout;
         thiz->selector.ctx = thiz;
 
         ret = TinyList_Construct(&thiz->channels);
@@ -183,11 +183,11 @@ static void _OnChannelRemoved(void * data, void *ctx)
 }
 
 TINY_LOR
-static TinyRet _PreSelect(Selector *selector, void *ctx)
+static TinyRet PreSelect(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_I(TAG, "_PreSelect, channels: %d", thiz->channels.size);
+    LOG_I(TAG, "PreSelect, channels: %d", thiz->channels.size);
 
     for (int i = (thiz->channels.size - 1); i >= 0; --i)
     {
@@ -219,11 +219,11 @@ static TinyRet _PreSelect(Selector *selector, void *ctx)
 }
 
 TINY_LOR
-static TinyRet _PostSelect(Selector *selector, void *ctx)
+static TinyRet PostSelect(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_I(TAG, "_PostSelect");
+    LOG_I(TAG, "PostSelect");
 
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
@@ -244,11 +244,11 @@ static TinyRet _PostSelect(Selector *selector, void *ctx)
 }
 
 TINY_LOR
-static TinyRet _OnSelectTimeout(Selector *selector, void *ctx)
+static TinyRet OnSelectTimeout(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_I(TAG, "_OnSelectTimeout");
+    LOG_I(TAG, "OnSelectTimeout");
 
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {

@@ -30,7 +30,7 @@ TINY_LOR
 static bool item_compare(void *data, void *ctx);
 
 TINY_LOR
-static int TinyList_FindKey(TinyList * thiz, const char *key);
+static int TinyMap_FindKey(TinyList * thiz, const char *key);
 
 TINY_LOR
 static void on_item_delete_listener(void * data, void *ctx);
@@ -120,43 +120,6 @@ void TinyMap_SetDeleteListener(TinyMap * thiz, TinyContainerItemDeleteListener l
     thiz->data_delete_listener_ctx = ctx;
 }
 
-//TINY_LOR
-//int TinyMap_Foreach(TinyMap * thiz, TinyContainerItemVisit visit, void * ctx)
-//{
-//    return TinyList_Foreach(&thiz->list, visit, ctx);
-//}
-//
-//TINY_LOR
-//int TinyMap_GetSize(TinyMap *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return TinyList_GetSize(&thiz->list);
-//}
-//
-//TINY_LOR
-//int TinyMap_GetCount(TinyMap *thiz)
-//{
-//    return TinyMap_GetSize(thiz);
-//}
-//
-//TINY_LOR
-//void * TinyMap_GetValueAt(TinyMap *thiz, uint32_t index)
-//{
-//    void *value = NULL;
-//    Item * item = NULL;
-//
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    item = (Item *)TinyList_GetAt(&thiz->list, index);
-//    if (item)
-//    {
-//        value = item->value;
-//    }
-//
-//    return value;
-//}
-
 TINY_LOR
 void * TinyMap_GetValue(TinyMap *thiz, const char *key)
 {
@@ -178,30 +141,58 @@ void * TinyMap_GetValue(TinyMap *thiz, const char *key)
 TINY_LOR
 TinyRet TinyMap_Insert(TinyMap *thiz, const char *key, void *value)
 {
-    int index = 0;
+    TinyRet ret = TINY_RET_OK;
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(key, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
 
-    index = TinyList_FindKey(&thiz->list, key);
-    if (index < 0)
+    do
     {
-        TinyMapItem * item = (TinyMapItem *)tiny_malloc(sizeof(TinyMapItem));
-        if (item == NULL)
+        int index = 0;
+        TinyMapItem * item = NULL;
+
+        index = TinyMap_FindKey(&thiz->list, key);
+        if (index >= 0)
         {
-            return TINY_RET_E_NEW;
+            ret = TINY_RET_E_ITEM_EXIST;
+            break;
         }
 
-        memset(item, 0, sizeof(TinyMapItem));
-        strncpy(item->key, key, MAX_KEY_LEN);
-        item->value = value;
 
-        TinyList_AddTail(&thiz->list, item);
-        return TINY_RET_OK;
-    }
+        do
+        {
+            uint32_t keyLength = strlen(key);
+            item = (TinyMapItem *)tiny_malloc(sizeof(TinyMapItem));
+            if (item == NULL)
+            {
+                ret = TINY_RET_E_NEW;
+                break;
+            }
 
-    return TINY_RET_E_ITEM_EXIST;
+            memset(item, 0, sizeof(TinyMapItem));
+
+            item->key = tiny_malloc(keyLength + 1);
+            if (item->key == NULL)
+            {
+                ret = TINY_RET_E_NEW;
+                break;
+            }
+            memset(item->key, 0, keyLength + 1);
+
+            strncpy(item->key, key, keyLength);
+            item->value = value;
+
+            TinyList_AddTail(&thiz->list, item);
+        } while (false);
+
+        if (RET_FAILED(ret) && item != NULL)
+        {
+            tiny_free(item);
+        }
+    } while (false);
+
+    return ret;
 }
 
 TINY_LOR
@@ -212,7 +203,7 @@ TinyRet TinyMap_Erase(TinyMap *thiz, const char *key)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(key, TINY_RET_E_ARG_NULL);
 
-    index = TinyList_FindKey(&thiz->list, key);
+    index = TinyMap_FindKey(&thiz->list, key);
     if (index < 0)
     {
         return TINY_RET_E_NOT_FOUND;
@@ -221,14 +212,6 @@ TinyRet TinyMap_Erase(TinyMap *thiz, const char *key)
     TinyList_RemoveAt(&thiz->list, index);
     return TINY_RET_OK;
 }
-
-//TINY_LOR
-//void TinyMap_Clear(TinyMap *thiz)
-//{
-//    RETURN_IF_FAIL(thiz);
-//
-//    TinyList_RemoveAll(&thiz->list);
-//}
 
 /*-----------------------------------------------------------------------------
 *
@@ -241,11 +224,11 @@ static bool item_compare(void *data, void *ctx)
     TinyMapItem * item = (TinyMapItem *)data;
     const char * key = (const char *)ctx;
 
-    return (strncmp(item->key, key, MAX_KEY_LEN) == 0);
+    return (strncmp(item->key, key, TINY_MAP_MAX_KEY_LEN) == 0);
 }
 
 TINY_LOR
-static int TinyList_FindKey(TinyList * thiz, const char *key)
+static int TinyMap_FindKey(TinyList * thiz, const char *key)
 {
     return TinyList_Foreach(thiz, item_compare, (void *)key);
 }
@@ -261,5 +244,6 @@ static void on_item_delete_listener(void * data, void *ctx)
         thiz->data_delete_listener(item->value, thiz->data_delete_listener_ctx);
     }
 
+    tiny_free(item->key);
     tiny_free(item);
 }

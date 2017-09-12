@@ -18,21 +18,20 @@
 #include "tiny_char_util.h"
 #include "tiny_url_split.h"
 #include "tiny_log.h"
+#include "Bytes.h"
 
 #define TAG                 "HttpMessage"
-#define CONTENT_LENGTH      "Content-Length"
 
 /* HTTP/1.1 0 X */
 #define HTTP_STATUS_LINE_MIN_LEN        14  /* strlen(HTTP/1.1 X 2\r\n) */
 #define HTTP_REQUEST_LINE_MIN_LEN       14  /* X * HTTP/1.1\r\n */
-#define HTTP_HEAD_LEN                   128
-#define HTTP_LINE_LEN                   128
+#define HTTP_LINE_LEN                   256
 
 TINY_LOR
-static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes, uint32_t len);
+static uint32_t HttpMessage_GetLineSize(HttpMessage * thiz);
 
 TINY_LOR
-static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *bytes, uint32_t len);
+static bool HttpMessage_ParseLine(HttpMessage * thiz, Line *line);
 
 TINY_LOR
 static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz);
@@ -131,59 +130,23 @@ void HttpMessage_SetProtocolIdentifier(HttpMessage * thiz, const char *identifie
     strncpy(thiz->protocol_identifier, identifier, PROTOCOL_LEN);
 }
 
-//TINY_LOR
-//void HttpMessage_SetIp(HttpMessage *thiz, const char *ip)
-//{
-//    RETURN_IF_FAIL(thiz);
-//    RETURN_IF_FAIL(ip);
-//
-//    strncpy(thiz->ip, ip, TINY_IP_LEN);
-//}
-//
-//TINY_LOR
-//const char * HttpMessage_GetIp(HttpMessage *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return thiz->ip;
-//}
-//
-//TINY_LOR
-//void HttpMessage_SetPort(HttpMessage *thiz, uint16_t port)
-//{
-//    RETURN_IF_FAIL(thiz);
-//
-//    thiz->port = port;
-//}
-//
-//TINY_LOR
-//uint16_t HttpMessage_GetPort(HttpMessage *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return thiz->port;
-//}
-
 TINY_LOR
-TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *bytes, uint32_t length)
+TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *data, uint32_t length)
 {
     TinyRet ret = TINY_RET_OK;
 
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-
     do
     {
-        uint32_t readable_length = length;
-        uint32_t first_line_length = 0;
-        uint32_t head_length = 0;
-        const char * content_length = NULL;
+        Bytes bytes;
+        Line line;
+
+        bytes.value = data;
+        bytes.length = length;
+        bytes.offset = 0;
 
         if (thiz->parser_status == HttpParserIncomplete)
         {
-            //uint32_t left_length = thiz->content_length - thiz->content_length_loaded;
-            uint32_t length_will_be_read = readable_length;
-            uint32_t loaded_length = HttpContent_AddBytes(&thiz->content, bytes, length_will_be_read);
+            uint32_t loaded_length = HttpContent_LoadBytes(&thiz->content, &bytes);
             thiz->consume_length = loaded_length;
             thiz->consume_length++;
             thiz->content_length_loaded += loaded_length;
@@ -191,63 +154,61 @@ TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *bytes, uint32_t length
             break;
         }
 
-        // load first line
-        first_line_length = HttpMessage_LoadStatusLine(thiz, bytes, readable_length);
-        if (first_line_length == 0)
+        if (! Bytes_GetLine(&bytes, &line))
         {
-            first_line_length = HttpMessage_LoadRequestLine(thiz, bytes, readable_length);
-            if (first_line_length == 0)
-            {
-                LOG_D(TAG, "HttpMessage_Parse => invalid first line");
-                thiz->parser_status = HttpParserError;
-                ret = TINY_RET_E_HTTP_MSG_INVALID;
-                break;
-            }
+            LOG_D(TAG, "HttpMessage_Parse => invalid first line");
+            thiz->parser_status = HttpParserError;
+            ret = TINY_RET_E_HTTP_MSG_INVALID;
+            break;
         }
 
-        thiz->consume_length += first_line_length;
-        readable_length = length - first_line_length;
+        if (! HttpMessage_ParseLine(thiz, &line))
+        {
+            LOG_D(TAG, "HttpMessage_ParseLine => invalid first line");
+            thiz->parser_status = HttpParserError;
+            ret = TINY_RET_E_HTTP_MSG_INVALID;
+            break;
+        }
 
-        // load headers
-        head_length = HttpHeader_Parse(&thiz->header, bytes + first_line_length, readable_length);
-        if (head_length == 0)
+        if (RET_FAILED(HttpHeader_Parse(&thiz->header, &bytes)))
         {
             LOG_D(TAG, "HttpMessage_Parse => invalid headers");
             thiz->parser_status = HttpParserHeaderIncomplete;
             break;
         }
 
-        content_length = HttpHeader_GetValue(&thiz->header, CONTENT_LENGTH);
-        thiz->content_length = (uint32_t)((content_length != NULL) ? atoi(content_length) : 0);
+        if (RET_FAILED(HttpHeader_GetContentLength(&thiz->header, &thiz->content_length)))
+        {
+            LOG_D(TAG, "HttpHeader_GetContentLength failed!");
+            thiz->parser_status = HttpParserHeaderIncomplete;
+            break;
+        }
+
         if (thiz->content_length == 0)
         {
             thiz->parser_status = HttpParserDone;
             break;
         }
 
-		ret = HttpContent_SetSize(&thiz->content, thiz->content_length);
+        ret = HttpContent_SetSize(&thiz->content, thiz->content_length);
         if (RET_FAILED(ret))
         {
-			thiz->parser_status = HttpParserError;
+            thiz->parser_status = HttpParserError;
             break;
         }
 
-		thiz->parser_status = HttpParserIncomplete;
+        thiz->parser_status = HttpParserIncomplete;
 
-        readable_length = length - first_line_length - head_length;
-        if (readable_length > 0)
+        if ((bytes.length - bytes.offset) > 0)
         {
-            const char *content_start = bytes + first_line_length + head_length;
-            uint32_t length_will_be_read = (readable_length < thiz->content_length) ? readable_length : thiz->content_length;
-            thiz->content_length_loaded = HttpContent_AddBytes(&thiz->content, content_start, length_will_be_read);
+            thiz->content_length_loaded = HttpContent_LoadBytes(&thiz->content, &bytes);
             thiz->consume_length += thiz->content_length_loaded;
             thiz->parser_status = (thiz->content_length_loaded >= thiz->content_length) ? HttpParserDone : HttpParserIncomplete;
         }
-    } while (0);
-    
+    } while (false);
+
     return ret;
 }
-
 
 TINY_LOR
 const char * HttpMessage_GetBytesWithoutContent(HttpMessage *thiz)
@@ -295,7 +256,7 @@ static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz)
 		}
 
 		// calculate size
-		buffer_size = HTTP_LINE_LEN + thiz->header.list.size * HTTP_HEAD_LEN;
+		buffer_size = HttpMessage_GetLineSize(thiz) + HttpHeader_GetSize(&thiz->header);
 
 		thiz->_bytes = (char *)tiny_malloc(buffer_size);
 		if (thiz->_bytes == NULL)
@@ -337,13 +298,12 @@ static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz)
 		thiz->_size = (uint32_t)(strlen(thiz->_bytes));
 
 		// headers
-		for (uint32_t i = 0; i < thiz->header.list.size; ++i)
+		for (uint32_t i = 0; i < thiz->header.values.list.size; ++i)
 		{
-			const char * name = HttpHeader_GetNameAt(&thiz->header, i);
-			const char * value = HttpHeader_GetValueAt(&thiz->header, i);
+            TinyMapItem *item = (TinyMapItem *) TinyList_GetAt(&thiz->header.values.list, i);
 
 			memset(line, 0, HTTP_LINE_LEN);
-			tiny_snprintf(line, HTTP_LINE_LEN, "%s: %s\r\n", name, value);
+			tiny_snprintf(line, HTTP_LINE_LEN, "%s: %s\r\n", item->key, (const char *)item->value);
 			line[HTTP_LINE_LEN - 1] = 0;
 
 			strncpy(thiz->_bytes + thiz->_size, line, HTTP_LINE_LEN);
@@ -359,22 +319,6 @@ static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz)
 		thiz->_size = (uint32_t)(strlen(thiz->_bytes));
 	} while (0);
 }
-
-//TINY_LOR
-//void HttpMessage_SetType(HttpMessage * thiz, HttpType type)
-//{
-//    RETURN_IF_FAIL(thiz);
-//
-//    thiz->type = type;
-//}
-//
-//TINY_LOR
-//HttpType HttpMessage_GetType(HttpMessage * thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, HTTP_UNDEFINED);
-//
-//    return thiz->type;
-//}
 
 TINY_LOR
 void HttpMessage_SetMethod(HttpMessage *thiz, const char * method)
@@ -394,22 +338,6 @@ void HttpMessage_SetUri(HttpMessage *thiz, const char * uri)
     strncpy(thiz->request_line.uri, uri, HTTP_URI_LEN);
 }
 
-//TINY_LOR
-//const char * HttpMessage_GetMethod(HttpMessage *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return thiz->request_line.method;
-//}
-//
-//TINY_LOR
-//const char * HttpMessage_GetUri(HttpMessage *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return thiz->request_line.uri;
-//}
-
 TINY_LOR
 void HttpMessage_SetResponse(HttpMessage *thiz, int code, const char *status)
 {
@@ -421,22 +349,6 @@ void HttpMessage_SetResponse(HttpMessage *thiz, int code, const char *status)
     strncpy(thiz->status_line.status, status, HTTP_STATUS_LEN);
 }
 
-//TINY_LOR
-//const char * HttpMessage_GetStatus(HttpMessage *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return thiz->status_line.status;
-//}
-//
-//TINY_LOR
-//int HttpMessage_GetStatusCode(HttpMessage *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return thiz->status_line.code;
-//}
-
 TINY_LOR
 void HttpMessage_SetVersion(HttpMessage *thiz, int major, int minor)
 {
@@ -446,113 +358,6 @@ void HttpMessage_SetVersion(HttpMessage *thiz, int major, int minor)
     thiz->version.minor = minor;
 }
 
-//TINY_LOR
-//int HttpMessage_GetMajorVersion(HttpMessage *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return thiz->version.major;
-//}
-//
-//TINY_LOR
-//int HttpMessage_GetMinorVersion(HttpMessage *thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return thiz->version.minor;
-//}
-//
-//TINY_LOR
-//HttpHeader * HttpMessage_GetHeader(HttpMessage * thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return &thiz->header;
-//}
-//
-//TINY_LOR
-//HttpContent * HttpMessage_GetContent(HttpMessage * thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return &thiz->content;
-//}
-
-//TINY_LOR
-//void HttpMessage_SetHeader(HttpMessage * thiz, const char *name, const char *value)
-//{
-//    RETURN_IF_FAIL(thiz);
-//    RETURN_IF_FAIL(name);
-//    RETURN_IF_FAIL(value);
-//
-//    HttpHeader_Set(&thiz->header, name, value);
-//}
-
-//TINY_LOR
-//void HttpMessage_SetHeaderInteger(HttpMessage * thiz, const char *name, uint32_t value)
-//{
-//    RETURN_IF_FAIL(thiz);
-//    RETURN_IF_FAIL(name);
-//
-//    HttpHeader_SetInteger(&thiz->header, name, value);
-//}
-
-//TINY_LOR
-//const char * HttpMessage_GetHeaderValue(HttpMessage * thiz, const char *name)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//    RETURN_VAL_IF_FAIL(name, NULL);
-//
-//    return HttpHeader_GetValue(&thiz->header, name);
-//}
-//
-//TINY_LOR
-//uint32_t HttpMessage_GetHeaderCount(HttpMessage * thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return HttpHeader_GetCount(&thiz->header);
-//}
-//
-//TINY_LOR
-//const char * HttpMessage_GetHeaderNameAt(HttpMessage * thiz, uint32_t index)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return HttpHeader_GetNameAt(&thiz->header, index);
-//}
-
-//TINY_LOR
-//const char * HttpMessage_GetHeaderValueAt(HttpMessage * thiz, uint32_t index)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//
-//    return HttpHeader_GetValueAt(&thiz->header, index);
-//}
-
-//TINY_LOR
-//const char * HttpMessage_GetContentObject(HttpMessage * thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, NULL);
-//    return thiz->content.buf;
-//}
-
-//TINY_LOR
-//uint32_t HttpMessage_GetContentSize(HttpMessage * thiz)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return HttpContent_GetSize(&thiz->content);
-//}
-//
-//TINY_LOR
-//bool HttpMessage_IsMethodEqual(HttpMessage * thiz, const char *method)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, false);
-//
-//    return STR_EQUAL(thiz->request_line.method, method);
-//}
-
 TINY_LOR
 bool HttpMessage_IsContentFull(HttpMessage *thiz)
 {
@@ -561,32 +366,52 @@ bool HttpMessage_IsContentFull(HttpMessage *thiz)
     return (thiz->content.buf_size == thiz->content.data_size);
 }
 
-//TINY_LOR
-//TinyRet HttpMessage_SetContentSize(HttpMessage *thiz, uint32_t size)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-//
-//    return HttpContent_SetSize(&thiz->content, size);
-//}
+TINY_LOR
+static uint32_t HttpMessage_GetLineSize(HttpMessage * thiz)
+{
+    char buf[HTTP_LINE_LEN];
 
-//TINY_LOR
-//TinyRet HttpMessage_AddContentObject(HttpMessage *thiz, const char *bytes, uint32_t size)
-//{
-//    RETURN_VAL_IF_FAIL(thiz, 0);
-//
-//    return HttpContent_AddBytes(&thiz->content, bytes, size);
-//}
+    RETURN_VAL_IF_FAIL(thiz, 0);
+
+    memset(buf, 0, HTTP_LINE_LEN);
+
+    switch (thiz->type)
+    {
+        case HTTP_REQUEST:
+            tiny_snprintf(buf, HTTP_LINE_LEN, "%s %s %s/%d.%d\r\n",
+                          thiz->request_line.method,
+                          thiz->request_line.uri,
+                          thiz->protocol_identifier,
+                          thiz->version.major,
+                          thiz->version.minor);
+            break;
+
+        case HTTP_RESPONSE:
+            tiny_snprintf(buf, HTTP_LINE_LEN, "%s/%d.%d %d %s\r\n",
+                          thiz->protocol_identifier,
+                          thiz->version.major,
+                          thiz->version.minor,
+                          thiz->status_line.code,
+                          thiz->status_line.status);
+            break;
+
+        default:
+            break;
+    }
+
+    return (strlen(buf) + 1);
+}
 
 TINY_LOR
-static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes, uint32_t len)
+static TinyRet HttpMessage_ParseStatusLine(HttpMessage * thiz, Line *line)
 {
-	uint32_t i = 0;
+    uint32_t i = 0;
     uint32_t count = 0;
-    const char *p = bytes;
+    const char *p = line->value + line->offset;
 
-    if (len < HTTP_STATUS_LINE_MIN_LEN)
+    if ((line->length - line->offset) < HTTP_STATUS_LINE_MIN_LEN)
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // protocol identifier.
@@ -595,7 +420,7 @@ static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes
     {
         if (p[i] != thiz->protocol_identifier[i])
         {
-            return 0;
+            return TINY_RET_E_ARG_INVALID;
         }
     }
 
@@ -604,13 +429,13 @@ static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes
     // Slash.
     if (*p++ != '/')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // Major version number.
     if (!is_digit(*p))
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     thiz->version.major = 0;
@@ -623,13 +448,13 @@ static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes
     // Dot.
     if (*p++ != '.')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // Minor version number.
     if (!is_digit(*p))
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     thiz->version.minor = 0;
@@ -642,7 +467,7 @@ static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes
     // Space.
     if (*p++ != ' ')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // status code
@@ -656,7 +481,7 @@ static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes
     // Space.
     if (*p++ != ' ')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // status
@@ -670,30 +495,29 @@ static uint32_t HttpMessage_LoadStatusLine(HttpMessage * thiz, const char *bytes
     // CRLF.
     if (*p++ != '\r')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
-    if (*p++ != '\n')
+    if (*p != '\n')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     thiz->type = HTTP_RESPONSE;
 
-    // length of status line
-    return (uint32_t)(p - bytes);
+    return TINY_RET_OK;
 }
 
 TINY_LOR
-static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *bytes, uint32_t len)
+static TinyRet HttpMessage_ParseRequestLine(HttpMessage * thiz, Line *line)
 {
-	uint32_t i = 0;
+    uint32_t i = 0;
     uint32_t count = 0;
-    const char *p = bytes;
+    const char *p = line->value + line->offset;
 
-    if (len < HTTP_STATUS_LINE_MIN_LEN)
+    if ((line->length - line->offset) < HTTP_REQUEST_LINE_MIN_LEN)
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // Request method.
@@ -707,13 +531,13 @@ static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *byte
 
     if (strlen(thiz->request_line.method) == 0)
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // Space.
     if (*p++ != ' ')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // URI.
@@ -727,13 +551,13 @@ static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *byte
 
     if (strlen(thiz->request_line.uri) == 0)
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // Space.
     if (*p++ != ' ')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // protocol identifier.
@@ -742,7 +566,7 @@ static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *byte
     {
         if (p[i] != thiz->protocol_identifier[i])
         {
-            return 0;
+            return TINY_RET_E_ARG_INVALID;
         }
     }
     p += count;
@@ -750,13 +574,13 @@ static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *byte
     // Slash.
     if (*p++ != '/')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // Major version number.
-    if (! is_digit(*p)) 
+    if (! is_digit(*p))
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     thiz->version.major = 0;
@@ -769,13 +593,13 @@ static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *byte
     // Dot.
     if (*p++ != '.')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     // Minor version number.
     if (!is_digit(*p))
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     thiz->version.minor = 0;
@@ -788,18 +612,40 @@ static uint32_t HttpMessage_LoadRequestLine(HttpMessage * thiz, const char *byte
     // CRLF.
     if (*p++ != '\r')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     if (*p++ != '\n')
     {
-        return 0;
+        return TINY_RET_E_ARG_INVALID;
     }
 
     thiz->type = HTTP_REQUEST;
 
-    // length of status line
-    return (uint32_t)(p - bytes);
+    return TINY_RET_OK;
+}
+
+TINY_LOR
+static bool HttpMessage_ParseLine(HttpMessage * thiz, Line *line)
+{
+    bool ret = true;
+
+    do
+    {
+        if (RET_SUCCEEDED(HttpMessage_ParseStatusLine(thiz, line)))
+        {
+            break;
+        }
+
+        if (RET_SUCCEEDED(HttpMessage_ParseRequestLine(thiz, line)))
+        {
+            break;
+        }
+
+        ret = false;
+    } while (false);
+
+    return ret;
 }
 
 TINY_LOR
