@@ -363,10 +363,10 @@ TinyRet JsonObject_PutString(JsonObject *thiz, const char *key, const char *valu
             break;
         }
 
-        ret = TinyMap_Insert(&thiz->data, key, v);
+        ret = JsonObject_PutValue(thiz, key, v);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            LOG_E(TAG, "JsonObject_PutValue FAILED: %d", TINY_RET_CODE(ret));
             JsonValue_Delete(v);
         }
     } while (false);
@@ -392,10 +392,10 @@ TinyRet JsonObject_PutInteger(JsonObject *thiz, const char *key, int value)
             break;
         }
 
-        ret = TinyMap_Insert(&thiz->data, key, v);
+        ret = JsonObject_PutValue(thiz, key, v);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            LOG_E(TAG, "JsonObject_PutValue FAILED: %d", TINY_RET_CODE(ret));
             JsonValue_Delete(v);
         }
     } while (false);
@@ -421,10 +421,10 @@ TinyRet JsonObject_PutFloat(JsonObject *thiz, const char *key, float value)
             break;
         }
 
-        ret = TinyMap_Insert(&thiz->data, key, v);
+        ret = JsonObject_PutValue(thiz, key, v);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            LOG_E(TAG, "JsonObject_PutValue FAILED: %d", TINY_RET_CODE(ret));
             JsonValue_Delete(v);
         }
     } while (false);
@@ -450,10 +450,10 @@ TinyRet JsonObject_PutBoolean(JsonObject *thiz, const char *key, bool value)
             break;
         }
 
-        ret = TinyMap_Insert(&thiz->data, key, v);
+        ret = JsonObject_PutValue(thiz, key, v);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            LOG_E(TAG, "JsonObject_PutValue FAILED: %d", TINY_RET_CODE(ret));
             JsonValue_Delete(v);
         }
     } while (false);
@@ -479,10 +479,10 @@ TinyRet JsonObject_PutNull(JsonObject *thiz, const char *key)
             break;
         }
 
-        ret = TinyMap_Insert(&thiz->data, key, v);
+        ret = JsonObject_PutValue(thiz, key, v);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            LOG_E(TAG, "JsonObject_PutValue FAILED: %d", TINY_RET_CODE(ret));
             JsonValue_Delete(v);
         }
     } while (false);
@@ -509,10 +509,10 @@ TinyRet JsonObject_PutObject(JsonObject *thiz, const char *key, JsonObject *valu
             break;
         }
 
-        ret = TinyMap_Insert(&thiz->data, key, v);
+        ret = JsonObject_PutValue(thiz, key, v);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            LOG_E(TAG, "JsonObject_PutValue FAILED: %d", TINY_RET_CODE(ret));
             JsonValue_Delete(v);
         }
     } while (false);
@@ -539,10 +539,10 @@ TinyRet JsonObject_PutArray(JsonObject *thiz, const char *key, JsonArray *value)
             break;
         }
 
-        ret = TinyMap_Insert(&thiz->data, key, v);
+        ret = JsonObject_PutValue(thiz, key, v);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            LOG_E(TAG, "JsonObject_PutValue FAILED: %d", TINY_RET_CODE(ret));
             JsonValue_Delete(v);
         }
     } while (false);
@@ -569,10 +569,10 @@ TinyRet JsonObject_PutNumber(JsonObject *thiz, const char *key, JsonNumber *valu
             break;
         }
 
-        ret = TinyMap_Insert(&thiz->data, key, v);
+        ret = JsonObject_PutValue(thiz, key, v);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "TinyMap_Insert FAILED!");
+            LOG_E(TAG, "JsonObject_PutValue FAILED: %d", TINY_RET_CODE(ret));
             JsonValue_Delete(v);
         }
     } while (false);
@@ -586,6 +586,8 @@ TinyRet JsonObject_PutValue(JsonObject *thiz, const char *key, JsonValue *value)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(key, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
+
+    TinyMap_Erase(&thiz->data, key);
 
     return TinyMap_Insert(&thiz->data, key, value);
 }

@@ -316,7 +316,7 @@ static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz)
 			tiny_snprintf(line, HTTP_LINE_LEN, "%s: %s\r\n", item->key, (const char *)item->value);
 			line[HTTP_LINE_LEN - 1] = 0;
 
-			strncpy(thiz->_bytes + thiz->_size, line, HTTP_LINE_LEN);
+            strncat(thiz->_bytes, line, buffer_size);
 			thiz->_size = (uint32_t)(strlen(thiz->_bytes));
 		}
 
