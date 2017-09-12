@@ -66,6 +66,22 @@ JsonValue * JsonObject_GetValue(JsonObject *thiz, const char *key);
 
 TINY_LOR
 TINY_API
+JsonObject * JsonObject_GetObject(JsonObject *thiz, const char *key);
+
+TINY_LOR
+TINY_API
+JsonNumber * JsonObject_GetNumber(JsonObject *thiz, const char *key);
+
+TINY_LOR
+TINY_API
+JsonArray * JsonObject_GetArray(JsonObject *thiz, const char *key);
+
+TINY_LOR
+TINY_API
+JsonString * JsonObject_GetString(JsonObject *thiz, const char *key);
+
+TINY_LOR
+TINY_API
 TinyRet JsonObject_PutString(JsonObject *thiz, const char *key, const char *value);
 
 TINY_LOR

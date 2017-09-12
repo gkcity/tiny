@@ -236,6 +236,114 @@ JsonValue * JsonObject_GetValue(JsonObject *thiz, const char *key)
 }
 
 TINY_LOR
+JsonObject * JsonObject_GetObject(JsonObject *thiz, const char *key)
+{
+    JsonObject *object = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+    RETURN_VAL_IF_FAIL(key, NULL);
+
+    do
+    {
+        JsonValue *value = JsonObject_GetValue(thiz, key);
+        if (value == NULL)
+        {
+            break;
+        }
+
+        if (value->type != JSON_OBJECT)
+        {
+            break;
+        }
+
+        object = value->data.object;
+    } while (false);
+
+    return object;
+}
+
+TINY_LOR
+JsonNumber *JsonObject_GetNumber(JsonObject *thiz, const char *key)
+{
+    JsonNumber *number = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+    RETURN_VAL_IF_FAIL(key, NULL);
+
+    do
+    {
+        JsonValue *value = JsonObject_GetValue(thiz, key);
+        if (value == NULL)
+        {
+            break;
+        }
+
+        if (value->type != JSON_NUMBER)
+        {
+            break;
+        }
+
+        number = value->data.number;
+    } while (false);
+
+    return number;
+}
+
+TINY_LOR
+JsonArray *JsonObject_GetArray(JsonObject *thiz, const char *key)
+{
+    JsonArray *array = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+    RETURN_VAL_IF_FAIL(key, NULL);
+
+    do
+    {
+        JsonValue *value = JsonObject_GetValue(thiz, key);
+        if (value == NULL)
+        {
+            break;
+        }
+
+        if (value->type != JSON_ARRAY)
+        {
+            break;
+        }
+
+        array = value->data.array;
+    } while (false);
+
+    return array;
+}
+
+TINY_LOR
+JsonString *JsonObject_GetString(JsonObject *thiz, const char *key)
+{
+    JsonString *string = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+    RETURN_VAL_IF_FAIL(key, NULL);
+
+    do
+    {
+        JsonValue *value = JsonObject_GetValue(thiz, key);
+        if (value == NULL)
+        {
+            break;
+        }
+
+        if (value->type != JSON_STRING)
+        {
+            break;
+        }
+
+        string = value->data.string;
+    } while (false);
+
+    return string;
+}
+
+TINY_LOR
 TinyRet JsonObject_PutString(JsonObject *thiz, const char *key, const char *value)
 {
 	TinyRet ret = TINY_RET_OK;
