@@ -26,14 +26,6 @@
 TINY_BEGIN_DECLS
 
 
-#define TINY_MAP_MAX_KEY_LEN             128
-
-typedef struct _TinyMapItem
-{
-    char      * key;
-    void      * value;
-} TinyMapItem;
-
 typedef struct _TinyMap
 {
     TinyList                            list;

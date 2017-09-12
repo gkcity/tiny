@@ -8,11 +8,13 @@ SET(Header
         TinyContainerListener.h
         TinyList.h
         TinyMap.h
+        TinyMapItem.h
         )
 
 SET(Source
         TinyList.c
         TinyMap.c
+        TinyMapItem.c
         )
 
 #TinyQueue.h

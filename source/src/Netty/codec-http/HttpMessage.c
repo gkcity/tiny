@@ -14,6 +14,7 @@
 
 #include <tiny_snprintf.h>
 #include <tiny_malloc.h>
+#include <TinyMapItem.h>
 #include "HttpMessage.h"
 #include "tiny_char_util.h"
 #include "tiny_url_split.h"
@@ -104,6 +105,11 @@ TinyRet HttpMessage_Dispose(HttpMessage *thiz)
 
 	if (thiz->_bytes != NULL)
 	{
+        printf("HttpMessage_Dispose, free _bytes!\n");
+        printf("_size: %d\n", thiz->_size);
+        printf("_bytes:\n[%s]\n", thiz->_bytes);
+        printf("_bytes.length: %d\n", strlen(thiz->_bytes));
+
 		tiny_free(thiz->_bytes);
 		thiz->_bytes = NULL;
 		thiz->_size = 0;
@@ -143,6 +149,10 @@ TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *data, uint32_t length)
         bytes.value = data;
         bytes.length = length;
         bytes.offset = 0;
+
+        line.value = NULL;
+        line.length = 0;
+        line.offset = 0;
 
         if (thiz->parser_status == HttpParserIncomplete)
         {
@@ -256,7 +266,7 @@ static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz)
 		}
 
 		// calculate size
-		buffer_size = HttpMessage_GetLineSize(thiz) + HttpHeader_GetSize(&thiz->header);
+		buffer_size = HttpMessage_GetLineSize(thiz) + HttpHeader_GetSize(&thiz->header) + 1;
 
 		thiz->_bytes = (char *)tiny_malloc(buffer_size);
 		if (thiz->_bytes == NULL)
@@ -492,17 +502,6 @@ static TinyRet HttpMessage_ParseStatusLine(HttpMessage * thiz, Line *line)
         p++;
     }
 
-    // CRLF.
-    if (*p++ != '\r')
-    {
-        return TINY_RET_E_ARG_INVALID;
-    }
-
-    if (*p != '\n')
-    {
-        return TINY_RET_E_ARG_INVALID;
-    }
-
     thiz->type = HTTP_RESPONSE;
 
     return TINY_RET_OK;
@@ -607,17 +606,6 @@ static TinyRet HttpMessage_ParseRequestLine(HttpMessage * thiz, Line *line)
     {
         thiz->version.minor = thiz->version.minor * 10 + *p - '0';
         p++;
-    }
-
-    // CRLF.
-    if (*p++ != '\r')
-    {
-        return TINY_RET_E_ARG_INVALID;
-    }
-
-    if (*p++ != '\n')
-    {
-        return TINY_RET_E_ARG_INVALID;
     }
 
     thiz->type = HTTP_REQUEST;

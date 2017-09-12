@@ -17,6 +17,7 @@
 #include <ctype.h>
 #include <tiny_snprintf.h>
 #include <tiny_malloc.h>
+#include <TinyMapItem.h>
 
 #define TAG     "HttpHeader"
 
@@ -103,20 +104,44 @@ TinyRet HttpHeader_Dispose(HttpHeader *thiz)
 TINY_LOR
 TinyRet HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
 {
-    char key[HTTP_MAX_NAME_LEN];
+    TinyRet ret = TINY_RET_OK;
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(name, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
 
-    memset(key, 0, HTTP_MAX_NAME_LEN);
-
-    for (uint32_t i = 0; i < strlen(name); ++i)
+    do 
     {
-        key[i] = (char) tolower(name[i]);
-    }
+        char key[HTTP_MAX_NAME_LEN];
+        char *v = NULL;
+        uint32_t vLength = 0;
 
-    return TinyMap_Insert(&thiz->values, key, (void *)value);
+        memset(key, 0, HTTP_MAX_NAME_LEN);
+
+        for (uint32_t i = 0; i < strlen(name); ++i)
+        {
+            key[i] = (char)tolower(name[i]);
+        }
+
+        vLength = strlen(value);
+        v = tiny_malloc(vLength + 1);
+        if (v == NULL)
+        {
+            ret = TINY_RET_E_NEW;
+            break;
+        }
+
+        memset(v, 0, vLength + 1);
+        strncpy(v, value, vLength);
+
+        ret = TinyMap_Insert(&thiz->values, key, (void *)v);
+        if (RET_FAILED(ret)) 
+        {
+            tiny_free(v);
+        }
+    } while (false);
+
+    return ret;
 }
 
 TINY_LOR
@@ -177,7 +202,7 @@ TinyRet HttpHeader_GetContentLength(HttpHeader * thiz, uint32_t *length)
 
     *length = (uint32_t)(strtol(value, &stop, 10));
 
-    return (stop == NULL) ? TINY_RET_OK : TINY_RET_E_ARG_INVALID;
+    return (stop != value) ? TINY_RET_OK : TINY_RET_E_ARG_INVALID;
 }
 
 TINY_LOR
@@ -201,7 +226,7 @@ static bool HttpHeader_ParseLine(HttpHeader *thiz, Line *line)
         char key[HTTP_MAX_NAME_LEN];
         char value[HTTP_MAX_VALUE_LEN];
         uint32_t keyLength = separator - line->offset;
-        uint32_t valueLength = line->length - separator - 2; // \r\n
+        uint32_t valueLength = line->length - separator - 1;
 
         if (separator == line->length)
         {
@@ -219,12 +244,11 @@ static bool HttpHeader_ParseLine(HttpHeader *thiz, Line *line)
         }
 
         memset(key, 0, HTTP_MAX_NAME_LEN);
-        memset(value, 0, HTTP_MAX_VALUE_LEN);
-
         memcpy(key, line->value + line->offset, keyLength);
 
         // skip ' '
         separator ++;
+
         while (separator < line->length)
         {
             if (line->value[separator] != ' ')
@@ -236,19 +260,12 @@ static bool HttpHeader_ParseLine(HttpHeader *thiz, Line *line)
             valueLength --;
         }
 
+        memset(value, 0, HTTP_MAX_VALUE_LEN);
         memcpy(value, line->value + separator, valueLength);
 
-        for (uint32_t i = 0; i < keyLength; ++i)
+        if (RET_FAILED(HttpHeader_Set(thiz, key, value)))
         {
-            key[i] = (char) tolower(key[i]);
-        }
-
-        LOG_E(TAG, "key: [%s]", key);
-        LOG_E(TAG, "value: [%s]", value);
-
-        if (RET_FAILED(TinyMap_Insert(&thiz->values, key, value)))
-        {
-            LOG_E(TAG, "TinyMap_Insert failed!");
+            LOG_E(TAG, "HttpHeader_Set failed!");
             break;
         }
 
@@ -267,6 +284,10 @@ TinyRet HttpHeader_Parse(HttpHeader *thiz, Bytes *bytes)
     {
         Line line;
 
+        line.value = NULL;
+        line.length = 0;
+        line.offset = 0;
+
         if (! Bytes_GetLine(bytes, &line))
         {
             LOG_E(TAG, "Bytes_GetLine Failed");
@@ -274,7 +295,7 @@ TinyRet HttpHeader_Parse(HttpHeader *thiz, Bytes *bytes)
             break;
         }
 
-        if (line.length == 2)
+        if (line.length == 0)
         {
             break;
         }

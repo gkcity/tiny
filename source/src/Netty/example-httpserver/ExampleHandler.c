@@ -83,6 +83,8 @@ static TinyRet ExampleHandler_Dispose(ChannelHandler *thiz)
     return TINY_RET_OK;
 }
 
+#define BODY "{\"code\": 12345}"
+
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
     HttpMessage *request = (HttpMessage *)data;
@@ -92,18 +94,15 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 
     if (RET_SUCCEEDED(HttpMessage_Construct(&response)))
     {
+        uint32_t length = strlen(BODY);
         HttpMessage_SetResponse(&response, 200, "OK");
         HttpMessage_SetVersion(&response, 1, 1);
 
         HttpHeader_Set(&response.header, "Content-Type", "text/json");
-        HttpHeader_SetInteger(&response.header, "Content-Length", 0);
+        HttpHeader_SetInteger(&response.header, "Content-Length", length);
 
         SocketChannel_StartWrite(channel, DATA_RAW, HttpMessage_GetBytesWithoutContent(&response), HttpMessage_GetBytesSizeWithoutContent(&response));
-
-		if (response.content.buf != NULL) 
-		{
-			SocketChannel_StartWrite(channel, DATA_RAW, response.content.buf, response.content.buf_size);
-		}
+        SocketChannel_StartWrite(channel, DATA_RAW, BODY, length);
 
 //        Channel_Close(channel);
         HttpMessage_Dispose(&response);

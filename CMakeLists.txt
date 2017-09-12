@@ -81,11 +81,13 @@ SET(TinyContainer_Header
         ${SOURCE_ROOT}/TinyContainer/TinyContainerListener.h
         ${SOURCE_ROOT}/TinyContainer/TinyList.h
         ${SOURCE_ROOT}/TinyContainer/TinyMap.h
+        ${SOURCE_ROOT}/TinyContainer/TinyMapItem.h
         )
 
 SET(TinyContainer_Source
         ${SOURCE_ROOT}/TinyContainer/TinyList.c
         ${SOURCE_ROOT}/TinyContainer/TinyMap.c
+        ${SOURCE_ROOT}/TinyContainer/TinyMapItem.c
         )
 
 #---------------------------

@@ -15,9 +15,10 @@
  *      set expandtab
  */
 
-#include "TinyMap.h"
 #include <tiny_malloc.h>
-#include "tiny_log.h"
+#include <tiny_log.h>
+#include "TinyMap.h"
+#include "TinyMapItem.h"
 
 /*-----------------------------------------------------------------------------
 *
@@ -159,36 +160,17 @@ TinyRet TinyMap_Insert(TinyMap *thiz, const char *key, void *value)
             break;
         }
 
-
-        do
+        item = TinyMapItem_New(key, value);
+        if (item == NULL)
         {
-            uint32_t keyLength = strlen(key);
-            item = (TinyMapItem *)tiny_malloc(sizeof(TinyMapItem));
-            if (item == NULL)
-            {
-                ret = TINY_RET_E_NEW;
-                break;
-            }
+            ret = TINY_RET_E_NEW;
+            break;
+        }
 
-            memset(item, 0, sizeof(TinyMapItem));
-
-            item->key = tiny_malloc(keyLength + 1);
-            if (item->key == NULL)
-            {
-                ret = TINY_RET_E_NEW;
-                break;
-            }
-            memset(item->key, 0, keyLength + 1);
-
-            strncpy(item->key, key, keyLength);
-            item->value = value;
-
-            TinyList_AddTail(&thiz->list, item);
-        } while (false);
-
-        if (RET_FAILED(ret) && item != NULL)
+        ret = TinyList_AddTail(&thiz->list, item);
+        if (RET_FAILED(ret))
         {
-            tiny_free(item);
+            TinyMapItem_Delete(item);
         }
     } while (false);
 
@@ -244,6 +226,5 @@ static void on_item_delete_listener(void * data, void *ctx)
         thiz->data_delete_listener(item->value, thiz->data_delete_listener_ctx);
     }
 
-    tiny_free(item->key);
-    tiny_free(item);
+    TinyMapItem_Delete(item);
 }
