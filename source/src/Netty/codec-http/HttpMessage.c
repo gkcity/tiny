@@ -105,12 +105,7 @@ TinyRet HttpMessage_Dispose(HttpMessage *thiz)
 
 	if (thiz->_bytes != NULL)
 	{
-        printf("HttpMessage_Dispose, free _bytes!\n");
-        printf("_size: %d\n", thiz->_size);
-        printf("_bytes:\n[%s]\n", thiz->_bytes);
-        printf("_bytes.length: %d\n", strlen(thiz->_bytes));
-
-		tiny_free(thiz->_bytes);
+        tiny_free(thiz->_bytes);
 		thiz->_bytes = NULL;
 		thiz->_size = 0;
 	}
