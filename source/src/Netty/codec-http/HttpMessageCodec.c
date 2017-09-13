@@ -51,9 +51,10 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 			break;
 		}
 
-		if (((HttpMessage *)thiz->data)->parser_status != HttpParserDone)
+
+		if (((HttpMessage *)thiz->data)->parser_status == HttpParserError)
 		{
-			LOG_D(TAG, "parser_status != HttpParserDone");
+			LOG_D(TAG, "HttpParserError");
 			HttpMessage_Delete((HttpMessage *)thiz->data);
 			thiz->data = NULL;
 			break;

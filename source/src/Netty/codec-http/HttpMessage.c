@@ -161,7 +161,7 @@ TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *data, uint32_t length)
 
         if (! Bytes_GetLine(&bytes, &line))
         {
-            LOG_D(TAG, "HttpMessage_Parse => invalid first line");
+            LOG_D(TAG, "Bytes_GetLine => invalid first line");
             thiz->parser_status = HttpParserError;
             ret = TINY_RET_E_HTTP_MSG_INVALID;
             break;
