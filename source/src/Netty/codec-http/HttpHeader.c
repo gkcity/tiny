@@ -197,12 +197,28 @@ uint32_t HttpHeader_GetSize(HttpHeader * thiz)
 TINY_LOR
 TinyRet HttpHeader_GetContentLength(HttpHeader * thiz, uint32_t *length)
 {
-    const char *value = HttpHeader_GetValue(thiz, CONTENT_LENGTH);
-    char *stop = NULL;
+    TinyRet ret = TINY_RET_OK;
 
-    *length = (uint32_t)(strtol(value, &stop, 10));
+    do
+    {
+        const char *value = HttpHeader_GetValue(thiz, CONTENT_LENGTH);
+        char *stop = NULL;
 
-    return (stop != value) ? TINY_RET_OK : TINY_RET_E_ARG_INVALID;
+        if (value == NULL)
+        {
+            (*length) = 0;
+            break;
+        }
+
+        *length = (uint32_t)(strtol(value, &stop, 10));
+
+        if (stop == value)
+        {
+            ret = TINY_RET_E_ARG_INVALID;
+        }
+    } while (false);
+
+    return ret;
 }
 
 TINY_LOR
