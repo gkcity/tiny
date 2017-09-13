@@ -130,5 +130,5 @@ ADD_SUBDIRECTORY(test)
 #----------------------------------------------------------------------------
 ADD_SUBDIRECTORY(example-httpserver)
 ADD_SUBDIRECTORY(example-httpclient)
+ADD_SUBDIRECTORY(example-wdc)
 ADD_SUBDIRECTORY(example-ssdp)
-#ADD_SUBDIRECTORY(example-timer)
