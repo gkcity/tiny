@@ -96,11 +96,11 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
 
     if (RET_SUCCEEDED(HttpMessage_Construct(&request)))
     {
-        HttpMessage_SetRequest(&request, "GET", "http://127.0.0.1:8080/api/v1/devices");
+        HttpMessage_SetRequest(&request, "GET", "http://miot-spec.org:80/instance/device?type=urn:miot-spec:device:fan:00000A04:zhimi");
+//        HttpMessage_SetRequest(&request, "GET", "http://47.93.60.147:8080/homekit/spec/property?type=urn:homekit-spec:property:status-fault:00000077");
         HttpMessage_SetVersion(&request, 1, 1);
 
-        HttpHeader_Set(&request.header, "App-Id", "9947163763053218");
-        HttpHeader_Set(&request.header, "Access-Token", "SJgbGdtgU3Ybg2kG-dOYWs1k9BBzlBITlDFso-Ib5E7by7jTtV3CUQ0jaS0Io4UsTUeGif1fDO9wwRG1LMxQEZJkEnc6nq0IPw4FrG735Ho");
+        HttpHeader_Set(&request.header, "HOST", "miot-spec.org");
 
         SocketChannel_StartWrite(channel, DATA_RAW, HttpMessage_GetBytesWithoutContent(&request), HttpMessage_GetBytesSizeWithoutContent(&request));
 
