@@ -632,50 +632,16 @@ static bool HttpMessage_ParseLine(HttpMessage * thiz, Line *line)
 }
 
 TINY_LOR
-TinyRet HttpMessage_SetRequest(HttpMessage *thiz, const char * method, const char *url)
+TinyRet HttpMessage_SetRequest(HttpMessage *thiz, const char * method, const char *uri)
 {
-    TinyRet ret = TINY_RET_OK;
-
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(method, TINY_RET_E_ARG_NULL);
-    RETURN_VAL_IF_FAIL(url, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(uri, TINY_RET_E_ARG_NULL);
 
-    do
-    {
-        char ip[TINY_IP_LEN];
-        uint16_t port = 0;
-        char uri[512];
-        char host[128];
-        
-        memset(ip, 0, TINY_IP_LEN);
-        memset(uri, 0, 512);
-        memset(host, 0, 128);
+    thiz->type = HTTP_REQUEST;
+    HttpMessage_SetVersion(thiz, 1, 1);
+    HttpMessage_SetMethod(thiz, method);
+    HttpMessage_SetUri(thiz, uri);
 
-        ret = url_split(url, ip, TINY_IP_LEN, &port, uri, 512);
-        if (RET_FAILED(ret))
-        {
-            LOG_D(TAG, "url_split: %s", tiny_ret_to_str(ret));
-            break;
-        }
-
-        if (port == 80)
-        {
-            tiny_snprintf(host, 128, "%s", ip);
-        }
-        else
-        {
-            tiny_snprintf(host, 128, "%s:%d", ip, port);
-        }
-
-        strncpy(thiz->ip, ip, TINY_IP_LEN);
-        thiz->port = port;
-        thiz->type = HTTP_REQUEST;
-
-        HttpMessage_SetVersion(thiz, 1, 1);
-        HttpMessage_SetMethod(thiz, method);
-        HttpMessage_SetUri(thiz, uri);
-        HttpHeader_Set(&thiz->header, "HOST", host);
-    } while (0);
-
-    return ret;
+    return TINY_RET_OK;
 }

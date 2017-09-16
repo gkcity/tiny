@@ -196,7 +196,7 @@ bool HttpMessage_IsContentFull(HttpMessage *thiz);
 
 TINY_API
 TINY_LOR
-TinyRet HttpMessage_SetRequest(HttpMessage *thiz, const char * method, const char *url);
+TinyRet HttpMessage_SetRequest(HttpMessage *thiz, const char * method, const char *uri);
 
 
 TINY_END_DECLS

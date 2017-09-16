@@ -116,6 +116,7 @@ SET(TinyStringUtil_Header
         ${SOURCE_ROOT}/TinyStringUtil/tiny_str_split.h
         ${SOURCE_ROOT}/TinyStringUtil/tiny_url_split.h
         ${SOURCE_ROOT}/TinyStringUtil/tiny_buffer_append.h
+        ${SOURCE_ROOT}/TinyStringUtil/tiny_strnlen.h
         )
 
 SET(TinyStringUtil_Source
@@ -125,6 +126,7 @@ SET(TinyStringUtil_Source
         ${SOURCE_ROOT}/TinyStringUtil/tiny_str_split.c
         ${SOURCE_ROOT}/TinyStringUtil/tiny_url_split.c
         ${SOURCE_ROOT}/TinyStringUtil/tiny_buffer_append.c
+        ${SOURCE_ROOT}/TinyStringUtil/tiny_strnlen.c
         )
 
 #-----------------------

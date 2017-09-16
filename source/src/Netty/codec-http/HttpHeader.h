@@ -54,6 +54,10 @@ TinyRet HttpHeader_SetInteger(HttpHeader * thiz, const char *name, uint32_t valu
 
 TINY_API
 TINY_LOR
+TinyRet HttpHeader_SetHost(HttpHeader * thiz, const char *name, uint16_t port);
+
+TINY_API
+TINY_LOR
 const char * HttpHeader_GetValue(HttpHeader * thiz, const char *name);
 
 TINY_API

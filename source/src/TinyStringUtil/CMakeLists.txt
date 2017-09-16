@@ -11,6 +11,7 @@ SET(String_Header
         tiny_str_split.h
         tiny_url_split.h
         tiny_buffer_append.h
+        tiny_strnlen.h
         )
 
 SET(String_Source
@@ -20,6 +21,7 @@ SET(String_Source
         tiny_str_split.c
         tiny_url_split.c
         tiny_buffer_append.c
+        tiny_strnlen.c
         )
 
 SET(SRC

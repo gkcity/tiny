@@ -134,6 +134,8 @@ TinyRet HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
         memset(v, 0, vLength + 1);
         strncpy(v, value, vLength);
 
+        TinyMap_Erase(&thiz->values, key);
+
         ret = TinyMap_Insert(&thiz->values, key, (void *)v);
         if (RET_FAILED(ret)) 
         {
@@ -156,6 +158,21 @@ TinyRet HttpHeader_SetInteger(HttpHeader * thiz, const char *name, uint32_t valu
     tiny_snprintf(v, 32, "%u", value);
 
     return HttpHeader_Set(thiz, name, v);
+}
+
+TINY_LOR
+TinyRet HttpHeader_SetHost(HttpHeader * thiz, const char *ip, uint16_t port)
+{
+    char v[64];
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(ip, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(port, TINY_RET_E_ARG_NULL);
+
+    memset(v, 0, 64);
+    tiny_snprintf(v, 64, "%s:%d", ip, port);
+
+    return HttpHeader_Set(thiz, "HOST", v);
 }
 
 TINY_LOR
