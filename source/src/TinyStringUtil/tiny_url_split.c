@@ -16,7 +16,7 @@
 #include "tiny_char_util.h"
 
 TINY_LOR
-TinyRet url_split(const char *url, char ip[], uint32_t ip_len, uint16_t *port, char uri[], uint32_t uri_len)
+TinyRet tiny_url_split(const char *url, char ip[], uint32_t ip_len, uint16_t *port, char uri[], uint32_t uri_len)
 {
     /* http://10.0.1.1:8080/1.mp4 */
     TinyRet ret = TINY_RET_OK;

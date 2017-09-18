@@ -72,16 +72,13 @@ TinyRet TinyList_Dispose(TinyList *thiz)
 //
 //    do
 //    {
-//        TinyRet ret = TINY_RET_OK;
-//
 //        thiz = (TinyList *)tiny_malloc(sizeof(TinyList));
 //        if (thiz == NULL)
 //        {
 //            break;
 //        }
 //
-//        ret = TinyList_Construct(thiz);
-//        if (RET_FAILED(ret))
+//        if (RET_FAILED(TinyList_Construct(thiz)))
 //        {
 //            TinyList_Delete(thiz);
 //            thiz = NULL;
@@ -101,7 +98,7 @@ TinyRet TinyList_Dispose(TinyList *thiz)
 //    TinyList_Dispose(thiz);
 //    tiny_free(thiz);
 //}
-//
+
 //TINY_LOR
 //TinyRet TinyList_AddRef(TinyList *thiz)
 //{

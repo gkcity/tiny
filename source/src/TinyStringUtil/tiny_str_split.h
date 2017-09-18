@@ -38,7 +38,7 @@ TINY_BEGIN_DECLS
  */
 TINY_API
 TINY_LOR
-uint32_t str_split(const char *str, const char *c, char group[][128], uint32_t groupCount);
+uint32_t tiny_str_split(const char *str, const char *c, char group[][128], uint32_t groupCount);
 
 
 TINY_END_DECLS

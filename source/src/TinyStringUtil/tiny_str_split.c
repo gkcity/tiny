@@ -16,7 +16,7 @@
 #include <ctype.h>
 
 TINY_LOR
-uint32_t str_split(const char *str, const char *c, char group[][128], uint32_t groupCount)
+uint32_t tiny_str_split(const char *str, const char *c, char group[][128], uint32_t groupCount)
 {
     uint32_t len = 128;
     uint32_t i = 0;
