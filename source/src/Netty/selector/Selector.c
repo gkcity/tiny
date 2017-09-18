@@ -106,6 +106,7 @@ TinyRet Selector_Construct(Selector *thiz)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
     memset(thiz, 0, sizeof(Selector));
+    thiz->running = false;
 
     return TINY_RET_OK;
 }
@@ -165,6 +166,8 @@ bool Selector_IsWriteable(Selector *thiz, int fd)
 TINY_LOR
 TinyRet Selector_Loop(Selector *thiz)
 {
+    thiz->running = true;
+
     while (true)
     {
         TinyRet ret = Selector_LoopOnce(thiz);
@@ -173,6 +176,8 @@ TinyRet Selector_Loop(Selector *thiz)
             break;
         }
     }
+
+    thiz->running = false;
 
     LOG_I(TAG, "Selector_Loop Finished!");
 

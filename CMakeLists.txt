@@ -16,6 +16,7 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Netty)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Json)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/HttpClient)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyUmm)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyMd5)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyThread)
@@ -204,6 +205,22 @@ SET(Json_Source
         )
 
 #---------------------------
+# HttpClient
+#---------------------------
+
+SET(HttpClient_Header
+        ${SOURCE_ROOT}/HttpClient/HttpClient.h
+        ${SOURCE_ROOT}/HttpClient/HttpClientHandler.h
+        ${SOURCE_ROOT}/HttpClient/HttpExchange.h
+        )
+
+SET(HttpClient_Source
+        ${SOURCE_ROOT}/HttpClient/HttpClient.c
+        ${SOURCE_ROOT}/HttpClient/HttpClientHandler.c
+        ${SOURCE_ROOT}/HttpClient/HttpExchange.c
+        )
+
+#---------------------------
 # TinyThread
 #---------------------------
 
@@ -235,6 +252,8 @@ SOURCE_GROUP(Netty\\headers                 FILES     ${Netty_Header})
 SOURCE_GROUP(Netty\\sources                 FILES     ${Netty_Source})
 SOURCE_GROUP(Json\\headers                  FILES     ${Json_Header})
 SOURCE_GROUP(Json\\sources                  FILES     ${Json_Source})
+SOURCE_GROUP(HttpClient\\headers            FILES     ${HttpClient_Header})
+SOURCE_GROUP(HttpClient\\sources            FILES     ${HttpClient_Source})
 SOURCE_GROUP(TinyThread\\headers            FILES     ${TinyThread_Header})
 SOURCE_GROUP(TinyThread\\sources            FILES     ${TinyThread_Source})
 
@@ -255,6 +274,8 @@ IF(TINY_THREAD_ENABLED EQUAL 1)
         ${Netty_Source}
         ${Json_Header}
         ${Json_Source}
+        ${HttpClient_Header}
+        ${HttpClient_Source}
         ${TinyThread_Header}
         ${TinyThread_Source}
         )
@@ -275,6 +296,8 @@ ELSE()
         ${Netty_Source}
         ${Json_Header}
         ${Json_Source}
+        ${HttpClient_Header}
+        ${HttpClient_Source}
         )
 ENDIF()
 

@@ -31,6 +31,7 @@ typedef TinyRet (*Selector_P_SelectTimeout)(Selector *thiz, void *ctx);
 
 struct _Selector
 {
+    bool                            running;
     int                             max_fd;
     fd_set                          read_set;
     fd_set                          write_set;

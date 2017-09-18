@@ -148,31 +148,37 @@ TinyRet Bootstrap_Sync(Bootstrap *thiz)
 TINY_LOR
 TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
 {
+    if (thiz->selector.running)
+    {
 #ifndef NETTY_SHUTDOWN_DISABLED
-    int ret = 0;
-    uint32_t length = (uint32_t)strlen(BOOTSTRAP_SHUTDOWN);
+        int ret = 0;
+        uint32_t length = (uint32_t) strlen(BOOTSTRAP_SHUTDOWN);
 
-    struct sockaddr_in to;
-    socklen_t to_len = sizeof(to);
+        struct sockaddr_in to;
+        socklen_t to_len = sizeof(to);
 
-    Channel *channel = SocketChannel_New();
-    SocketChannel_Open(channel, TYPE_UDP);
-    SocketChannel_Bind(channel, 0, false);
+        Channel *channel = SocketChannel_New();
+        SocketChannel_Open(channel, TYPE_UDP);
+        SocketChannel_Bind(channel, 0, false);
 
-    memset(&to, 0, sizeof(to));
-    to.sin_family = AF_INET;
-    to.sin_addr.s_addr = inet_addr("127.0.0.1");
-    to.sin_port = htons(thiz->loopbackPort);
-    ret = (int)tiny_sendto(channel->fd, BOOTSTRAP_SHUTDOWN, length, 0, (struct sockaddr *)&to, (socklen_t)to_len);
-    LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopbackPort, ret);
+        memset(&to, 0, sizeof(to));
+        to.sin_family = AF_INET;
+        to.sin_addr.s_addr = inet_addr("127.0.0.1");
+        to.sin_port = htons(thiz->loopbackPort);
+        ret = (int) tiny_sendto(channel->fd, BOOTSTRAP_SHUTDOWN, length, 0, (struct sockaddr *) &to,
+                                (socklen_t) to_len);
+        LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopbackPort, ret);
 
-    channel->_close(channel);
-    channel->_onRemove(channel);
+        channel->_close(channel);
+        channel->_onRemove(channel);
 
-    return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
+        return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
 #endif
 
-    return TINY_RET_E_NOT_IMPLEMENTED;
+        return TINY_RET_E_NOT_IMPLEMENTED;
+    }
+
+    return TINY_RET_OK;
 }
 
 TINY_LOR
@@ -199,11 +205,22 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
         }
     }
 
+#ifndef NETTY_SHUTDOWN_DISABLED
+    if (thiz->channels.size == 1)
+    {
+        LOG_E(TAG, "remove loopback channel");
+        Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, 0);
+        Channel_Close(channel);
+        TinyList_RemoveAt(&thiz->channels, 0);
+        return TINY_RET_E_NOT_FOUND;
+    }
+#else
     if (thiz->channels.size == 0)
     {
         LOG_E(TAG, "Channels is empty");
         return TINY_RET_E_NOT_FOUND;
     }
+#endif
 
     thiz->timer.valid = false;
 
