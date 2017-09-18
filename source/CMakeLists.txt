@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-PROJECT(TinyDebug C)
+PROJECT(Tiny-DEBUG C)
 
-SET(PROJ_NAME "TinyDebug")
+SET(PROJ_NAME "Tiny-DEBUG")
 
 #---------------------------------------------------------------------------------------
 #
