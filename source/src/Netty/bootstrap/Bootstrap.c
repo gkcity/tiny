@@ -210,7 +210,10 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
         }
     }
 
+    LOG_I(TAG, "current channels: %d", thiz->channels.size);
+
 #ifndef NETTY_SHUTDOWN_DISABLED
+    // BUG ???
     if (thiz->channels.size == 1)
     {
         LOG_E(TAG, "remove loopback channel");
@@ -219,10 +222,13 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
         TinyList_RemoveAt(&thiz->channels, 0);
         return TINY_RET_E_NOT_FOUND;
     }
+    else if (thiz->channels.size == 0)
+    {
+        return TINY_RET_E_NOT_FOUND;
+    }
 #else
     if (thiz->channels.size == 0)
     {
-        LOG_E(TAG, "Channels is empty");
         return TINY_RET_E_NOT_FOUND;
     }
 #endif
