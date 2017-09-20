@@ -121,10 +121,10 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
         exchange->length = response->content.buf_size;
         if (exchange->length > 0)
         {
-            exchange->content = tiny_malloc(exchange->length);
+            exchange->content = tiny_malloc(exchange->length + 1);
             if (exchange->content != NULL)
             {
-                memset(exchange->content, 0, exchange->length);
+                memset(exchange->content, 0, exchange->length + 1);
                 memcpy(exchange->content, response->content.buf, exchange->length);
             }
             else

@@ -50,6 +50,8 @@ TinyRet Bootstrap_InitializeLoopbackChannel(Bootstrap *thiz)
 
     thiz->loopbackPort = loopback->local.socket.port;
 
+    LOG_D(TAG, "Bootstrap_InitializeLoopbackChannel, port = %d", thiz->loopbackPort);
+
     return TinyList_AddTail(&thiz->channels, loopback);
 }
 #endif /* NETTY_SHUTDOWN_DISABLED */
@@ -66,6 +68,7 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
         ret = Selector_Construct(&thiz->selector);
         if (RET_FAILED(ret))
         {
+            LOG_E(TAG, "Selector_Construct FAILED");
             break;
         }
 
@@ -77,6 +80,7 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
         ret = TinyList_Construct(&thiz->channels);
         if (RET_FAILED(ret))
         {
+            LOG_E(TAG, "TinyList_Construct FAILED");
             break;
         }
         TinyList_SetDeleteListener(&thiz->channels, _OnChannelRemoved, NULL);
@@ -85,6 +89,7 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
         ret = Bootstrap_InitializeLoopbackChannel(thiz);
         if (RET_FAILED(ret))
         {
+            LOG_E(TAG, "Bootstrap_InitializeLoopbackChannel FAILED");
             break;
         }
     #endif /* NETTY_SHUTDOWN_DISABLED */

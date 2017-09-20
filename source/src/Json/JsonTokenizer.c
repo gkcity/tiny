@@ -113,6 +113,7 @@ static TokenParseResult JsonTokenizer_ParseTokenMonocase(JsonTokenizer *thiz, Js
             break;
         }
 
+        thiz->index++;
         thiz->current ++;
     } while (false);
 
@@ -148,6 +149,7 @@ static TokenParseResult JsonTokenizer_ParseNull(JsonTokenizer *thiz)
             return TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
         }
 
+        thiz->index += 4;
         thiz->current += 4;
     } while (false);
 
@@ -183,6 +185,7 @@ static TokenParseResult JsonTokenizer_ParseTrue(JsonTokenizer *thiz)
             return TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
         }
 
+        thiz->index += 4;
         thiz->current += 4;
     } while (false);
 
@@ -219,6 +222,7 @@ static TokenParseResult JsonTokenizer_ParseFalse(JsonTokenizer *thiz)
             return TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
         }
 
+        thiz->index += 5;
         thiz->current += 5;
     } while (false);
 
@@ -235,6 +239,7 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
         uint32_t offset = (uint32_t) (thiz->current - thiz->string);
         const char *start = thiz->current;
 
+        thiz->index ++;
         thiz->current ++;
 
         while (true)
@@ -243,7 +248,9 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
 
             if (c == '\\')
             {
+                thiz->index ++;
                 thiz->current ++;
+
                 c = *thiz->current;
 
                 switch (c)
@@ -256,13 +263,17 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
                     case 'n':
                     case 'r':
                     case 't':
+                        thiz->index ++;
                         thiz->current ++;
                         break;
 
                     case 'u':
-                        thiz->current++;
+                        thiz->index ++;
+                        thiz->current ++;
+
                         if (is_hex(thiz->current[0]) && is_hex(thiz->current[1]) && is_hex(thiz->current[2]) && is_hex(thiz->current[3]))
                         {
+                            thiz->index += 4;
                             thiz->current += 4;
                         }
                         else
@@ -279,12 +290,14 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
 
             else if (c == '"')
             {
+                thiz->index ++;
                 thiz->current ++;
                 break;
             }
 
             else if (isprint(c))
             {
+                thiz->index++;
                 thiz->current ++;
             }
 
@@ -336,23 +349,27 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
         {
             if (c == '-')
             {
-                thiz->current++;
+                thiz->index ++;
+                thiz->current ++;
                 c = *thiz->current;
             }
 
             if (c == '0')
             {
-                thiz->current++;
+                thiz->index ++;
+                thiz->current ++;
                 c = *thiz->current;
             }
             else if (c >= '1' && c <= '9')
             {
-                thiz->current++;
+                thiz->index ++;
+                thiz->current ++;
                 c = *thiz->current;
 
                 while (isdigit(c))
                 {
-                    thiz->current++;
+                    thiz->index ++;
+                    thiz->current ++;
                     c = *thiz->current;
                 }
             }
@@ -364,7 +381,8 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
 
             if (c == '.')
             {
-                thiz->current++;
+                thiz->index ++;
+                thiz->current ++;
                 c = *thiz->current;
             }
             else if (c == ' ' || c == '\r' || c == '\n' || c == '\t' || c == '}' || c == ']' || c == ',')
@@ -379,7 +397,8 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
 
             while (isdigit(c))
             {
-                thiz->current++;
+                thiz->index ++;
+                thiz->current ++;
                 c = *thiz->current;
             }
 
@@ -389,7 +408,8 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
             }
             else if (c == 'e' || c == 'E')
             {
-                thiz->current++;
+                thiz->index ++;
+                thiz->current ++;
                 c = *thiz->current;
 
                 if (c == '+' || c == '-') 
@@ -454,7 +474,8 @@ static TokenParseResult JsonTokenizer_ParseToken(JsonTokenizer *thiz)
         case '\t':
         case '\r':
         case '\n':
-            thiz->current++;
+            thiz->index ++;
+            thiz->current ++;
             return TOKEN_PARSE_OK;
 
         case '{':
@@ -513,6 +534,7 @@ TinyRet JsonTokenizer_Parse(JsonTokenizer *thiz, const char *string)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(string, TINY_RET_E_ARG_NULL);
 
+    thiz->index = 0;
     thiz->string = string;
     thiz->current = string;
 
@@ -521,7 +543,7 @@ TinyRet JsonTokenizer_Parse(JsonTokenizer *thiz, const char *string)
         result = JsonTokenizer_ParseToken(thiz);
         if (result != TOKEN_PARSE_OK)
         {
-            LOG_D(TAG, "JsonTokenizer_ParseToken: %d\n", result);
+            LOG_D(TAG, "JsonTokenizer_ParseToken FAILED: %d, index: %d", result, thiz->index);
             break;
         }
     }
@@ -952,6 +974,8 @@ JsonObject * JsonTokenizer_ConvertToObject(JsonTokenizer *thiz)
     JsonObject *object = NULL;
 
     RETURN_VAL_IF_FAIL(thiz, NULL);
+
+    LOG_D(TAG, "JsonTokenizer_ConvertToObject");
 
     //JsonTokenizer_Print(thiz);
 

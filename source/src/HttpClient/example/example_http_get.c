@@ -1,10 +1,13 @@
 #include <tiny_log.h>
+#include <tiny_socket.h>
 #include "../HttpClient.h"
 
 #define URI "/homekit/instance/device?type=urn:homtkit-spec:device:lightbulb:00000000:arrizo-v1"
 
 int main(void)
 {
+    tiny_socket_initialize();
+
     do
     {
         HttpClient *client = HttpClient_New();
@@ -24,6 +27,8 @@ int main(void)
         HttpExchange_Delete(exchange);
         HttpClient_Delete(client);
     } while (false);
+
+    tiny_socket_initialize();
 
     return 0;
 }
