@@ -35,6 +35,7 @@ TINY_API
 TINY_LOR
 int JsonNumber_ToString(JsonNumber *thiz, char *buf, uint32_t length, uint32_t offset);
 
+TINY_API
 TINY_LOR
 int JsonArray_ToString(JsonArray *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
 

@@ -51,6 +51,7 @@ ChannelHandler * HttpClientHandler(HttpExchange *context)
     return thiz;
 }
 
+TINY_LOR
 static void HttpClientHandler_Delete(ChannelHandler *thiz)
 {
     LOG_D(TAG, "HttpClientHandler_Delete");
@@ -59,6 +60,7 @@ static void HttpClientHandler_Delete(ChannelHandler *thiz)
     tiny_free(thiz);
 }
 
+TINY_LOR
 static TinyRet HttpClientHandler_Construct(ChannelHandler *thiz, HttpExchange *context)
 {
     LOG_D(TAG, "HttpClientHandler_Construct");
@@ -78,6 +80,7 @@ static TinyRet HttpClientHandler_Construct(ChannelHandler *thiz, HttpExchange *c
     return TINY_RET_OK;
 }
 
+TINY_LOR
 static TinyRet HttpClientHandler_Dispose(ChannelHandler *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
@@ -87,6 +90,7 @@ static TinyRet HttpClientHandler_Dispose(ChannelHandler *thiz)
     return TINY_RET_OK;
 }
 
+TINY_LOR
 static void _channelActive(ChannelHandler *thiz, Channel *channel)
 {
     HttpExchange *exchange = (HttpExchange *)thiz->data;
@@ -108,6 +112,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
     }
 }
 
+TINY_LOR
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
     HttpMessage *response = (HttpMessage *)data;
@@ -139,6 +144,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     return true;
 }
 
+TINY_LOR
 static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer)
 {
     LOG_E(TAG, "_channelEvent: %s", channel->id);
