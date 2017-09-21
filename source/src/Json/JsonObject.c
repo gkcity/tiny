@@ -12,12 +12,11 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include <tiny_snprintf.h>
-#include <tiny_buffer_append.h>
 #include <TinyMapItem.h>
 #include "JsonObject.h"
 #include "JsonNumber.h"
-#include "JsonTokenizer.h"
+#include "codec/JsonEncoder.h"
+#include "codec/JsonDecoder.h"
 
 #define TAG     "JsonObject"
 
@@ -105,85 +104,24 @@ JsonObject * JsonObject_NewString(const char *string)
 
     RETURN_VAL_IF_FAIL(string, NULL);
 
-    do 
+    do
     {
-        JsonTokenizer tokenizer;
+        JsonDecoder decoder;
 
-        if (RET_FAILED(JsonTokenizer_Construct(&tokenizer)))
+        if (RET_FAILED(JsonDecoder_Construct(&decoder)))
         {
             break;
         }
 
-        if (RET_SUCCEEDED(JsonTokenizer_Parse(&tokenizer, string)))
+        if (RET_SUCCEEDED(JsonDecoder_Parse(&decoder, string)))
         {
-            object = JsonTokenizer_ConvertToObject(&tokenizer);
+            object = JsonDecoder_ConvertToObject(&decoder);
         }
 
-        JsonTokenizer_Dispose(&tokenizer);
+        JsonDecoder_Dispose(&decoder);
     } while (false);
 
     return object;
-}
-
-TINY_LOR
-int JsonObject_ToString(JsonObject *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset)
-{
-    int size = 0;
-
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-
-    size += tiny_buffer_append(buf, length, offset + size, "{");
-
-    if (pretty)
-    {
-        size += tiny_buffer_append(buf, length, offset + size, "\n");
-    }
-
-    for (uint32_t i = 0; i < thiz->data.list.size; ++i)
-    {
-        TinyMapItem *item = TinyList_GetAt(&thiz->data.list, i);
-        char key[64];
-
-        if (pretty)
-        {
-            for (int d = 0; d <= depth; ++d)
-            {
-                size += tiny_buffer_append(buf, length, offset + size, "    ");
-            }
-        }
-
-        tiny_snprintf(key, 64, "\"%s\":", item->key);
-        size += tiny_buffer_append(buf, length, offset + size, key);
-
-        if (pretty)
-        {
-            size += tiny_buffer_append(buf, length, offset + size, " ");
-        }
-
-        size += JsonValue_ToString(item->value, pretty, depth + 1, buf, length, offset + size);
-
-        if (i < thiz->data.list.size - 1)
-        {
-            size += tiny_buffer_append(buf, length, offset + size, ",");
-        }
-
-        if (pretty)
-        {
-            size += tiny_buffer_append(buf, length, offset + size, "\n");
-        }
-    }
-
-    if (pretty)
-    {
-        for (int d = 0; d < depth; ++d)
-        {
-            size += tiny_buffer_append(buf, length, offset + size, "    ");
-        }
-    }
-
-    size += tiny_buffer_append(buf, length, offset + size, "}");
-
-    return size;
 }
 
 TINY_LOR
@@ -342,6 +280,33 @@ JsonString *JsonObject_GetString(JsonObject *thiz, const char *key)
     } while (false);
 
     return string;
+}
+
+TINY_LOR
+JsonBoolean * JsonObject_GetBoolean(JsonObject *thiz, const char *key)
+{
+    JsonBoolean *boolean = NULL;
+
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+    RETURN_VAL_IF_FAIL(key, NULL);
+
+    do
+    {
+        JsonValue *value = JsonObject_GetValue(thiz, key);
+        if (value == NULL)
+        {
+            break;
+        }
+
+        if (value->type != JSON_BOOLEAN)
+        {
+            break;
+        }
+
+        boolean = value->data.boolean;
+    } while (false);
+
+    return boolean;
 }
 
 TINY_LOR

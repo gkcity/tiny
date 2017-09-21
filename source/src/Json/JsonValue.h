@@ -18,6 +18,9 @@
 TINY_BEGIN_DECLS
 
 
+struct _JsonBoolean;
+typedef struct _JsonBoolean JsonBoolean;
+
 struct _JsonString;
 typedef struct _JsonString JsonString;
 
@@ -37,9 +40,8 @@ typedef enum _JsonValueType
     JSON_NUMBER         = 2,
     JSON_OBJECT         = 3,
     JSON_ARRAY          = 4,
-    JSON_TRUE           = 5,
-    JSON_FALSE          = 6,
-    JSON_NULL           = 7,
+    JSON_BOOLEAN        = 5,
+    JSON_NULL           = 6,
 } JsonValueType;
 
 typedef union _JsonValueData
@@ -48,6 +50,7 @@ typedef union _JsonValueData
     JsonNumber    * number;
     JsonObject    * object;
     JsonArray     * array;
+    JsonBoolean   * boolean;
 } JsonValueData;
 
 typedef struct _JsonValue
@@ -55,7 +58,6 @@ typedef struct _JsonValue
     JsonValueType   type;
     JsonValueData   data;
 } JsonValue;
-
 
 TINY_LOR
 TINY_API
@@ -87,10 +89,6 @@ JsonValue * JsonValue_NewValue(JsonValueType type, void *value);
 TINY_LOR
 TINY_API
 void JsonValue_Delete(JsonValue *thiz);
-
-TINY_LOR
-TINY_API
-int JsonValue_ToString(JsonValue *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
 
 
 TINY_END_DECLS

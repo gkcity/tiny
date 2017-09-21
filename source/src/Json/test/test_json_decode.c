@@ -11,6 +11,7 @@
 #include <JsonArray.h>
 #include <JsonString.h>
 #include <JsonNumber.h>
+#include <JsonBoolean.h>
 
 #define TAG			"test"
 
@@ -171,11 +172,11 @@ static int test3(void)
         JsonObject *property = ((JsonValue *)TinyList_GetAt(&characteristics->data.array->values, 0))->data.object;
         JsonValue *jaid = JsonObject_GetValue(property, "aid");
         JsonValue *jiid = JsonObject_GetValue(property, "iid");
-        JsonValue *ev = JsonObject_GetValue(property, "ev");
+        JsonBoolean *ev = JsonObject_GetBoolean(property, "ev");
 
         printf("aid: %d\n", jaid->data.number->value.intValue);
         printf("iid: %d\n", jiid->data.number->value.intValue);
-        printf("ev: %s\n", ev->type == JSON_TRUE ? "true" : "false");
+        printf("ev: %s\n", ev->value ? "true" : "false");
 
         JsonObject_Delete(object);
     }

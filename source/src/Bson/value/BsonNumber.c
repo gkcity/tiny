@@ -4,7 +4,7 @@
  * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
- * @file   JsonNumber.h
+ * @file   BsonNumber.h
  *
  * @remark
  *
@@ -12,18 +12,18 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include "JsonNumber.h"
+#include "BsonNumber.h"
 
-#define TAG     "JsonNumber"
+#define TAG     "BsonNumber"
 
 TINY_LOR
-JsonNumber * JsonNumber_NewInteger(int value)
+BsonNumber * BsonNumber_NewInteger(int value)
 {
-    JsonNumber *thiz = NULL;
+    BsonNumber *thiz = NULL;
 
     do
     {
-        thiz = (JsonNumber *) tiny_malloc(sizeof(JsonNumber));
+        thiz = (BsonNumber *) tiny_malloc(sizeof(BsonNumber));
         if (thiz == NULL)
         {
             LOG_E(TAG, "tiny_malloc FAILED!");
@@ -38,13 +38,13 @@ JsonNumber * JsonNumber_NewInteger(int value)
 }
 
 TINY_LOR
-JsonNumber * JsonNumber_NewFloat(float value)
+BsonNumber * BsonNumber_NewFloat(float value)
 {
-    JsonNumber *thiz = NULL;
+    BsonNumber *thiz = NULL;
 
     do
     {
-        thiz = (JsonNumber *) tiny_malloc(sizeof(JsonNumber));
+        thiz = (BsonNumber *) tiny_malloc(sizeof(BsonNumber));
         if (thiz == NULL)
         {
             LOG_E(TAG, "tiny_malloc FAILED!");
@@ -59,7 +59,7 @@ JsonNumber * JsonNumber_NewFloat(float value)
 }
 
 TINY_LOR
-void JsonNumber_Delete(JsonNumber *thiz)
+void BsonNumber_Delete(BsonNumber *thiz)
 {
     tiny_free(thiz);
 }

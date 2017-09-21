@@ -9,8 +9,8 @@
 #include <tiny_debug.h>
 #include <JsonObject.h>
 #include <JsonArray.h>
-#include <JsonTokenizer.h>
-#include <JsonToken.h>
+#include <codec/JsonDecoder.h>
+#include <codec/JsonToken.h>
 
 #define TAG			"test"
 
@@ -46,24 +46,24 @@ static int test1(void)
 {
     for (int i = 0; i < 6; ++i)
     {
-        JsonTokenizer tokenizer;
+        JsonDecoder tokenizer;
 
-        if (RET_FAILED(JsonTokenizer_Construct(&tokenizer)))
+        if (RET_FAILED(JsonDecoder_Construct(&tokenizer)))
         {
             return 1;
         }
 
-        if (RET_FAILED(JsonTokenizer_Parse(&tokenizer, samples[i])))
+        if (RET_FAILED(JsonDecoder_Parse(&tokenizer, samples[i])))
         {
-            JsonTokenizer_Print(&tokenizer);
-            JsonTokenizer_Dispose(&tokenizer);
+            JsonDecoder_Print(&tokenizer);
+            JsonDecoder_Dispose(&tokenizer);
             return 1;
         }
 
-        JsonTokenizer_Print(&tokenizer);
+        JsonDecoder_Print(&tokenizer);
         printf("\n");
 
-        JsonTokenizer_Dispose(&tokenizer);
+        JsonDecoder_Dispose(&tokenizer);
     }
 
 	return 0;

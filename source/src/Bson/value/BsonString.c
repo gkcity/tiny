@@ -4,7 +4,7 @@
  * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
- * @file   JsonString.h
+ * @file   BsonString.h
  *
  * @remark
  *
@@ -12,16 +12,16 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include "JsonString.h"
+#include "BsonString.h"
 
-#define TAG     "JsonString"
+#define TAG     "BsonString"
 
 TINY_LOR
-static TinyRet JsonString_Construct(JsonString *thiz, const char *value)
+static TinyRet BsonString_Construct(BsonString *thiz, const char *value)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    memset(thiz, 0, sizeof(JsonString));
+    memset(thiz, 0, sizeof(BsonString));
 
     if (value != NULL)
     {
@@ -40,7 +40,7 @@ static TinyRet JsonString_Construct(JsonString *thiz, const char *value)
 }
 
 TINY_LOR
-static void JsonString_Dispose(JsonString *thiz)
+static void BsonString_Dispose(BsonString *thiz)
 {
     if (thiz->value != NULL)
     {
@@ -51,23 +51,23 @@ static void JsonString_Dispose(JsonString *thiz)
 }
 
 TINY_LOR
-JsonString * JsonString_New(const char *value)
+BsonString * BsonString_New(const char *value)
 {
-    JsonString *thiz = NULL;
+    BsonString *thiz = NULL;
 
     do
     {
-        thiz = (JsonString *) tiny_malloc(sizeof(JsonString));
+        thiz = (BsonString *) tiny_malloc(sizeof(BsonString));
         if (thiz == NULL)
         {
             LOG_E(TAG, "tiny_malloc FAILED!");
             break;
         }
 
-        if (RET_FAILED(JsonString_Construct(thiz, value)))
+        if (RET_FAILED(BsonString_Construct(thiz, value)))
         {
-            LOG_E(TAG, "JsonString_Construct FAILED");
-            JsonString_Delete(thiz);
+            LOG_E(TAG, "BsonString_Construct FAILED");
+            BsonString_Delete(thiz);
             thiz = NULL;
             break;
         }
@@ -77,8 +77,8 @@ JsonString * JsonString_New(const char *value)
 }
 
 TINY_LOR
-void JsonString_Delete(JsonString *thiz)
+void BsonString_Delete(BsonString *thiz)
 {
-    JsonString_Dispose(thiz);
+    BsonString_Dispose(thiz);
     tiny_free(thiz);
 }

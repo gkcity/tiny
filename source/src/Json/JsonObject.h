@@ -54,11 +54,11 @@ TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty);
 
 TINY_LOR
 TINY_API
-int JsonObject_ToString(JsonObject *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
-
-TINY_LOR
-TINY_API
 bool JsonObject_ContainsKey(JsonObject *thiz, const char *key);
+
+/**
+ * Getter
+ */
 
 TINY_LOR
 TINY_API
@@ -82,6 +82,14 @@ JsonString * JsonObject_GetString(JsonObject *thiz, const char *key);
 
 TINY_LOR
 TINY_API
+JsonBoolean * JsonObject_GetBoolean(JsonObject *thiz, const char *key);
+
+/**
+ * Setter: value
+ */
+
+TINY_LOR
+TINY_API
 TinyRet JsonObject_PutString(JsonObject *thiz, const char *key, const char *value);
 
 TINY_LOR
@@ -100,6 +108,9 @@ TINY_LOR
 TINY_API
 TinyRet JsonObject_PutNull(JsonObject *thiz, const char *key);
 
+/**
+ * Setter: Object
+ */
 TINY_LOR
 TINY_API
 TinyRet JsonObject_PutObject(JsonObject *thiz, const char *key, JsonObject *value);

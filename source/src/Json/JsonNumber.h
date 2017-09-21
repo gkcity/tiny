@@ -45,9 +45,6 @@ JsonNumber * JsonNumber_NewFloat(float value);
 TINY_LOR
 void JsonNumber_Delete(JsonNumber *thiz);
 
-TINY_LOR
-int JsonNumber_ToString(JsonNumber *thiz, char *buf, uint32_t length, uint32_t offset);
-
 
 TINY_END_DECLS
 

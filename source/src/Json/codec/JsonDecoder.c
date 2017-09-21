@@ -4,7 +4,7 @@
  * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
- * @file   JsonTokenizer.c
+ * @file   JsonDecoder.c
  *
  * @remark
  *
@@ -14,13 +14,13 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <tiny_char_util.h>
-#include "JsonTokenizer.h"
+#include "JsonDecoder.h"
 #include "JsonToken.h"
 #include "JsonNumber.h"
 #include "JsonString.h"
 #include "JsonArray.h"
 
-#define TAG     "JsonTokenizer"
+#define TAG     "JsonDecoder"
 
 typedef enum _TokenParseResult
 {
@@ -50,16 +50,16 @@ typedef enum _TokenAnalystResult
 } TokenAnalystResult;
 
 TINY_LOR
-static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz);
+static JsonObject * JsonDecoder_PeakObject(JsonDecoder *thiz);
 
 TINY_LOR
-static JsonArray * JsonTokenizer_PeakArray(JsonTokenizer *thiz);
+static JsonArray * JsonDecoder_PeakArray(JsonDecoder *thiz);
 
 TINY_LOR
-static JsonString * JsonTokenizer_PeakString(JsonTokenizer *thiz, JsonToken *token);
+static JsonString * JsonDecoder_PeakString(JsonDecoder *thiz, JsonToken *token);
 
 TINY_LOR
-static JsonNumber * JsonTokenizer_PeakNumber(JsonTokenizer *thiz, JsonToken *token);
+static JsonNumber * JsonDecoder_PeakNumber(JsonDecoder *thiz, JsonToken *token);
 
 TINY_LOR
 static void _OnTokenDelete (void * data, void *ctx)
@@ -68,7 +68,7 @@ static void _OnTokenDelete (void * data, void *ctx)
 }
 
 TINY_LOR
-TinyRet JsonTokenizer_Construct(JsonTokenizer *thiz)
+TinyRet JsonDecoder_Construct(JsonDecoder *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -84,7 +84,7 @@ TinyRet JsonTokenizer_Construct(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-void JsonTokenizer_Dispose(JsonTokenizer *thiz)
+void JsonDecoder_Dispose(JsonDecoder *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
@@ -92,7 +92,7 @@ void JsonTokenizer_Dispose(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-static TokenParseResult JsonTokenizer_ParseTokenMonocase(JsonTokenizer *thiz, JsonTokenType type)
+static TokenParseResult JsonDecoder_ParseTokenMonocase(JsonDecoder *thiz, JsonTokenType type)
 {
     TokenParseResult result = TOKEN_PARSE_OK;
 
@@ -121,7 +121,7 @@ static TokenParseResult JsonTokenizer_ParseTokenMonocase(JsonTokenizer *thiz, Js
 }
 
 TINY_LOR
-static TokenParseResult JsonTokenizer_ParseNull(JsonTokenizer *thiz)
+static TokenParseResult JsonDecoder_ParseNull(JsonDecoder *thiz)
 {
     TokenParseResult result = TOKEN_PARSE_OK;
 
@@ -157,7 +157,7 @@ static TokenParseResult JsonTokenizer_ParseNull(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-static TokenParseResult JsonTokenizer_ParseTrue(JsonTokenizer *thiz)
+static TokenParseResult JsonDecoder_ParseTrue(JsonDecoder *thiz)
 {
     TokenParseResult result = TOKEN_PARSE_OK;
 
@@ -193,7 +193,7 @@ static TokenParseResult JsonTokenizer_ParseTrue(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-static TokenParseResult JsonTokenizer_ParseFalse(JsonTokenizer *thiz)
+static TokenParseResult JsonDecoder_ParseFalse(JsonDecoder *thiz)
 {
     TokenParseResult result = TOKEN_PARSE_OK;
 
@@ -230,7 +230,7 @@ static TokenParseResult JsonTokenizer_ParseFalse(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
+static TokenParseResult JsonDecoder_ParseString(JsonDecoder *thiz)
 {
     TokenParseResult result = TOKEN_PARSE_OK;
 
@@ -335,7 +335,7 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
+static TokenParseResult JsonDecoder_ParseNumber(JsonDecoder *thiz)
 {
     TokenParseResult result = TOKEN_PARSE_OK;
 
@@ -466,7 +466,7 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-static TokenParseResult JsonTokenizer_ParseToken(JsonTokenizer *thiz)
+static TokenParseResult JsonDecoder_ParseToken(JsonDecoder *thiz)
 {
     switch (*thiz->current)
     {
@@ -479,34 +479,34 @@ static TokenParseResult JsonTokenizer_ParseToken(JsonTokenizer *thiz)
             return TOKEN_PARSE_OK;
 
         case '{':
-            return JsonTokenizer_ParseTokenMonocase(thiz, JSON_TOKEN_OBJECT_START);
+            return JsonDecoder_ParseTokenMonocase(thiz, JSON_TOKEN_OBJECT_START);
 
         case '}':
-            return JsonTokenizer_ParseTokenMonocase(thiz, JSON_TOKEN_OBJECT_END);
+            return JsonDecoder_ParseTokenMonocase(thiz, JSON_TOKEN_OBJECT_END);
 
         case '[':
-            return JsonTokenizer_ParseTokenMonocase(thiz, JSON_TOKEN_ARRAY_START);
+            return JsonDecoder_ParseTokenMonocase(thiz, JSON_TOKEN_ARRAY_START);
 
         case ']':
-            return JsonTokenizer_ParseTokenMonocase(thiz, JSON_TOKEN_ARRAY_END);
+            return JsonDecoder_ParseTokenMonocase(thiz, JSON_TOKEN_ARRAY_END);
 
         case ',':
-            return JsonTokenizer_ParseTokenMonocase(thiz, JSON_TOKEN_COMMA);
+            return JsonDecoder_ParseTokenMonocase(thiz, JSON_TOKEN_COMMA);
 
         case ':':
-            return JsonTokenizer_ParseTokenMonocase(thiz, JSON_TOKEN_COLON);
+            return JsonDecoder_ParseTokenMonocase(thiz, JSON_TOKEN_COLON);
 
         case 'n':
-            return JsonTokenizer_ParseNull(thiz);
+            return JsonDecoder_ParseNull(thiz);
 
         case 't':
-            return JsonTokenizer_ParseTrue(thiz);
+            return JsonDecoder_ParseTrue(thiz);
 
         case 'f':
-            return JsonTokenizer_ParseFalse(thiz);
+            return JsonDecoder_ParseFalse(thiz);
 
         case '"':
-            return JsonTokenizer_ParseString(thiz);
+            return JsonDecoder_ParseString(thiz);
 
         case '-':
         case '0':
@@ -519,7 +519,7 @@ static TokenParseResult JsonTokenizer_ParseToken(JsonTokenizer *thiz)
         case '7':
         case '8':
         case '9':
-            return JsonTokenizer_ParseNumber(thiz);
+            return JsonDecoder_ParseNumber(thiz);
 
         default:
             return TOKEN_PARSE_E_INVALID_VALUE;
@@ -527,7 +527,7 @@ static TokenParseResult JsonTokenizer_ParseToken(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-TinyRet JsonTokenizer_Parse(JsonTokenizer *thiz, const char *string)
+TinyRet JsonDecoder_Parse(JsonDecoder *thiz, const char *string)
 {
     TokenParseResult result = TOKEN_PARSE_OK;
 
@@ -540,10 +540,10 @@ TinyRet JsonTokenizer_Parse(JsonTokenizer *thiz, const char *string)
 
     while (*thiz->current != '\0')
     {
-        result = JsonTokenizer_ParseToken(thiz);
+        result = JsonDecoder_ParseToken(thiz);
         if (result != TOKEN_PARSE_OK)
         {
-            LOG_D(TAG, "JsonTokenizer_ParseToken FAILED: %d, index: %d", result, thiz->index);
+            LOG_D(TAG, "JsonDecoder_ParseToken FAILED: %d, index: %d", result, thiz->index);
             break;
         }
     }
@@ -594,7 +594,7 @@ const char * JsonToken_TypeToString(JsonTokenType type)
     }
 }
 
-void JsonTokenizer_Print(JsonTokenizer *thiz)
+void JsonDecoder_Print(JsonDecoder *thiz)
 {
     for (uint32_t i = 0; i < thiz->tokens.size; ++i)
     {
@@ -611,7 +611,7 @@ void JsonTokenizer_Print(JsonTokenizer *thiz)
 #endif
 
 TINY_LOR
-static JsonValue * JsonTokenizer_PeakValue(JsonTokenizer *thiz)
+static JsonValue * JsonDecoder_PeakValue(JsonDecoder *thiz)
 {
     JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index);
     JsonValue *value = NULL;
@@ -619,14 +619,14 @@ static JsonValue * JsonTokenizer_PeakValue(JsonTokenizer *thiz)
     switch (token->type)
     {
         case JSON_TOKEN_OBJECT_START:
-            value = JsonValue_NewValue(JSON_OBJECT, JsonTokenizer_PeakObject(thiz));
+            value = JsonValue_NewValue(JSON_OBJECT, JsonDecoder_PeakObject(thiz));
             break;
 
         case JSON_TOKEN_OBJECT_END:
             break;
 
         case JSON_TOKEN_ARRAY_START:
-            value = JsonValue_NewValue(JSON_ARRAY, JsonTokenizer_PeakArray(thiz));
+            value = JsonValue_NewValue(JSON_ARRAY, JsonDecoder_PeakArray(thiz));
             break;
 
         case JSON_TOKEN_ARRAY_END:
@@ -654,12 +654,12 @@ static JsonValue * JsonTokenizer_PeakValue(JsonTokenizer *thiz)
             break;
 
         case JSON_TOKEN_STRING:
-            value = JsonValue_NewValue(JSON_STRING, JsonTokenizer_PeakString(thiz, token));
+            value = JsonValue_NewValue(JSON_STRING, JsonDecoder_PeakString(thiz, token));
             thiz->index++;
             break;
 
         case JSON_TOKEN_NUMBER:
-            value = JsonValue_NewValue(JSON_NUMBER, JsonTokenizer_PeakNumber(thiz, token));
+            value = JsonValue_NewValue(JSON_NUMBER, JsonDecoder_PeakNumber(thiz, token));
             thiz->index++;
             break;
     }
@@ -668,7 +668,7 @@ static JsonValue * JsonTokenizer_PeakValue(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-static JsonArray * JsonTokenizer_PeakArray(JsonTokenizer *thiz)
+static JsonArray * JsonDecoder_PeakArray(JsonDecoder *thiz)
 {
     JsonArray * array = NULL;
     
@@ -714,7 +714,7 @@ static JsonArray * JsonTokenizer_PeakArray(JsonTokenizer *thiz)
             }
 
             // value
-            value = JsonTokenizer_PeakValue(thiz);
+            value = JsonDecoder_PeakValue(thiz);
             if (value == NULL)
             {
                 result = TOKEN_ANALYSIS_E_ARRAY_VALUE_INVALID;
@@ -764,7 +764,7 @@ static JsonArray * JsonTokenizer_PeakArray(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-static JsonString * JsonTokenizer_PeakString(JsonTokenizer *thiz, JsonToken *token)
+static JsonString * JsonDecoder_PeakString(JsonDecoder *thiz, JsonToken *token)
 {
     JsonString * string = NULL;
 
@@ -793,7 +793,7 @@ static JsonString * JsonTokenizer_PeakString(JsonTokenizer *thiz, JsonToken *tok
 }
 
 TINY_LOR
-static JsonNumber * JsonTokenizer_PeakNumber(JsonTokenizer *thiz, JsonToken *token)
+static JsonNumber * JsonDecoder_PeakNumber(JsonDecoder *thiz, JsonToken *token)
 {
     JsonNumber * number = NULL;
     
@@ -834,7 +834,7 @@ static JsonNumber * JsonTokenizer_PeakNumber(JsonTokenizer *thiz, JsonToken *tok
 }
 
 TINY_LOR
-static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz)
+static JsonObject * JsonDecoder_PeakObject(JsonDecoder *thiz)
 {
     JsonObject *object = NULL;
 
@@ -918,7 +918,7 @@ static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz)
             thiz->index++;
 
             // value
-            value = JsonTokenizer_PeakValue(thiz);
+            value = JsonDecoder_PeakValue(thiz);
             if (value == NULL)
             {
                 LOG_D(TAG, "JsonValue invalid: %s", key);
@@ -969,18 +969,18 @@ static JsonObject * JsonTokenizer_PeakObject(JsonTokenizer *thiz)
 }
 
 TINY_LOR
-JsonObject * JsonTokenizer_ConvertToObject(JsonTokenizer *thiz)
+JsonObject * JsonDecoder_ConvertToObject(JsonDecoder *thiz)
 {
     JsonObject *object = NULL;
 
     RETURN_VAL_IF_FAIL(thiz, NULL);
 
-    LOG_D(TAG, "JsonTokenizer_ConvertToObject");
+    LOG_D(TAG, "JsonDecoder_ConvertToObject");
 
-    //JsonTokenizer_Print(thiz);
+    //JsonDecoder_Print(thiz);
 
     thiz->index = 0;
-    object = JsonTokenizer_PeakObject(thiz);
+    object = JsonDecoder_PeakObject(thiz);
     if (object == NULL)
     {
         JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index);

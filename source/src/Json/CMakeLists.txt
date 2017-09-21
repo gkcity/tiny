@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------------
 #
-# son
+# Json
 #
 #-----------------------------------------------------------------------------
 
@@ -10,8 +10,10 @@ SET(Json_Header
         JsonString.h
         JsonNumber.h
         JsonObject.h
-        JsonTokenizer.h
-        JsonToken.h
+        JsonBoolean.h
+        codec/JsonToken.h
+        codec/JsonDecoder.h
+        codec/JsonEncoder.h
         )
 
 SET(Json_Source
@@ -20,8 +22,10 @@ SET(Json_Source
         JsonString.c
         JsonNumber.c
         JsonObject.c
-        JsonTokenizer.c
-        JsonToken.c
+        JsonBoolean.c
+        codec/JsonToken.c
+        codec/JsonDecoder.c
+        codec/JsonEncoder.c
         )
 
 SET(SRC

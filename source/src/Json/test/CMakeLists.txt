@@ -1,5 +1,5 @@
-ADD_EXECUTABLE(test_json_encoder test_json_encoder.c)
-TARGET_LINK_LIBRARIES(test_json_encoder
+ADD_EXECUTABLE(test_json_encode test_json_encode.c)
+TARGET_LINK_LIBRARIES(test_json_encode
         json_static
         tiny_string_util_static
         tiny_container_static
@@ -8,8 +8,8 @@ TARGET_LINK_LIBRARIES(test_json_encoder
         tiny_base_static
         ${OS_LIB})
 
-ADD_EXECUTABLE(test_json_decoder test_json_decoder.c)
-TARGET_LINK_LIBRARIES(test_json_decoder
+ADD_EXECUTABLE(test_json_decode test_json_decode.c)
+TARGET_LINK_LIBRARIES(test_json_decode
         json_static
         tiny_string_util_static
         tiny_container_static

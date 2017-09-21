@@ -41,10 +41,6 @@ TinyRet JsonArray_Encode(JsonArray *thiz, bool pretty);
 
 TINY_LOR
 TINY_API
-int JsonArray_ToString(JsonArray *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
-
-TINY_LOR
-TINY_API
 TinyRet JsonArray_AddString(JsonArray *thiz, const char *value);
 
 TINY_LOR

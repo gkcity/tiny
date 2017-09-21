@@ -19,6 +19,7 @@
 #include "JsonNumber.h"
 #include "JsonObject.h"
 #include "JsonArray.h"
+#include "JsonBoolean.h"
 
 #define TAG     "JsonValue"
 
@@ -117,7 +118,13 @@ JsonValue * JsonValue_NewBoolean(bool value)
     JsonValue * thiz = JsonValue_New();
     if (thiz != NULL)
     {
-        thiz->type = value ? JSON_TRUE : JSON_FALSE;
+        thiz->type = JSON_BOOLEAN;
+        thiz->data.boolean = JsonBoolean_New(value);
+        if (thiz->data.boolean == NULL)
+        {
+            JsonValue_Delete(thiz);
+            thiz = NULL;
+        }
     }
 
     return thiz;
@@ -165,8 +172,10 @@ JsonValue * JsonValue_NewValue(JsonValueType type, void *value)
                     thiz->data.array = (JsonArray *)value;
                     break;
 
-                case JSON_TRUE:
-                case JSON_FALSE:
+                case JSON_BOOLEAN:
+                    thiz->data.boolean = (JsonBoolean *)value;
+                    break;
+
                 case JSON_NULL:
                 case JSON_UNDEFINED:
                     JsonValue_Delete(thiz);
@@ -212,54 +221,16 @@ void JsonValue_Delete(JsonValue *thiz)
             }
             break;
 
-        default:
+        case JSON_BOOLEAN:
+            if (thiz->data.boolean != NULL)
+            {
+                JsonBoolean_Delete(thiz->data.boolean);
+            }
             break;
+
+        case JSON_UNDEFINED:
+        case JSON_NULL:break;
     }
 
     tiny_free(thiz);
-}
-
-TINY_LOR
-TINY_API
-int JsonValue_ToString(JsonValue *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset)
-{
-    int size = 0;
-    char string[128];
-
-    switch (thiz->type)
-    {
-        case JSON_STRING:
-            tiny_snprintf(string, 128, "\"%s\"", thiz->data.string->value);
-            size = tiny_buffer_append(buf, length, offset, string);
-            break;
-
-        case JSON_NUMBER:
-            size = JsonNumber_ToString(thiz->data.number, buf, length, offset);
-            break;
-
-        case JSON_OBJECT:
-            size = JsonObject_ToString(thiz->data.object, pretty, depth, buf, length, offset);
-            break;
-
-        case JSON_ARRAY:
-            size = JsonArray_ToString(thiz->data.array, pretty, depth, buf, length, offset);
-            break;
-
-        case JSON_TRUE:
-            size = tiny_buffer_append(buf, length, offset, "true");
-            break;
-
-        case JSON_FALSE:
-            size = tiny_buffer_append(buf, length, offset, "false");
-            break;
-
-        case JSON_NULL:
-            size = tiny_buffer_append(buf, length, offset, "null");
-            break;
-
-        default:
-            break;
-    }
-
-    return size;
 }
