@@ -18,37 +18,44 @@
 #ifdef TINY_UMM
 #include "umm_malloc.h"
 
+TINY_LOR
 void * tiny_malloc(uint32_t size)
 {
     return umm_malloc(size);
 }
 
+TINY_LOR
 void * tiny_realloc(void *p, uint32_t size)
 {
     return umm_realloc(p, size);
 }
 
+TINY_LOR
 void tiny_free(void *p)
 {
     umm_free(p);
 }
 #else
 
+TINY_LOR
 void * tiny_malloc(uint32_t size)
 {
     return malloc(size);
 }
 
+TINY_LOR
 void * tiny_calloc(uint32_t n, size_t size)
 {
     return calloc(n, size);
 }
 
+TINY_LOR
 void * tiny_realloc(void *p, uint32_t size)
 {
     return realloc(p, size);
 }
 
+TINY_LOR
 void tiny_free(void *p)
 {
     free(p);

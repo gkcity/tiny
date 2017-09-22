@@ -212,6 +212,7 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
     return ret;
 }
 
+TINY_LOR
 TinyRet MulticastChannel_Write(Channel *thiz, const void *data, uint32_t len)
 {
     MulticastChannelContext *ctx = (MulticastChannelContext *)thiz->ctx;

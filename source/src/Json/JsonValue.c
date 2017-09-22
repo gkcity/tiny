@@ -12,8 +12,6 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include <tiny_snprintf.h>
-#include <tiny_buffer_append.h>
 #include "JsonValue.h"
 #include "JsonString.h"
 #include "JsonNumber.h"
@@ -23,9 +21,8 @@
 
 #define TAG     "JsonValue"
 
-
-static
-TinyRet JsonValue_Construct(JsonValue *thiz)
+TINY_LOR
+static TinyRet JsonValue_Construct(JsonValue *thiz)
 {
     memset(thiz, 0, sizeof(JsonValue));
     thiz->type = JSON_UNDEFINED;

@@ -25,6 +25,7 @@ uint64_t tiny_current_microsecond(void)
     return (uint64_t)(tv.tv_sec * 1000 * 1000 + tv.tv_usec);
 }
 
+TINY_LOR
 int tiny_gettimeofday(struct timeval *tv, void *tz)
 {
     time_t clock;

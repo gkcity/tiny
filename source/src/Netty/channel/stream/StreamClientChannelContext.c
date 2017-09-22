@@ -23,6 +23,7 @@ static TinyRet StreamClientChannelContext_Construct(StreamClientChannelContext *
     return ret;
 }
 
+TINY_LOR
 static void StreamClientChannelContext_Dispose(StreamClientChannelContext *thiz)
 {
 }

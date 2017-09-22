@@ -20,11 +20,22 @@
 
 #define TAG "HttpClientHandler"
 
+TINY_LOR
 static TinyRet HttpClientHandler_Construct(ChannelHandler *thiz, HttpExchange *context);
+
+TINY_LOR
 static TinyRet HttpClientHandler_Dispose(ChannelHandler *thiz);
+
+TINY_LOR
 static void HttpClientHandler_Delete(ChannelHandler *thiz);
+
+TINY_LOR
 static void _channelActive(ChannelHandler *thiz, Channel *channel);
+
+TINY_LOR
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len);
+
+TINY_LOR
 static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer);
 
 TINY_LOR
