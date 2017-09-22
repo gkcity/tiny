@@ -4,6 +4,21 @@
 
 #define URI "/homekit/instance/device?type=urn:homtkit-spec:device:lightbulb:00000000:arrizo-v1"
 
+/**
+ * NO ACTION
+ */
+#define ZHIMI_FAN "/instance/device?type=urn:miot-spec:device:fan:00000A04:zhimi"
+
+/**
+ * Contains Action without arguments
+ */
+#define ROCK_SWEEPER "/instance/device?type=urn:miot-spec:device:sweeper:00000A0A:rock"
+
+/**
+ * Contains Action with arguments
+ */
+#define CHUNMI_COOKER "/instance/device?type=urn:miot-spec:device:cooker:00000A08:chunmi"
+
 int main(void)
 {
     tiny_socket_initialize();
@@ -12,7 +27,7 @@ int main(void)
     {
         HttpClient *client = HttpClient_New();
 
-        HttpExchange *exchange = HttpExchange_New("47.93.60.147", 8080, "GET", URI, 5);
+        HttpExchange *exchange = HttpExchange_New("47.93.60.147", 8080, "GET", ROCK_SWEEPER, 5);
 
         if (RET_SUCCEEDED(HttpClient_Send(client, exchange)))
         {
