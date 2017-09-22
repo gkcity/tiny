@@ -57,6 +57,7 @@ TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size)
 
         if (size > HTTP_CONTENT_MAX_SIZE)
         {
+            LOG_E(TAG, "out of size: %d/%d",  size, HTTP_CONTENT_MAX_SIZE);
             ret = TINY_RET_E_OUT_OF_MEMORY;
             break;
         }
@@ -65,6 +66,7 @@ TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size)
         thiz->buf = (char *)tiny_malloc(size + 1);
         if (thiz->buf == NULL)
         {
+            LOG_E(TAG, "tiny_malloc failed");
             ret = TINY_RET_E_OUT_OF_MEMORY;
             break;
         }
