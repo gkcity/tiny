@@ -193,14 +193,14 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
         ret = SocketChannel_Open(thiz, TYPE_TCP_CONNECTION);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "SocketChannel_Open failed");
+            LOG_E(TAG, "SocketChannel_Open failed: %d", TINY_RET_CODE(ret));
             break;
         }
 
         ret = SocketChannel_SetBlock(thiz, false);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "SocketChannel_SetBlock failed");
+            LOG_E(TAG, "SocketChannel_SetBlock failed: %d", TINY_RET_CODE(ret));
             break;
         }
 
@@ -211,7 +211,7 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
         ret = tiny_async_connect(thiz->fd, ip, port);
         if (RET_FAILED(ret))
         {
-            LOG_E(TAG, "tiny_async_connect failed");
+            LOG_E(TAG, "tiny_async_connect failed: %d", TINY_RET_CODE(ret));
             break;
         }
 

@@ -27,7 +27,7 @@ int main(void)
     {
         HttpClient *client = HttpClient_New();
 
-        HttpExchange *exchange = HttpExchange_New("47.93.60.147", 8080, "GET", ROCK_SWEEPER, 5);
+        HttpExchange *exchange = HttpExchange_New("47.93.60.147", 8080, "GET", CHUNMI_COOKER, 5);
 
         if (RET_SUCCEEDED(HttpClient_Send(client, exchange)))
         {
