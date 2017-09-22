@@ -25,8 +25,6 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 {
     LOG_MEM(TAG, "_channelRead");
 
-    printf("%s\n", (const char *) data);
-
     do
     {
         if (type != DATA_RAW)
@@ -52,7 +50,6 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
             thiz->data = NULL;
             break;
         }
-
 
         if (((HttpMessage *) thiz->data)->parser_status == HttpParserError)
         {
