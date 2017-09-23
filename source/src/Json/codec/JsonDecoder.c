@@ -16,8 +16,8 @@
 #include <tiny_char_util.h>
 #include "JsonDecoder.h"
 #include "JsonToken.h"
-#include "JsonNumber.h"
-#include "JsonString.h"
+#include "value/JsonNumber.h"
+#include "value/JsonString.h"
 #include "JsonArray.h"
 
 #define TAG     "JsonDecoder"

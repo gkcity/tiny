@@ -37,10 +37,9 @@ static int test1(void)
     BsonObject *object = BsonObject_NewBinary(binary, 22);
     if (object == NULL)
     {
-        printf("JsonObject_NewString FAILED!\n");
+        printf("BsonObject_NewBinary FAILED!\n");
         return 1;
     }
-
 
     //        BsonObject_Encode(object, true);
     //        printf("------------ BSON ENCODE START ----------------------\n");

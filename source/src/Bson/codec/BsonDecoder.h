@@ -20,7 +20,6 @@
 TINY_BEGIN_DECLS
 
 
-
 typedef struct _BsonDecoder
 {
     const uint8_t   * value;

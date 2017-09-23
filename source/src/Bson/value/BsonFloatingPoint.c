@@ -21,7 +21,10 @@ static TinyRet BsonFloatingPoint_Construct(BsonFloatingPoint *thiz, const uint8_
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    thiz->value = *((double *) value);
+    if (value != NULL)
+    {
+        thiz->value = *((double *) value);
+    }
 
     return TINY_RET_OK;
 }

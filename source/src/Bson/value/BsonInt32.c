@@ -21,11 +21,14 @@ static TinyRet BsonInt32_Construct(BsonInt32 *thiz, const uint8_t * v)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    thiz->value =
-            (uint32_t)(v[0]) +
-            (((uint32_t)(v[1])) << 8) +
-            (((uint32_t)(v[2])) << 16) +
-            (((uint32_t)(v[3])) << 24);
+    if (v != NULL)
+    {
+        thiz->value =
+                (uint32_t)(v[0]) +
+                (((uint32_t)(v[1])) << 8) +
+                (((uint32_t)(v[2])) << 16) +
+                (((uint32_t)(v[3])) << 24);
+    }
 
     return TINY_RET_OK;
 }

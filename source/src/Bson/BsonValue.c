@@ -53,7 +53,6 @@ BsonValue * BsonValue_New(void)
     return thiz;
 }
 
-#if 0
 TINY_LOR
 BsonValue * BsonValue_NewString(const char *value)
 {
@@ -73,18 +72,22 @@ BsonValue * BsonValue_NewString(const char *value)
 }
 
 TINY_LOR
-BsonValue * BsonValue_NewInteger(int value)
+BsonValue * BsonValue_NewInt32(int32_t value)
 {
     BsonValue * thiz = BsonValue_New();
     if (thiz != NULL)
     {
-        thiz->type = BSON_NUMBER;
-        thiz->data.number = BsonNumber_NewInteger(value);
-        if (thiz->data.number == NULL)
+        thiz->type = BSON_INT32;
+        thiz->data.int32 = BsonInt32_New(0);
+        if (thiz->data.int32 == NULL)
         {
             BsonValue_Delete(thiz);
             thiz = NULL;
         }
+        else
+        {
+          thiz->data.int32->value = value;
+        };
     }
 
     return thiz;
@@ -96,12 +99,16 @@ BsonValue * BsonValue_NewFloat(float value)
     BsonValue * thiz = BsonValue_New();
     if (thiz != NULL)
     {
-        thiz->type = BSON_NUMBER;
-        thiz->data.number = BsonNumber_NewFloat(value);
-        if (thiz->data.number == NULL)
+        thiz->type = BSON_FLOAT;
+        thiz->data.floatingPoint = BsonFloatingPoint_New(NULL);
+        if (thiz->data.floatingPoint == NULL)
         {
             BsonValue_Delete(thiz);
             thiz = NULL;
+        }
+        else
+        {
+            thiz->data.floatingPoint->value = value;
         }
     }
 
@@ -114,12 +121,23 @@ BsonValue * BsonValue_NewBoolean(bool value)
     BsonValue * thiz = BsonValue_New();
     if (thiz != NULL)
     {
-        thiz->type = value ? BSON_TRUE : BSON_FALSE;
+        thiz->type = BSON_BOOLEAN;
+        thiz->data.boolean = BsonBoolean_New(0);
+        if (thiz->data.boolean == NULL)
+        {
+            BsonValue_Delete(thiz);
+            thiz = NULL;
+        }
+        else
+        {
+            thiz->data.boolean->value = value;
+        }
     }
 
     return thiz;
 }
 
+#if 0
 TINY_LOR
 BsonValue * BsonValue_NewNull()
 {

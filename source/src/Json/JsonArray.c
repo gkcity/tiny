@@ -103,7 +103,7 @@ TinyRet JsonArray_Encode(JsonArray *thiz, bool pretty)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    length = JsonArray_ToString(thiz, pretty, 0, NULL, 0, 0);
+    length = JsonEncoder_EncodeArray(thiz, pretty, 0, NULL, 0, 0);
     if (length < 0)
     {
         return TINY_RET_E_INTERNAL;
@@ -122,7 +122,7 @@ TinyRet JsonArray_Encode(JsonArray *thiz, bool pretty)
 
     memset(thiz->string, 0, (size_t)length + 1);
 
-    JsonArray_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
+    JsonEncoder_EncodeArray(thiz, pretty, 0, thiz->string, (uint32_t) length, 0);
 
     return TINY_RET_OK;
 }

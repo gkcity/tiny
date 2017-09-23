@@ -7,25 +7,25 @@
 SET(Json_Header
         JsonValue.h
         JsonArray.h
-        JsonString.h
-        JsonNumber.h
         JsonObject.h
-        JsonBoolean.h
         codec/JsonToken.h
         codec/JsonDecoder.h
         codec/JsonEncoder.h
+        value/JsonString.h
+        value/JsonNumber.h
+        value/JsonBoolean.h
         )
 
 SET(Json_Source
         JsonValue.c
         JsonArray.c
-        JsonString.c
-        JsonNumber.c
         JsonObject.c
-        JsonBoolean.c
         codec/JsonToken.c
         codec/JsonDecoder.c
         codec/JsonEncoder.c
+        value/JsonString.c
+        value/JsonNumber.c
+        value/JsonBoolean.c
         )
 
 SET(SRC

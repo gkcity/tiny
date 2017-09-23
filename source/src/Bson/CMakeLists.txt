@@ -9,6 +9,8 @@ SET(Bson_Header
         BsonArray.h
         BsonObject.h
         codec/BsonDecoder.h
+        codec/BsonEncoder.h
+        codec/StringEncoder.h
         value/BsonBinary.h
         value/BsonBoolean.h
         value/BsonCstring.h
@@ -30,6 +32,8 @@ SET(Bson_Source
         BsonArray.c
         BsonObject.c
         codec/BsonDecoder.c
+        codec/BsonEncoder.c
+        codec/StringEncoder.c
         value/BsonBinary.c
         value/BsonBoolean.c
         value/BsonCstring.c
@@ -49,7 +53,7 @@ SET(Bson_Source
 SET(SRC
         ${Bson_Header}
         ${Bson_Source}
-    )
+        )
 
 #----------------------------------------------------------------------------
 # static library

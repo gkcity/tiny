@@ -21,7 +21,6 @@ TINY_BEGIN_DECLS
 typedef struct _BsonFloatingPoint
 {
     double        value;
-    uint32_t      length;
 } BsonFloatingPoint;
 
 TINY_LOR

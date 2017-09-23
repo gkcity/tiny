@@ -186,27 +186,27 @@ SET(Netty_Source
 #---------------------------
 
 SET(Json_Header
-        ${SOURCE_ROOT}/Json/JsonValue.h
-        ${SOURCE_ROOT}/Json/JsonArray.h
-        ${SOURCE_ROOT}/Json/JsonString.h
-        ${SOURCE_ROOT}/Json/JsonNumber.h
-        ${SOURCE_ROOT}/Json/JsonBoolean.h
         ${SOURCE_ROOT}/Json/JsonObject.h
+        ${SOURCE_ROOT}/Json/JsonArray.h
+        ${SOURCE_ROOT}/Json/JsonValue.h
         ${SOURCE_ROOT}/Json/codec/JsonDecoder.h
         ${SOURCE_ROOT}/Json/codec/JsonEncoder.h
         ${SOURCE_ROOT}/Json/codec/JsonToken.h
+        ${SOURCE_ROOT}/Json/value/JsonNumber.h
+        ${SOURCE_ROOT}/Json/value/JsonBoolean.h
+        ${SOURCE_ROOT}/Json/value/JsonString.h
         )
 
 SET(Json_Source
-        ${SOURCE_ROOT}/Json/JsonValue.c
-        ${SOURCE_ROOT}/Json/JsonArray.c
-        ${SOURCE_ROOT}/Json/JsonString.c
-        ${SOURCE_ROOT}/Json/JsonNumber.c
-        ${SOURCE_ROOT}/Json/JsonBoolean.c
         ${SOURCE_ROOT}/Json/JsonObject.c
+        ${SOURCE_ROOT}/Json/JsonArray.c
+        ${SOURCE_ROOT}/Json/JsonValue.c
         ${SOURCE_ROOT}/Json/codec/JsonDecoder.c
         ${SOURCE_ROOT}/Json/codec/JsonEncoder.c
         ${SOURCE_ROOT}/Json/codec/JsonToken.c
+        ${SOURCE_ROOT}/Json/value/JsonString.c
+        ${SOURCE_ROOT}/Json/value/JsonNumber.c
+        ${SOURCE_ROOT}/Json/value/JsonBoolean.c
         )
 
 #---------------------------

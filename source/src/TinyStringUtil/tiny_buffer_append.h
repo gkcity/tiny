@@ -24,7 +24,15 @@ TINY_BEGIN_DECLS
 
 TINY_API
 TINY_LOR
-int tiny_buffer_append(char *buf, uint32_t length, uint32_t offset, const char *string);
+int tiny_buffer_append_byte(uint8_t *buf, uint32_t length, uint32_t offset, uint8_t value);
+
+TINY_API
+TINY_LOR
+int tiny_buffer_append_bytes(uint8_t *buf, uint32_t length, uint32_t offset, uint8_t *value, uint32_t size);
+
+TINY_API
+TINY_LOR
+int tiny_buffer_append_string(char *buf, uint32_t length, uint32_t offset, const char *string);
 
 
 TINY_END_DECLS

@@ -13,11 +13,11 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include "JsonValue.h"
-#include "JsonString.h"
-#include "JsonNumber.h"
+#include "value/JsonString.h"
+#include "value/JsonNumber.h"
 #include "JsonObject.h"
 #include "JsonArray.h"
-#include "JsonBoolean.h"
+#include "value/JsonBoolean.h"
 
 #define TAG     "JsonValue"
 

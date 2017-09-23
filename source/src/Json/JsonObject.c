@@ -14,7 +14,7 @@
 #include <tiny_log.h>
 #include <TinyMapItem.h>
 #include "JsonObject.h"
-#include "JsonNumber.h"
+#include "value/JsonNumber.h"
 #include "codec/JsonEncoder.h"
 #include "codec/JsonDecoder.h"
 
@@ -131,7 +131,7 @@ TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    length = JsonObject_ToString(thiz, pretty, 0, NULL, 0, 0);
+    length = JsonEncoder_EncodeObject(thiz, pretty, 0, NULL, 0, 0);
     if (length < 0)
     {
         return TINY_RET_E_INTERNAL;
@@ -151,7 +151,7 @@ TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
     memset(thiz->string, 0, (size_t)length + 1);
     thiz->size = (uint32_t)length;
 
-    JsonObject_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
+    JsonEncoder_EncodeObject(thiz, pretty, 0, thiz->string, (uint32_t) length, 0);
 
     return TINY_RET_OK;
 }

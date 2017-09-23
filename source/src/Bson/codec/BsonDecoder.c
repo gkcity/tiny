@@ -24,9 +24,20 @@
 #define TAG                 "BsonDecoder"
 #define BSON_MIN_LENGTH     (4 + 1 + 2 + 4 + 2 + 1)
 
+/**
+ * BSON: {"hello": "world"} => BSON: \x16\x00\x00\x00\x02hello\x00\x06\x00\x00\x00world\x00\x00
+ *
+ * [\x16\x00\x00\x00]   = total length                      4
+ * [\x02]               = type of value: string,            1
+ * [hello\x00]          = key.                              2
+ * [\x06\x00\x00\x00]   = length of value.                  4
+ * [world\x00]          = value                             2
+ * [\x00]               = end                               1
+ *
+ */
+
 TINY_LOR
 static BsonObject * BsonDecoder_GetObject(BsonDecoder *thiz);
-
 
 TINY_LOR
 static uint32_t BsonTokenizer_GetUint32Value(BsonDecoder *thiz)
@@ -45,6 +56,8 @@ TINY_LOR
 static TinyRet BsonDecoder_GetKey(BsonDecoder *thiz, char *string, uint32_t length)
 {
     TinyRet ret = TINY_RET_OK;
+
+    LOG_D(TAG, "BsonDecoder_GetKey");
 
     do
     {
@@ -80,7 +93,20 @@ static BsonString * BsonDecoder_GetString(BsonDecoder *thiz)
 {
     BsonString *string = NULL;
 
-    string = BsonString_New("xxx");
+    LOG_D(TAG, "BsonDecoder_GetString");
+
+    do
+    {
+        uint32_t length = BsonTokenizer_GetUint32Value(thiz);
+
+        string = BsonString_New((const char *)(thiz->value + thiz->offset));
+        if (string == NULL)
+        {
+            break;
+        }
+
+        thiz->offset += length;
+    } while (false);
 
     return string;
 }
@@ -88,7 +114,11 @@ static BsonString * BsonDecoder_GetString(BsonDecoder *thiz)
 TINY_LOR
 static BsonFloatingPoint * BsonDecoder_GetFloat(BsonDecoder *thiz)
 {
-    BsonFloatingPoint *v = BsonFloatingPoint_New(thiz->value);
+    BsonFloatingPoint *v = NULL;
+
+    LOG_D(TAG, "BsonDecoder_GetFloat");
+
+    v = BsonFloatingPoint_New(thiz->value);
     if (v != NULL)
     {
         thiz->offset += 8;
@@ -100,6 +130,8 @@ static BsonFloatingPoint * BsonDecoder_GetFloat(BsonDecoder *thiz)
 TINY_LOR
 static BsonArray * BsonDecoder_GetArray(BsonDecoder *thiz)
 {
+    LOG_D(TAG, "BsonDecoder_GetArray");
+
     return NULL;
 }
 
@@ -107,6 +139,8 @@ TINY_LOR
 static BsonBinary * BsonDecoder_GetBinary(BsonDecoder *thiz)
 {
     BsonBinary *v = NULL;
+
+    LOG_D(TAG, "BsonDecoder_GetBinary");
 
     do
     {
@@ -134,6 +168,8 @@ static BsonBoolean * BsonDecoder_GetBoolean(BsonDecoder *thiz)
 {
     BsonBoolean *v = NULL;
 
+    LOG_D(TAG, "BsonDecoder_GetBoolean");
+
     do
     {
         v = BsonBoolean_New(thiz->value[thiz->offset++]);
@@ -152,6 +188,8 @@ TINY_LOR
 static BsonDateTime * BsonDecoder_GetDateTime(BsonDecoder *thiz)
 {
     BsonDateTime * v = NULL;
+
+    LOG_D(TAG, "BsonDecoder_GetDateTime");
 
     do
     {
@@ -172,6 +210,8 @@ static BsonTimestamp * BsonDecoder_GetTimestamp(BsonDecoder *thiz)
 {
     BsonTimestamp * v = NULL;
 
+    LOG_D(TAG, "BsonDecoder_GetTimestamp");
+
     do
     {
         v = BsonTimestamp_New(thiz->value + thiz->offset);
@@ -190,6 +230,8 @@ TINY_LOR
 static BsonInt32 * BsonDecoder_GetInt32(BsonDecoder *thiz)
 {
     BsonInt32 * v = NULL;
+
+    LOG_D(TAG, "BsonDecoder_GetInt32");
 
     do
     {
@@ -210,6 +252,8 @@ static BsonInt64 * BsonDecoder_GetInt64(BsonDecoder *thiz)
 {
     BsonInt64 * v = NULL;
 
+    LOG_D(TAG, "BsonDecoder_GetInt64");
+
     do
     {
         v = BsonInt64_New(thiz->value + thiz->offset);
@@ -228,6 +272,8 @@ TINY_LOR
 static BsonValue * BsonDecoder_GetValue(BsonDecoder *thiz, BsonValueType type)
 {
     BsonValue * value = NULL;
+
+    LOG_D(TAG, "BsonDecoder_GetValue: 0x%x", type);
 
     switch (type)
     {
@@ -293,6 +339,7 @@ static BsonValue * BsonDecoder_GetValue(BsonDecoder *thiz, BsonValueType type)
 TINY_LOR
 TinyRet BsonDecoder_Construct(BsonDecoder *thiz, const uint8_t *value, uint32_t offset, uint32_t length)
 {
+    LOG_D(TAG, "BsonDecoder_Construct");
 
     thiz->value = value;
     thiz->offset = 0;
@@ -304,6 +351,7 @@ TinyRet BsonDecoder_Construct(BsonDecoder *thiz, const uint8_t *value, uint32_t 
 TINY_LOR
 void BsonDecoder_Dispose(BsonDecoder *thiz)
 {
+    LOG_D(TAG, "BsonDecoder_Dispose");
 
 }
 
@@ -314,14 +362,20 @@ TinyRet BsonDecoder_Parse(BsonDecoder *thiz)
 
     do
     {
-        if ((thiz->length - thiz->offset) < BSON_MIN_LENGTH)
+        uint32_t length = thiz->length - thiz->offset;
+        uint32_t value = 0;
+
+        if (length < BSON_MIN_LENGTH)
         {
+            LOG_D(TAG, "invalid length: %d", length);
             ret = TINY_RET_E_ARG_INVALID;
             break;
         }
 
-        if (BsonTokenizer_GetUint32Value(thiz) != (thiz->length - thiz->offset))
+        value = BsonTokenizer_GetUint32Value(thiz);
+        if (value != length)
         {
+            LOG_D(TAG, "length(%d) not equals %d", value, length);
             ret = TINY_RET_E_ARG_INVALID;
             break;
         }
@@ -329,18 +383,6 @@ TinyRet BsonDecoder_Parse(BsonDecoder *thiz)
 
     return ret;
 }
-
-/**
- * BSON: {"hello": "world"} => BSON: \x16\x00\x00\x00\x02hello\x00\x06\x00\x00\x00world\x00\x00
- *
- * [\x16\x00\x00\x00]   = total length                      4
- * [\x02]               = type of value: string,            1
- * [hello\x00]          = key.                              2
- * [\x06\x00\x00\x00]   = length of value.                  4
- * [world\x00]          = value                             2
- * [\x00]               = end                               1
- *
- */
 
 TINY_LOR
 static BsonObject * BsonDecoder_GetObject(BsonDecoder *thiz)
@@ -378,8 +420,14 @@ static BsonObject * BsonDecoder_GetObject(BsonDecoder *thiz)
             }
 
             printf("key: %s\n", key);
+            printf("value: %s\n", value->data.string->value);
 
             BsonObject_PutValue(object, key, value);
+
+            if (thiz->value[thiz->offset] == 0x00)
+            {
+                break;
+            }
         }
 
         if (RET_FAILED(ret))

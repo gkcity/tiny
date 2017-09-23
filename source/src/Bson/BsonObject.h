@@ -24,17 +24,13 @@ TINY_BEGIN_DECLS
 typedef struct _BsonObject
 {
     TinyMap         data;
-    char          * string;
+    uint8_t       * binary;
     uint32_t        size;
 } BsonObject;
 
 TINY_LOR
 TINY_API
 BsonObject * BsonObject_New(void);
-
-TINY_LOR
-TINY_API
-BsonObject * BsonObject_NewString(const char *string);
 
 TINY_LOR
 TINY_API
@@ -54,11 +50,13 @@ void BsonObject_Dispose(BsonObject *thiz);
 
 TINY_LOR
 TINY_API
-TinyRet BsonObject_Encode(BsonObject *thiz, bool pretty);
+TinyRet BsonObject_Encode(BsonObject *thiz);
 
+#ifdef TINY_DEBUG
 TINY_LOR
 TINY_API
-TinyRet BsonObject_EncodeBinary(BsonObject *thiz);
+TinyRet BsonObject_ToString(BsonObject *thiz);
+#endif
 
 TINY_LOR
 TINY_API
@@ -86,14 +84,13 @@ TINY_API
 BsonString * BsonObject_GetString(BsonObject *thiz, const char *key);
 #endif
 
-#if 0
 TINY_LOR
 TINY_API
 TinyRet BsonObject_PutString(BsonObject *thiz, const char *key, const char *value);
 
 TINY_LOR
 TINY_API
-TinyRet BsonObject_PutInteger(BsonObject *thiz, const char *key, int value);
+TinyRet BsonObject_PutInt32(BsonObject *thiz, const char *key, int32_t value);
 
 TINY_LOR
 TINY_API
@@ -103,6 +100,7 @@ TINY_LOR
 TINY_API
 TinyRet BsonObject_PutBoolean(BsonObject *thiz, const char *key, bool value);
 
+#if 0
 TINY_LOR
 TINY_API
 TinyRet BsonObject_PutNull(BsonObject *thiz, const char *key);

@@ -89,22 +89,22 @@ TINY_LOR
 TINY_API
 BsonValue * BsonValue_New(void);
 
-//TINY_LOR
-//TINY_API
-//BsonValue * BsonValue_NewString(const char *value);
-//
-//TINY_LOR
-//TINY_API
-//BsonValue * BsonValue_NewInteger(int value);
-//
-//TINY_LOR
-//TINY_API
-//BsonValue * BsonValue_NewFloat(float value);
-//
-//TINY_LOR
-//TINY_API
-//BsonValue * BsonValue_NewBoolean(bool value);
-//
+TINY_LOR
+TINY_API
+BsonValue * BsonValue_NewString(const char *value);
+
+TINY_LOR
+TINY_API
+BsonValue * BsonValue_NewInt32(int32_t value);
+
+TINY_LOR
+TINY_API
+BsonValue * BsonValue_NewFloat(float value);
+
+TINY_LOR
+TINY_API
+BsonValue * BsonValue_NewBoolean(bool value);
+
 //TINY_LOR
 //TINY_API
 //BsonValue * BsonValue_NewNull(void);

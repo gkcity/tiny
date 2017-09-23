@@ -16,29 +16,21 @@
 #include <tiny_base.h>
 #include <TinyList.h>
 #include "JsonObject.h"
-#include "JsonArray.h"
-#include "JsonString.h"
-#include "JsonNumber.h"
 
 TINY_BEGIN_DECLS
 
 
 TINY_API
 TINY_LOR
-int JsonObject_ToString(JsonObject *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
+int JsonEncoder_EncodeObject(JsonObject *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
 
 TINY_API
 TINY_LOR
-int JsonValue_ToString(JsonValue *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
+int JsonEncoder_EncodeArray(JsonArray *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
 
 TINY_API
 TINY_LOR
-int JsonNumber_ToString(JsonNumber *thiz, char *buf, uint32_t length, uint32_t offset);
-
-TINY_API
-TINY_LOR
-int JsonArray_ToString(JsonArray *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
-
+int JsonEncoder_EncodeValue(JsonValue *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
 
 
 TINY_END_DECLS

@@ -13,7 +13,9 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <TinyMapItem.h>
+#include <codec/StringEncoder.h>
 #include "BsonObject.h"
+#include "codec/BsonEncoder.h"
 #include "codec/BsonDecoder.h"
 
 #define TAG     "BsonObject"
@@ -66,7 +68,7 @@ TinyRet BsonObject_Construct(BsonObject *thiz)
     do 
     {
         memset(thiz, 0, sizeof(BsonObject));
-        thiz->string = NULL;
+        thiz->binary = NULL;
         thiz->size = 0;
 
         ret = TinyMap_Construct(&thiz->data);
@@ -86,10 +88,10 @@ void BsonObject_Dispose(BsonObject *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    if (thiz->string != NULL)
+    if (thiz->binary != NULL)
     {
-        tiny_free(thiz->string);
-        thiz->string = NULL;
+        tiny_free(thiz->binary);
+        thiz->binary = NULL;
     }
 
     TinyMap_Dispose(&thiz->data);
@@ -108,14 +110,18 @@ BsonObject * BsonObject_NewBinary(const uint8_t *binary, uint32_t length)
 
         if (RET_FAILED(BsonDecoder_Construct(&decoder, binary, 0, length)))
         {
+            LOG_D(TAG, "BsonDecoder_Construct failed");
             break;
         }
 
-        if (RET_SUCCEEDED(BsonDecoder_Parse(&decoder)))
+        if (RET_FAILED(BsonDecoder_Parse(&decoder)))
         {
-            object = BsonDecoder_ConvertToObject(&decoder);
+            LOG_D(TAG, "BsonDecoder_Parse failed");
+            BsonDecoder_Dispose(&decoder);
+            break;
         }
 
+        object = BsonDecoder_ConvertToObject(&decoder);
         BsonDecoder_Dispose(&decoder);
     } while (false);
 
@@ -123,70 +129,71 @@ BsonObject * BsonObject_NewBinary(const uint8_t *binary, uint32_t length)
 }
 
 TINY_LOR
-TinyRet BsonObject_Encode(BsonObject *thiz, bool pretty)
+TinyRet BsonObject_Encode(BsonObject *thiz)
 {
-//    int length = 0;
-//
-//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-//
-//    length = BsonObject_ToString(thiz, pretty, 0, NULL, 0, 0);
-//    if (length < 0)
-//    {
-//        return TINY_RET_E_INTERNAL;
-//    }
-//
-//    if (thiz->string != NULL)
-//    {
-//        tiny_free(thiz->string);
-//    }
-//
-//    thiz->string = tiny_malloc((size_t)length + 1);
-//    if (thiz->string == NULL)
-//    {
-//        return TINY_RET_E_NEW;
-//    }
-//
-//    memset(thiz->string, 0, (size_t)length + 1);
-//    thiz->size = (uint32_t)length;
-//
-//    BsonObject_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
-//
-//    return TINY_RET_OK;
+    int length = 0;
 
-    return TINY_RET_E_NOT_IMPLEMENTED;
-}
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-TINY_LOR
-TinyRet BsonObject_EncodeBinary(BsonObject *thiz)
-{
-//    int length = 0;
-//
-//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-//
-//    length = BsonObject_ToString(thiz, pretty, 0, NULL, 0, 0);
-//    if (length < 0)
-//    {
-//        return TINY_RET_E_INTERNAL;
-//    }
-//
-//    if (thiz->string != NULL)
-//    {
-//        tiny_free(thiz->string);
-//    }
-//
-//    thiz->string = tiny_malloc((size_t)length + 1);
-//    if (thiz->string == NULL)
-//    {
-//        return TINY_RET_E_NEW;
-//    }
-//
-//    memset(thiz->string, 0, (size_t)length + 1);
-//    thiz->size = (uint32_t)length;
-//
-//    BsonObject_ToString(thiz, pretty, 0, thiz->string, (uint32_t)length, 0);
+    length = BsonEncoder_EncodeObject(thiz, NULL, 0, 0);
+    if (length < 0)
+    {
+        return TINY_RET_E_INTERNAL;
+    }
+
+    if (thiz->binary != NULL)
+    {
+        tiny_free(thiz->binary);
+    }
+
+    thiz->binary = tiny_malloc((size_t)length);
+    if (thiz->binary == NULL)
+    {
+        return TINY_RET_E_NEW;
+    }
+
+    memset(thiz->binary, 0, (size_t)length);
+    thiz->size = (uint32_t)length;
+
+    BsonEncoder_EncodeObject(thiz, thiz->binary, (uint32_t)length, 0);
 
     return TINY_RET_OK;
 }
+
+#ifdef TINY_DEBUG
+TINY_LOR
+TINY_API
+TinyRet BsonObject_ToString(BsonObject *thiz)
+{
+    int length = 0;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    length = StringEncoder_EncodeObject(thiz, true, 0, NULL, 0, 0);
+    if (length < 0)
+    {
+        return TINY_RET_E_INTERNAL;
+    }
+
+    if (thiz->binary != NULL)
+    {
+        tiny_free(thiz->binary);
+    }
+
+    thiz->binary = tiny_malloc((size_t)length + 1);
+    if (thiz->binary == NULL)
+    {
+        return TINY_RET_E_NEW;
+    }
+
+    memset(thiz->binary, 0, (size_t)length + 1);
+    thiz->size = (uint32_t)length;
+
+    StringEncoder_EncodeObject(thiz, true, 0, (char *)thiz->binary, (uint32_t)length, 0);
+
+    return TINY_RET_OK;
+}
+#endif /* TINY_DEBUG */
 
 TINY_LOR
 bool BsonObject_ContainsKey(BsonObject *thiz, const char *key)
@@ -316,7 +323,6 @@ BsonString *BsonObject_GetString(BsonObject *thiz, const char *key)
 }
 #endif
 
-#if 0
 TINY_LOR
 TinyRet BsonObject_PutString(BsonObject *thiz, const char *key, const char *value)
 {
@@ -348,7 +354,7 @@ TinyRet BsonObject_PutString(BsonObject *thiz, const char *key, const char *valu
 }
 
 TINY_LOR
-TinyRet BsonObject_PutInteger(BsonObject *thiz, const char *key, int value)
+TinyRet BsonObject_PutInt32(BsonObject *thiz, const char *key, int32_t value)
 {
 	TinyRet ret = TINY_RET_OK;
 
@@ -357,10 +363,10 @@ TinyRet BsonObject_PutInteger(BsonObject *thiz, const char *key, int value)
 
     do
     {
-        BsonValue * v = BsonValue_NewInteger(value);
+        BsonValue * v = BsonValue_NewInt32(value);
         if (v == NULL)
         {
-            LOG_E(TAG, "BsonValue_NewInteger FAILED!");
+            LOG_E(TAG, "BsonValue_NewInt32 FAILED!");
             ret = TINY_RET_E_NEW;
             break;
         }
@@ -434,6 +440,7 @@ TinyRet BsonObject_PutBoolean(BsonObject *thiz, const char *key, bool value)
     return ret;
 }
 
+#if 0
 TINY_LOR
 TinyRet BsonObject_PutNull(BsonObject *thiz, const char *key)
 {
@@ -552,6 +559,7 @@ TinyRet BsonObject_PutNumber(BsonObject *thiz, const char *key, BsonNumber *valu
 
     return ret;
 }
+#endif
 
 TINY_LOR
 TinyRet BsonObject_PutValue(BsonObject *thiz, const char *key, BsonValue *value)
@@ -564,4 +572,3 @@ TinyRet BsonObject_PutValue(BsonObject *thiz, const char *key, BsonValue *value)
 
     return TinyMap_Insert(&thiz->data, key, value);
 }
-#endif

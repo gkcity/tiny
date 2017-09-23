@@ -9,9 +9,9 @@
 #include <tiny_debug.h>
 #include <JsonObject.h>
 #include <JsonArray.h>
-#include <JsonString.h>
-#include <JsonNumber.h>
-#include <JsonBoolean.h>
+#include <value/JsonString.h>
+#include <value/JsonNumber.h>
+#include <value/JsonBoolean.h>
 
 #define TAG			"test"
 
