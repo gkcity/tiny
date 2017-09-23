@@ -27,15 +27,22 @@ typedef struct _HttpExchange
     uint16_t                  port;
     char                      method[HTTP_METHOD_LEN];
     char                    * uri;
+    HttpHeader                request;
     uint32_t                  timeout;
     int                       status;
-    uint32_t                  length;
     char                    * content;
+    uint32_t                  length;
 } HttpExchange;
 
 TINY_API
 TINY_LOR
-HttpExchange * HttpExchange_New(const char *ip, uint16_t port, const char *method, const char *uri, uint32_t timeout);
+HttpExchange * HttpExchange_New(const char *ip,
+                                uint16_t port,
+                                const char *method,
+                                const char *uri,
+                                uint32_t timeout,
+                                const uint8_t *content,
+                                uint32_t length);
 
 TINY_API
 TINY_LOR

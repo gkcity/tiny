@@ -16,6 +16,7 @@
 #include <tiny_log.h>
 #include <codec-http/HttpMessage.h>
 #include <channel/SocketChannel.h>
+#include <TinyMapItem.h>
 #include "HttpClientHandler.h"
 
 #define TAG "HttpClientHandler"
@@ -117,8 +118,21 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
         HttpMessage_SetRequest(&request, exchange->method, exchange->uri);
         HttpHeader_Set(&request.header, "Accept", "*/*");
         HttpHeader_SetHost(&request.header, exchange->ip, exchange->port);
+        HttpHeader_SetInteger(&request.header, "Content-Length", exchange->length);
+
+        for (uint32_t i = 0; i < exchange->request.values.list.size; ++i)
+        {
+            TinyMapItem * item = (TinyMapItem *) TinyList_GetAt(&exchange->request.values.list, i);
+            HttpHeader_Set(&request.header, item->key, (const char *)(item->value));
+        }
 
         SocketChannel_StartWrite(channel, DATA_RAW, HttpMessage_GetBytesWithoutContent(&request), HttpMessage_GetBytesSizeWithoutContent(&request));
+
+        if (exchange->content != NULL)
+        {
+            SocketChannel_StartWrite(channel, DATA_RAW, exchange->content, exchange->length);
+        }
+
         HttpMessage_Dispose(&request);
     }
 }
@@ -137,6 +151,12 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
         exchange->length = response->content.buf_size;
         if (exchange->length > 0)
         {
+            if (exchange->content != NULL)
+            {
+                tiny_free(exchange->content);
+                exchange->content = NULL;
+            }
+
             exchange->content = tiny_malloc(exchange->length + 1);
             if (exchange->content != NULL)
             {

@@ -56,21 +56,19 @@ int tiny_buffer_append_string(char *buf, uint32_t length, uint32_t offset, const
 {
     return tiny_buffer_append_bytes((uint8_t *)buf, length, offset, (uint8_t *)string, (uint32_t)strlen(string));
 
-#if 0
-    int size = strlen(string);
-
-
-    if (buf != NULL)
-    {
-        if (size > (int)(length - offset))
-        {
-            LOG_E(TAG, "buffer size too small");
-            return 0;
-        }
-
-        strncpy(buf + offset, string, (size_t)size);
-    }
-
-    return size;
-#endif
+//    int size = strlen(string);
+//
+//
+//    if (buf != NULL)
+//    {
+//        if (size > (int)(length - offset))
+//        {
+//            LOG_E(TAG, "buffer size too small");
+//            return 0;
+//        }
+//
+//        strncpy(buf + offset, string, (size_t)size);
+//    }
+//
+//    return size;
 }

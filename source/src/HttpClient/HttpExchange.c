@@ -19,7 +19,14 @@
 #define TAG     "HttpExchange"
 
 TINY_LOR
-static TinyRet HttpExchange_Construct(HttpExchange *thiz, const char *ip, uint16_t port, const char *method, const char *uri, uint32_t timeout)
+static TinyRet HttpExchange_Construct(HttpExchange *thiz,
+                                      const char *ip,
+                                      uint16_t port,
+                                      const char *method,
+                                      const char *uri,
+                                      uint32_t timeout,
+                                      const uint8_t *content,
+                                      uint32_t length)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -28,25 +35,46 @@ static TinyRet HttpExchange_Construct(HttpExchange *thiz, const char *ip, uint16
 
     do
     {
-        uint32_t length = 0;
+        uint32_t uriLength = 0;
 
         memset(thiz, 0, sizeof(HttpExchange));
-        length = (uint32_t) (strlen(uri) + 1);
+        uriLength = (uint32_t) (strlen(uri) + 1);
 
         strncpy(thiz->ip, ip, TINY_IP_LEN);
         thiz->port = port;
         strncpy(thiz->method, method, HTTP_METHOD_LEN);
 
-        thiz->uri = tiny_malloc(length);
+        thiz->uri = tiny_malloc(uriLength);
         if (thiz->uri == NULL)
         {
             ret = TINY_RET_E_NEW;
             break;
         }
-        memset(thiz->uri, 0, length);
-        strncpy(thiz->uri, uri, length);
+        memset(thiz->uri, 0, uriLength);
+        strncpy(thiz->uri, uri, uriLength);
+
+        ret = HttpHeader_Construct(&thiz->request);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
 
         thiz->timeout = timeout;
+
+        if (content == NULL || length == 0)
+        {
+            break;
+        }
+
+        thiz->length = length;
+        thiz->content = tiny_malloc(length);
+        if (thiz->content == NULL)
+        {
+            ret = TINY_RET_E_NEW;
+            break;
+        }
+        memset(thiz->content, 0, length);
+        memcpy(thiz->content, content, length);
     } while (false);
 
     return ret;
@@ -69,7 +97,13 @@ static void HttpExchange_Dispose(HttpExchange *thiz)
 }
 
 TINY_LOR
-HttpExchange * HttpExchange_New(const char *ip, uint16_t port, const char *method, const char *uri, uint32_t timeout)
+HttpExchange * HttpExchange_New(const char *ip,
+                                uint16_t port,
+                                const char *method,
+                                const char *uri,
+                                uint32_t timeout,
+                                const uint8_t *content,
+                                uint32_t length)
 {
     HttpExchange *thiz = NULL;
 
@@ -82,7 +116,7 @@ HttpExchange * HttpExchange_New(const char *ip, uint16_t port, const char *metho
             break;
         }
 
-        if (RET_FAILED(HttpExchange_Construct(thiz, ip, port, method, uri, timeout)))
+        if (RET_FAILED(HttpExchange_Construct(thiz, ip, port, method, uri, timeout, content, length)))
         {
             HttpExchange_Delete(thiz);
             thiz = NULL;

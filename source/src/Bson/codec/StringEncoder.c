@@ -35,8 +35,9 @@ int StringEncoder_EncodeValue(BsonValue *thiz, bool pretty, int depth, char *buf
             break;
 
         case BSON_STRING:
-            tiny_snprintf(string, 128, "\"%s\"", thiz->data.string->value);
-            size = tiny_buffer_append_string(buf, length, offset, string);
+            size += tiny_buffer_append_byte((uint8_t *) buf, length, offset, '"');
+            size += tiny_buffer_append_string(buf, length, offset, thiz->data.string->value);
+            size += tiny_buffer_append_byte((uint8_t *) buf, length, offset, '"');
             break;
 
         case BSON_OBJECT:

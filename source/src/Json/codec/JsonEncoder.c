@@ -42,13 +42,13 @@ TINY_LOR
 int JsonEncoder_EncodeValue(JsonValue *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset)
 {
     int size = 0;
-    char string[128];
 
     switch (thiz->type)
     {
         case JSON_STRING:
-            tiny_snprintf(string, 128, "\"%s\"", thiz->data.string->value);
-            size = tiny_buffer_append_string(buf, length, offset, string);
+            size += tiny_buffer_append_byte((uint8_t *) buf, length, offset + size, '"');
+            size += tiny_buffer_append_string(buf, length, offset + size, thiz->data.string->value);
+            size += tiny_buffer_append_byte((uint8_t *) buf, length, offset + size, '"');
             break;
 
         case JSON_NUMBER:
