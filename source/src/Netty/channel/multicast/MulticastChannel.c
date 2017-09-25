@@ -207,6 +207,8 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
 
         strncpy(ctx->group, group, TINY_IP_LEN);
         ctx->port = port;
+
+        thiz->_onActive(thiz);
     } while (0);
 
     return ret;

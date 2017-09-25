@@ -14,6 +14,7 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyPortable)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyContainer)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyRandom)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Netty)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Json)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/HttpClient)
@@ -129,6 +130,18 @@ SET(TinyStringUtil_Source
         ${SOURCE_ROOT}/TinyStringUtil/tiny_url_split.c
         ${SOURCE_ROOT}/TinyStringUtil/tiny_buffer_append.c
         ${SOURCE_ROOT}/TinyStringUtil/tiny_strnlen.c
+        )
+
+#---------------------------
+# TinyRandom
+#---------------------------
+
+SET(TinyRandom_Header
+        ${SOURCE_ROOT}/TinyRandom/tiny_random.h
+        )
+
+SET(TinyRandom_Source
+        ${SOURCE_ROOT}/TinyRandom/tiny_random.c
         )
 
 #-----------------------
@@ -289,6 +302,8 @@ IF (TINY_THREAD_ENABLED EQUAL 1)
             ${TinyLog_Source}
             ${TinyStringUtil_Header}
             ${TinyStringUtil_Source}
+            ${TinyRandom_Header}
+            ${TinyRandom_Source}
             ${Netty_Header}
             ${Netty_Source}
             ${Json_Header}
@@ -313,6 +328,8 @@ ELSE ()
             ${TinyLog_Source}
             ${TinyStringUtil_Header}
             ${TinyStringUtil_Source}
+            ${TinyRandom_Header}
+            ${TinyRandom_Source}
             ${Netty_Header}
             ${Netty_Source}
             ${Json_Header}
