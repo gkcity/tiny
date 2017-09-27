@@ -33,37 +33,37 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
             break;
         }
 
-        if (thiz->data == NULL)
+        if (thiz->context == NULL)
         {
-            thiz->data = HttpMessage_New();
-            if (thiz->data == NULL)
+            thiz->context = HttpMessage_New();
+            if (thiz->context == NULL)
             {
                 LOG_D(TAG, "HttpMessage_New failed");
                 break;
             }
         }
 
-        if (RET_FAILED(HttpMessage_Parse((HttpMessage *) thiz->data, data, len)))
+        if (RET_FAILED(HttpMessage_Parse((HttpMessage *) thiz->context, data, len)))
         {
             LOG_D(TAG, "HttpMessage_Parse failed!");
-            HttpMessage_Delete((HttpMessage *) thiz->data);
-            thiz->data = NULL;
+            HttpMessage_Delete((HttpMessage *) thiz->context);
+            thiz->context = NULL;
             break;
         }
 
-        if (((HttpMessage *) thiz->data)->parser_status == HttpParserError)
+        if (((HttpMessage *) thiz->context)->parser_status == HttpParserError)
         {
             LOG_D(TAG, "HttpParserError");
-            HttpMessage_Delete((HttpMessage *) thiz->data);
-            thiz->data = NULL;
+            HttpMessage_Delete((HttpMessage *) thiz->context);
+            thiz->context = NULL;
             break;
         }
 
-        if (HttpMessage_IsContentFull((HttpMessage *) thiz->data))
+        if (HttpMessage_IsContentFull((HttpMessage *) thiz->context))
         {
-            SocketChannel_NextRead(channel, DATA_HTTP_MESSAGE, thiz->data, len);
-            HttpMessage_Delete((HttpMessage *) thiz->data);
-            thiz->data = NULL;
+            SocketChannel_NextRead(channel, DATA_HTTP_MESSAGE, thiz->context, len);
+            HttpMessage_Delete((HttpMessage *) thiz->context);
+            thiz->context = NULL;
         }
     } while (0);
 
@@ -75,11 +75,11 @@ static TinyRet HttpMessageCodec_Dispose(ChannelHandler *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    if (thiz->data != NULL)
+    if (thiz->context != NULL)
     {
-        HttpMessage *p = (HttpMessage *) thiz->data;
+        HttpMessage *p = (HttpMessage *) thiz->context;
         HttpMessage_Delete(p);
-        thiz->data = NULL;
+        thiz->context = NULL;
     }
 
     memset(thiz, 0, sizeof(ChannelHandler));
@@ -105,7 +105,7 @@ static TinyRet HttpMessageCodec_Construct(ChannelHandler *thiz)
     thiz->outType = DATA_HTTP_MESSAGE;
     thiz->channelRead = _channelRead;
     thiz->channelWrite = NULL;
-    thiz->data = NULL;
+    thiz->context = NULL;
 
     return TINY_RET_OK;
 }

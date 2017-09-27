@@ -25,10 +25,10 @@
 TINY_LOR
 static void StreamServerChannel_Dispose(Channel *thiz)
 {
-    if (thiz->ctx != NULL)
+    if (thiz->context != NULL)
     {
-        StreamServerChannelContext_Delete((StreamServerChannelContext *)thiz->ctx);
-        thiz->ctx = NULL;
+        StreamServerChannelContext_Delete((StreamServerChannelContext *)thiz->context);
+        thiz->context = NULL;
     }
 
     SocketChannel_Dispose(thiz);
@@ -46,7 +46,7 @@ static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector, Ch
 {
     if (Channel_IsActive(thiz))
     {
-        StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
+        StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->context;
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
 
         // remove closed channel
@@ -92,7 +92,7 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
 
-    ctx = (StreamServerChannelContext *)thiz->ctx;
+    ctx = (StreamServerChannelContext *)thiz->context;
 
     if (Selector_IsReadable(selector, thiz->fd))
     {
@@ -166,7 +166,7 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
 TINY_LOR
 static void StreamServerChannel_OnInactive(Channel *thiz)
 {
-    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
+    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->context;
 
     LOG_D(TAG, "StreamServerChannel_OnInactive");
 
@@ -183,7 +183,7 @@ static void StreamServerChannel_OnInactive(Channel *thiz)
 TINY_LOR
 static void StreamServerChannel_OnEventTriggered(Channel *thiz, ChannelTimer *timer)
 {
-    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
+    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->context;
 
     RETURN_IF_FAIL(thiz);
 
@@ -199,7 +199,7 @@ static void StreamServerChannel_OnEventTriggered(Channel *thiz, ChannelTimer *ti
 TINY_LOR
 static void StreamServerChannel_Close(Channel *thiz)
 {
-    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->ctx;
+    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->context;
 
     LOG_D(TAG, "StreamServerChannel_Close");
 
@@ -236,14 +236,14 @@ static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
         thiz->_onEventTriggered = StreamServerChannel_OnEventTriggered;
         thiz->_close = StreamServerChannel_Close;
 
-        thiz->ctx = StreamServerChannelContext_New();
-        if (thiz->ctx == NULL)
+        thiz->context = StreamServerChannelContext_New();
+        if (thiz->context == NULL)
         {
             ret = TINY_RET_E_OUT_OF_MEMORY;
             break;
         }
 
-        ((StreamServerChannelContext *)thiz->ctx)->maxConnections = maxConnections;
+        ((StreamServerChannelContext *)thiz->context)->maxConnections = maxConnections;
     } while (0);
 
     return ret;
@@ -279,6 +279,6 @@ void StreamServerChannel_Initialize(Channel *thiz, ChannelInitializer initialize
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(initializer);
 
-    ((StreamServerChannelContext *)thiz->ctx) ->initializer = initializer ;
-    ((StreamServerChannelContext *)thiz->ctx) ->initializerContext = ctx;
+    ((StreamServerChannelContext *)thiz->context) ->initializer = initializer ;
+    ((StreamServerChannelContext *)thiz->context) ->initializerContext = ctx;
 }

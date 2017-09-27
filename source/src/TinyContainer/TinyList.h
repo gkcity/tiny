@@ -30,11 +30,11 @@ typedef struct _TinyNode TinyNode;
 
 typedef struct _TinyList
 {
-    void                                * additionalData;
     uint32_t                              size;
     TinyNode                            * first;
     TinyContainerItemDeleteListener       data_delete_listener;
     void                                * data_delete_listener_ctx;
+    void                                * context;
 } TinyList;
 
 TINY_API

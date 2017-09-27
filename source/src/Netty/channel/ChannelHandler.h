@@ -57,7 +57,7 @@ struct _ChannelHandler
     ChannelEvent                channelEvent;
     ChannelTimeoutGetter        getTimeout;
     ChannelIdles                idles;
-    void                      * data;
+    void                      * context;
 };
 
 

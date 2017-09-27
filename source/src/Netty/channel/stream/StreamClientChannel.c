@@ -24,7 +24,7 @@
 TINY_LOR
 static TinyRet StreamClientChannel_GetConnectingTimeout(Channel *thiz, ChannelTimer *timer, void *ctx)
 {
-    timer->timeout = ((StreamClientChannelContext *) thiz->ctx)->connectingTimeout * 1000000;
+    timer->timeout = ((StreamClientChannelContext *) thiz->context)->connectingTimeout * 1000000;
     timer->type = CHANNEL_TIMER_ALL;
     return TINY_RET_OK;
 }
@@ -32,10 +32,10 @@ static TinyRet StreamClientChannel_GetConnectingTimeout(Channel *thiz, ChannelTi
 TINY_LOR
 void StreamClientChannel_Dispose(Channel *thiz)
 {
-    if (thiz->ctx != NULL)
+    if (thiz->context != NULL)
     {
-        StreamClientChannelContext_Delete((StreamClientChannelContext *) thiz->ctx);
-        thiz->ctx = NULL;
+        StreamClientChannelContext_Delete((StreamClientChannelContext *) thiz->context);
+        thiz->context = NULL;
     }
 
     if (StreamClientChannel_IsConnected(thiz))
@@ -106,9 +106,9 @@ static void StreamClientChannel_OnActive(Channel *thiz)
 
     LOG_D(TAG, "StreamClientChannel_OnActive");
 
-    if (thiz->ctx != NULL)
+    if (thiz->context != NULL)
     {
-        ((StreamClientChannelContext *) thiz->ctx)->initializer(thiz, ((StreamClientChannelContext *) thiz->ctx)->initializerContext);
+        ((StreamClientChannelContext *) thiz->context)->initializer(thiz, ((StreamClientChannelContext *) thiz->context)->initializerContext);
     }
 
     thiz->_onActive = SocketChannel_OnActive;
@@ -134,8 +134,8 @@ TinyRet StreamClientChannel_Construct(Channel *thiz)
 
         thiz->_getTimeout = StreamClientChannel_GetConnectingTimeout;
 
-        thiz->ctx = StreamClientChannelContext_New();
-        if (thiz->ctx == NULL)
+        thiz->context = StreamClientChannelContext_New();
+        if (thiz->context == NULL)
         {
             ret = TINY_RET_E_OUT_OF_MEMORY;
             break;
@@ -175,8 +175,8 @@ TinyRet StreamClientChannel_Initialize(Channel *thiz, ChannelInitializer initial
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(initializer, TINY_RET_E_ARG_NULL);
 
-    ((StreamClientChannelContext *) thiz->ctx)->initializer = initializer;
-    ((StreamClientChannelContext *) thiz->ctx)->initializerContext = ctx;
+    ((StreamClientChannelContext *) thiz->context)->initializer = initializer;
+    ((StreamClientChannelContext *) thiz->context)->initializerContext = ctx;
 
     return TINY_RET_OK;
 }
@@ -204,7 +204,7 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
             break;
         }
 
-        ((StreamClientChannelContext *) thiz->ctx)->connectingTimeout = timeout;
+        ((StreamClientChannelContext *) thiz->context)->connectingTimeout = timeout;
 
         SocketChannel_SetRemoteInfo(thiz, ip, port);
 

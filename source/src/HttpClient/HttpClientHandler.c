@@ -87,7 +87,7 @@ static TinyRet HttpClientHandler_Construct(ChannelHandler *thiz, HttpExchange *c
     thiz->channelWrite = NULL;
     thiz->channelEvent = _channelEvent;
     thiz->channelActive = _channelActive;
-    thiz->data = context;
+    thiz->context = context;
 
     return TINY_RET_OK;
 }
@@ -105,7 +105,7 @@ static TinyRet HttpClientHandler_Dispose(ChannelHandler *thiz)
 TINY_LOR
 static void _channelActive(ChannelHandler *thiz, Channel *channel)
 {
-    HttpExchange *exchange = (HttpExchange *)thiz->data;
+    HttpExchange *exchange = (HttpExchange *)thiz->context;
     HttpMessage request;
 
     RETURN_IF_FAIL(thiz);
@@ -141,7 +141,7 @@ TINY_LOR
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
     HttpMessage *response = (HttpMessage *)data;
-    HttpExchange *exchange = (HttpExchange *)thiz->data;
+    HttpExchange *exchange = (HttpExchange *)thiz->context;
 
     LOG_D(TAG, "_channelRead: %d %s", response->status_line.code, response->status_line.status);
 

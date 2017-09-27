@@ -57,7 +57,7 @@ struct _Channel
     TinyList                        handlers;
     int                             currentReader;
     int                             currentWriter;
-    void                          * ctx;
+    void                          * context;
 };
 
 #define Channel_IsActive(thiz)      ((thiz)->fd >= 0)

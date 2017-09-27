@@ -28,10 +28,10 @@ static void MulticastChannel_Dispose(Channel *thiz)
 {
     SocketChannel_LeaveGroup(thiz);
 
-    if (thiz->ctx != NULL)
+    if (thiz->context != NULL)
     {
-        MulticastChannelContext_Delete((MulticastChannelContext *)thiz->ctx);
-        thiz->ctx = NULL;
+        MulticastChannelContext_Delete((MulticastChannelContext *)thiz->context);
+        thiz->context = NULL;
     }
 
     SocketChannel_Dispose(thiz);
@@ -122,8 +122,8 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
         thiz->_onActive = SocketChannel_OnActive;
         thiz->_onInactive = SocketChannel_OnInactive;
 
-        thiz->ctx = MulticastChannelContext_New();
-        if (thiz->ctx == NULL)
+        thiz->context = MulticastChannelContext_New();
+        if (thiz->context == NULL)
         {
             ret = TINY_RET_E_OUT_OF_MEMORY;
             break;
@@ -175,7 +175,7 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
 
     do
     {
-        MulticastChannelContext *ctx = (MulticastChannelContext *)thiz->ctx;
+        MulticastChannelContext *ctx = (MulticastChannelContext *)thiz->context;
 
         ret = SocketChannel_Open(thiz, TYPE_UDP);
         if (RET_FAILED(ret))
@@ -217,7 +217,7 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
 TINY_LOR
 TinyRet MulticastChannel_Write(Channel *thiz, const void *data, uint32_t len)
 {
-    MulticastChannelContext *ctx = (MulticastChannelContext *)thiz->ctx;
+    MulticastChannelContext *ctx = (MulticastChannelContext *)thiz->context;
     return MulticastChannel_WriteTo(thiz, data, len, inet_addr(ctx->group), ctx->port);
 }
 

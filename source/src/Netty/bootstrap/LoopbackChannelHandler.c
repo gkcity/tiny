@@ -29,7 +29,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     {
         if (STR_EQUAL(BOOTSTRAP_SHUTDOWN, data))
         {
-            TinyList *list = thiz->data;
+            TinyList *list = thiz->context;
 
             for (uint32_t i = 0; i < list->size; ++i)
             {
@@ -73,7 +73,7 @@ static TinyRet LoopbackChannelHandler_Construct(ChannelHandler *thiz, void *ctx)
     thiz->inType = DATA_RAW;
     thiz->outType = DATA_RAW;
     thiz->channelRead = _channelRead;
-    thiz->data = ctx;
+    thiz->context = ctx;
 
     return TINY_RET_OK;
 }

@@ -111,6 +111,7 @@ TinyRet JsonObject_PutNull(JsonObject *thiz, const char *key);
 /**
  * Setter: Object
  */
+
 TINY_LOR
 TINY_API
 TinyRet JsonObject_PutObject(JsonObject *thiz, const char *key, JsonObject *value);
