@@ -14,7 +14,7 @@
 #define __JSON_TOKENIZER_H__
 
 #include <tiny_base.h>
-#include <TinyList.h>
+#include <TinyQueue.h>
 #include "JsonToken.h"
 
 TINY_BEGIN_DECLS
@@ -22,8 +22,7 @@ TINY_BEGIN_DECLS
 
 typedef struct _JsonTokenizer
 {
-    TinyList        tokens;
-    uint32_t        index;
+    TinyQueue       queue;
     const char    * string;
     const char    * current;
     bool            parseOnce;
@@ -39,7 +38,10 @@ TINY_LOR
 TinyRet JsonTokenizer_Parse(JsonTokenizer * thiz, const char *string, bool parseOnce);
 
 TINY_LOR
-JsonToken * JsonTokenizer_Next(JsonTokenizer * thiz);
+JsonToken * JsonTokenizer_Head(JsonTokenizer * thiz);
+
+TINY_LOR
+void JsonTokenizer_Pop(JsonTokenizer * thiz);
 
 
 TINY_END_DECLS

@@ -27,17 +27,30 @@ TINY_BEGIN_DECLS
 
 typedef TinyList TinyQueue;
 
-TINY_API TinyQueue * TinyQueue_New(void);
-TINY_API TinyRet TinyQueue_Construct(TinyQueue *thiz);
-TINY_API TinyRet TinyQueue_Dispose(TinyQueue *thiz);
-TINY_API void TinyQueue_Delete(TinyQueue *thiz);
+TINY_API
+TINY_LOR
+TinyRet TinyQueue_Construct(TinyQueue *thiz);
 
-TINY_API void TinyQueue_SetDeleteListener(TinyList * thiz, TinyContainerItemDeleteListener listener, void *ctx);
+TINY_API
+TINY_LOR
+TinyRet TinyQueue_Dispose(TinyQueue *thiz);
 
-TINY_API void * TinyQueue_Head(TinyQueue *thiz);
-TINY_API void TinyQueue_Push(TinyQueue *thiz, void *data);
-TINY_API void TinyQueue_Pop(TinyQueue *thiz);
-TINY_API int TinyQueue_GetSize(TinyQueue *thiz);
+TINY_API
+TINY_LOR
+void TinyQueue_SetDeleteListener(TinyList * thiz, TinyContainerItemDeleteListener listener, void *ctx);
+
+TINY_API
+TINY_LOR
+void * TinyQueue_Head(TinyQueue *thiz);
+
+TINY_API
+TINY_LOR
+TinyRet TinyQueue_Push(TinyQueue *thiz, void *data);
+
+TINY_API
+TINY_LOR
+void TinyQueue_Pop(TinyQueue *thiz);
+
 
 
 TINY_END_DECLS

@@ -28,10 +28,10 @@ TinyRet JsonTokenizer_Construct(JsonTokenizer * thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
-    ret = TinyList_Construct(&thiz->tokens);
+    ret = TinyQueue_Construct(&thiz->queue);
     if (RET_SUCCEEDED(ret))
     {
-        TinyList_SetDeleteListener(&thiz->tokens, _OnTokenDelete, thiz);
+        TinyQueue_SetDeleteListener(&thiz->queue, _OnTokenDelete, thiz);
     }
 
     return ret;
@@ -40,7 +40,7 @@ TinyRet JsonTokenizer_Construct(JsonTokenizer * thiz)
 TINY_LOR
 void JsonTokenizer_Dispose(JsonTokenizer * thiz)
 {
-    TinyList_Dispose(&thiz->tokens);
+    TinyList_Dispose(&thiz->queue);
 }
 
 typedef enum _TokenParseResult
@@ -70,7 +70,7 @@ static TokenParseResult JsonTokenizer_ParseTokenMonocase(JsonTokenizer *thiz, Js
             break;
         }
 
-        if (RET_FAILED(TinyList_AddTail(&thiz->tokens, token)))
+        if (RET_FAILED(TinyQueue_Push(&thiz->queue, token)))
         {
             result = TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
             break;
@@ -106,7 +106,7 @@ static TokenParseResult JsonTokenizer_ParseNull(JsonTokenizer *thiz)
             return TOKEN_PARSE_OK_BUT_OUT_OF_MEMORY;
         }
 
-        if (RET_FAILED(TinyList_AddTail(&thiz->tokens, token)))
+        if (RET_FAILED(TinyQueue_Push(&thiz->queue, token)))
         {
             return TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
         }
@@ -141,7 +141,7 @@ static TokenParseResult JsonTokenizer_ParseTrue(JsonTokenizer *thiz)
             return TOKEN_PARSE_OK_BUT_OUT_OF_MEMORY;
         }
 
-        if (RET_FAILED(TinyList_AddTail(&thiz->tokens, token)))
+        if (RET_FAILED(TinyQueue_Push(&thiz->queue, token)))
         {
             return TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
         }
@@ -177,7 +177,7 @@ static TokenParseResult JsonTokenizer_ParseFalse(JsonTokenizer *thiz)
             return TOKEN_PARSE_OK_BUT_OUT_OF_MEMORY;
         }
 
-        if (RET_FAILED(TinyList_AddTail(&thiz->tokens, token)))
+        if (RET_FAILED(TinyQueue_Push(&thiz->queue, token)))
         {
             return TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
         }
@@ -276,7 +276,7 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
             break;
         }
 
-        if (RET_FAILED(TinyList_AddTail(&thiz->tokens, token)))
+        if (RET_FAILED(TinyQueue_Push(&thiz->queue, token)))
         {
             result = TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
             break;
@@ -400,7 +400,7 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
             break;
         }
 
-        if (RET_FAILED(TinyList_AddTail(&thiz->tokens, token)))
+        if (RET_FAILED(TinyQueue_Push(&thiz->queue, token)))
         {
             result = TOKEN_PARSE_OK_BUT_ADD_LIST_FAILED;
             break;
@@ -480,7 +480,6 @@ TinyRet JsonTokenizer_Parse(JsonTokenizer * thiz, const char *string, bool parse
 
     thiz->string = string;
     thiz->current = string;
-    thiz->index = 0;
     thiz->parseOnce = parseOnce;
 
     if (parseOnce)
@@ -490,7 +489,7 @@ TinyRet JsonTokenizer_Parse(JsonTokenizer * thiz, const char *string, bool parse
             result = JsonTokenizer_ParseToken(thiz);
             if (result != TOKEN_PARSE_OK)
             {
-                LOG_D(TAG, "JsonDecoder_ParseToken FAILED: %d, index: %d", result, thiz->index);
+                LOG_D(TAG, "JsonDecoder_ParseToken FAILED: %d", result);
                 break;
             }
         }
@@ -500,28 +499,27 @@ TinyRet JsonTokenizer_Parse(JsonTokenizer * thiz, const char *string, bool parse
 }
 
 TINY_LOR
-JsonToken * JsonTokenizer_Next(JsonTokenizer * thiz)
+JsonToken * JsonTokenizer_Head(JsonTokenizer * thiz)
 {
     JsonToken * token = NULL;
 
     if (thiz->parseOnce)
     {
-        token = (JsonToken *) TinyList_GetAt(&thiz->tokens, thiz->index++);
+        token = (JsonToken *) TinyQueue_Head(&thiz->queue);
     }
     else
     {
-        TinyList_Dispose(&thiz->tokens);
-
         if (JsonTokenizer_ParseToken(thiz) == TOKEN_PARSE_OK)
         {
-            token = (JsonToken *) TinyList_GetHead(&thiz->tokens);
+            token = (JsonToken *) TinyQueue_Head(&thiz->queue);
         }
-
-//        else
-//        {
-//            LOG_D(TAG, "JsonTokenizer_ParseToken FAILED: %d", result);
-//        }
     }
 
     return token;
+}
+
+TINY_LOR
+void JsonTokenizer_Pop(JsonTokenizer * thiz)
+{
+    TinyQueue_Pop(&thiz->queue);
 }

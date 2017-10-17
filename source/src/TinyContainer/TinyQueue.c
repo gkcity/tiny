@@ -17,47 +17,38 @@
 
 #include "TinyQueue.h"
 
-TinyQueue * TinyQueue_New(void)
-{
-    return TinyList_New();
-}
-
+TINY_LOR
 TinyRet TinyQueue_Construct(TinyQueue *thiz)
 {
     return TinyList_Construct(thiz);
 }
 
+TINY_LOR
 TinyRet TinyQueue_Dispose(TinyQueue *thiz)
 {
     return TinyList_Dispose(thiz);
 }
 
-void TinyQueue_Delete(TinyQueue *thiz)
-{
-    TinyList_Delete(thiz);
-}
-
+TINY_LOR
 void TinyQueue_SetDeleteListener(TinyList * thiz, TinyContainerItemDeleteListener listener, void *ctx)
 {
     TinyList_SetDeleteListener(thiz, listener, ctx);
 }
 
+TINY_LOR
 void * TinyQueue_Head(TinyQueue *thiz)
 {
     return TinyList_GetHead(thiz);
 }
 
-void TinyQueue_Push(TinyQueue *thiz, void *data)
+TINY_LOR
+TinyRet TinyQueue_Push(TinyQueue *thiz, void *data)
 {
-    TinyList_AddTail(thiz, data);
+    return TinyList_AddTail(thiz, data);
 }
 
+TINY_LOR
 void TinyQueue_Pop(TinyQueue *thiz)
 {
     TinyList_RemoveHead(thiz);
-}
-
-int TinyQueue_GetSize(TinyQueue *thiz)
-{
-    return TinyList_GetCount(thiz);
 }

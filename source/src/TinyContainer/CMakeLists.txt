@@ -9,12 +9,14 @@ SET(Header
         TinyList.h
         TinyMap.h
         TinyMapItem.h
+        TinyQueue.h
         )
 
 SET(Source
         TinyList.c
         TinyMap.c
         TinyMapItem.c
+        TinyQueue.c
         )
 
 #TinyQueue.h

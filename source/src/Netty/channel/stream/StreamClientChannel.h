@@ -23,27 +23,35 @@
 TINY_BEGIN_DECLS
 
 
+TINY_API
 TINY_LOR
 Channel * StreamClientChannel_New(void);
 
+TINY_API
 TINY_LOR
 void StreamClientChannel_Delete(Channel *thiz);
 
+TINY_API
 TINY_LOR
 TinyRet StreamClientChannel_Construct(Channel *thiz);
 
+TINY_API
 TINY_LOR
 void StreamClientChannel_Dispose(Channel *thiz);
 
+TINY_API
 TINY_LOR
 TinyRet StreamClientChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx);
 
+TINY_API
 TINY_LOR
 TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port, uint32_t timeout);
 
+TINY_API
 TINY_LOR
 TinyRet StreamClientChannel_Close(Channel *thiz);
 
+TINY_API
 TINY_LOR
 bool StreamClientChannel_IsConnected(Channel* thiz);
 
