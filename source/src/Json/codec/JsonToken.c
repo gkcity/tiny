@@ -22,6 +22,7 @@ JsonToken * JsonToken_New(JsonTokenType type, uint32_t offset, uint32_t length)
     JsonToken *thiz = tiny_malloc(sizeof(JsonToken));
     if (thiz == NULL)
     {
+        LOG_MEM("JsonToken", "JsonToken_New");
         LOG_E(TAG, "tiny_malloc failed!");
         return NULL;
     }
@@ -31,4 +32,10 @@ JsonToken * JsonToken_New(JsonTokenType type, uint32_t offset, uint32_t length)
     thiz->length = length;
 
     return thiz;
+}
+
+TINY_LOR
+void JsonToken_Delete(JsonToken *thiz)
+{
+    tiny_free(thiz);
 }

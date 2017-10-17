@@ -43,6 +43,8 @@ typedef struct _JsonToken
 TINY_LOR
 JsonToken * JsonToken_New(JsonTokenType type, uint32_t offset, uint32_t length);
 
+TINY_LOR
+void JsonToken_Delete(JsonToken *thiz);
 
 
 TINY_END_DECLS

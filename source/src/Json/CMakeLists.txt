@@ -9,7 +9,9 @@ SET(Json_Header
         JsonArray.h
         JsonObject.h
         codec/JsonToken.h
+        codec/JsonTokenizer.h
         codec/JsonDecoder.h
+        codec/JsonDecoderCompact.h
         codec/JsonEncoder.h
         value/JsonString.h
         value/JsonNumber.h
@@ -21,7 +23,9 @@ SET(Json_Source
         JsonArray.c
         JsonObject.c
         codec/JsonToken.c
+        codec/JsonTokenizer.c
         codec/JsonDecoder.c
+        codec/JsonDecoderCompact.c
         codec/JsonEncoder.c
         value/JsonString.c
         value/JsonNumber.c

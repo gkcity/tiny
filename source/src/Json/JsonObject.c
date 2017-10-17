@@ -17,6 +17,7 @@
 #include "value/JsonNumber.h"
 #include "codec/JsonEncoder.h"
 #include "codec/JsonDecoder.h"
+#include "codec/JsonDecoderCompact.h"
 
 #define TAG     "JsonObject"
 
@@ -98,7 +99,7 @@ void JsonObject_Dispose(JsonObject *thiz)
 }
 
 TINY_LOR
-JsonObject * JsonObject_NewString(const char *string)
+JsonObject * JsonObject_NewStringFast(const char *string)
 {
     JsonObject *object = NULL;
 
@@ -119,6 +120,30 @@ JsonObject * JsonObject_NewString(const char *string)
         }
 
         JsonDecoder_Dispose(&decoder);
+    } while (false);
+
+    return object;
+}
+
+TINY_LOR
+JsonObject * JsonObject_NewString(const char *string)
+{
+    JsonObject *object = NULL;
+
+    RETURN_VAL_IF_FAIL(string, NULL);
+
+    do
+    {
+        JsonDecoderCompact decoder;
+
+        if (RET_FAILED(JsonDecoderCompact_Construct(&decoder)))
+        {
+            break;
+        }
+
+        object = JsonDecoderCompact_Parse(&decoder, string);
+
+        JsonDecoderCompact_Dispose(&decoder);
     } while (false);
 
     return object;

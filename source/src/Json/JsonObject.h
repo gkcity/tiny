@@ -34,6 +34,10 @@ JsonObject * JsonObject_New(void);
 
 TINY_LOR
 TINY_API
+JsonObject * JsonObject_NewStringFast(const char *string);
+
+TINY_LOR
+TINY_API
 JsonObject * JsonObject_NewString(const char *string);
 
 TINY_LOR
