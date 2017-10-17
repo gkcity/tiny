@@ -143,7 +143,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     HttpMessage *response = (HttpMessage *)data;
     HttpExchange *exchange = (HttpExchange *)thiz->context;
 
-    LOG_D(TAG, "_channelRead: %d %s", response->status_line.code, response->status_line.status);
+    LOG_E(TAG, "_channelRead: %d %s", response->status_line.code, response->status_line.status);
 
     exchange->status = response->status_line.code;
     if (exchange->status == HTTP_STATUS_OK)

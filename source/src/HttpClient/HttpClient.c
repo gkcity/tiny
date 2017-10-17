@@ -97,10 +97,11 @@ void HttpClient_Delete(HttpClient *thiz)
 TINY_LOR
 static void HttpClientInitializer(Channel *channel, void *ctx)
 {
+    HttpExchange * exchange = (HttpExchange *)ctx;
     LOG_D(TAG, "HttpClientInitializer: %s", channel->id);
-    SocketChannel_AddLast(channel, ChannelIdleStateHandler(0, 0, 5));
+    SocketChannel_AddLast(channel, ChannelIdleStateHandler(0, 0, exchange->timeout));
     SocketChannel_AddLast(channel, HttpMessageCodec());
-    SocketChannel_AddLast(channel, HttpClientHandler((HttpExchange *)ctx));
+    SocketChannel_AddLast(channel, HttpClientHandler(exchange));
 }
 
 TINY_LOR
