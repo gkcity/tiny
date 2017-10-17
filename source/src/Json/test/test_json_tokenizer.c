@@ -9,8 +9,7 @@
 #include <tiny_debug.h>
 #include <JsonObject.h>
 #include <JsonArray.h>
-#include <codec/JsonDecoder.h>
-#include <codec/JsonToken.h>
+#include <codec/JsonTokenizer.h>
 
 #define TAG			"test"
 
@@ -42,28 +41,51 @@ const char * samples[6] =
                 JSON_SAMPLE_5,
         };
 
+static void JsonToken_Print(JsonTokenizer * thiz, JsonToken *token, int index) 
+{
+    char buf[128];
+
+    memset(buf, 0, 128);
+    memcpy(buf, thiz->string + token->offset, token->length);
+    printf("[%d] %s (%d, %d) -> %s\n", index, JsonToken_TypeToString(token->type), token->offset, token->length, buf);
+}
+
 static int test1(void)
 {
     for (int i = 0; i < 6; ++i)
     {
-        JsonDecoder tokenizer;
+        JsonTokenizer tokenizer;
+        JsonToken * token = NULL;
 
-        if (RET_FAILED(JsonDecoder_Construct(&tokenizer)))
+        if (RET_FAILED(JsonTokenizer_Construct(&tokenizer)))
         {
             return 1;
         }
 
-        if (RET_FAILED(JsonDecoder_Parse(&tokenizer, samples[i])))
+        if (RET_FAILED(JsonTokenizer_Parse(&tokenizer, samples[i], false)))
         {
-            JsonDecoder_Print(&tokenizer);
-            JsonDecoder_Dispose(&tokenizer);
+            JsonTokenizer_Dispose(&tokenizer);
             return 1;
         }
 
-        JsonDecoder_Print(&tokenizer);
-        printf("\n");
+        printf("---- tokens ----\n");
 
-        JsonDecoder_Dispose(&tokenizer);
+        int index = 0;
+
+        while (true)
+        {
+            token = JsonTokenizer_Head(&tokenizer);
+            if (token == NULL) 
+            {
+                printf("\n");
+                break;
+            }
+
+            JsonTokenizer_Print(&tokenizer, token, index ++);
+            JsonTokenizer_Pop(&tokenizer);
+        }
+
+        JsonTokenizer_Dispose(&tokenizer);
     }
 
 	return 0;

@@ -37,16 +37,16 @@ typedef enum _TokenAnalystResult
 } TokenAnalystResult;
 
 TINY_LOR
-static JsonObject * JsonDecoderCompact_PeakObject(JsonDecoderCompact *thiz);
+static JsonObject * JsonDecoderCompact_DecodeObject(JsonDecoderCompact *thiz);
 
 TINY_LOR
-static JsonArray * JsonDecoderCompact_PeakArray(JsonDecoderCompact *thiz);
+static JsonArray * JsonDecoderCompact_DecodeArray(JsonDecoderCompact *thiz);
 
 TINY_LOR
-static JsonString * JsonDecoderCompact_PeakString(JsonDecoderCompact *thiz, JsonToken *token);
+static JsonString * JsonDecoderCompact_DecodeString(JsonDecoderCompact *thiz, JsonToken *token);
 
 TINY_LOR
-static JsonNumber * JsonDecoderCompact_PeakNumber(JsonDecoderCompact *thiz, JsonToken *token);
+static JsonNumber * JsonDecoderCompact_DecodeNumber(JsonDecoderCompact *thiz, JsonToken *token);
 
 TINY_LOR
 TinyRet JsonDecoderCompact_Construct(JsonDecoderCompact *thiz)
@@ -70,7 +70,7 @@ void JsonDecoderCompact_Dispose(JsonDecoderCompact *thiz)
 }
 
 TINY_LOR
-static JsonValue * JsonDecoderCompact_PeakValue(JsonDecoderCompact *thiz)
+static JsonValue * JsonDecoderCompact_DecodeValue(JsonDecoderCompact *thiz)
 {
     JsonToken *token = JsonTokenizer_Head(&thiz->tokenizer);
 //    JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index);
@@ -79,14 +79,14 @@ static JsonValue * JsonDecoderCompact_PeakValue(JsonDecoderCompact *thiz)
     switch (token->type)
     {
         case JSON_TOKEN_OBJECT_START:
-            value = JsonValue_NewValue(JSON_OBJECT, JsonDecoderCompact_PeakObject(thiz));
+            value = JsonValue_NewValue(JSON_OBJECT, JsonDecoderCompact_DecodeObject(thiz));
             break;
 
         case JSON_TOKEN_OBJECT_END:
             break;
 
         case JSON_TOKEN_ARRAY_START:
-            value = JsonValue_NewValue(JSON_ARRAY, JsonDecoderCompact_PeakArray(thiz));
+            value = JsonValue_NewValue(JSON_ARRAY, JsonDecoderCompact_DecodeArray(thiz));
             break;
 
         case JSON_TOKEN_ARRAY_END:
@@ -117,13 +117,13 @@ static JsonValue * JsonDecoderCompact_PeakValue(JsonDecoderCompact *thiz)
             break;
 
         case JSON_TOKEN_STRING:
-            value = JsonValue_NewValue(JSON_STRING, JsonDecoderCompact_PeakString(thiz, token));
+            value = JsonValue_NewValue(JSON_STRING, JsonDecoderCompact_DecodeString(thiz, token));
             JsonTokenizer_Pop(&thiz->tokenizer);
 //            thiz->index++;
             break;
 
         case JSON_TOKEN_NUMBER:
-            value = JsonValue_NewValue(JSON_NUMBER, JsonDecoderCompact_PeakNumber(thiz, token));
+            value = JsonValue_NewValue(JSON_NUMBER, JsonDecoderCompact_DecodeNumber(thiz, token));
             JsonTokenizer_Pop(&thiz->tokenizer);
 //            thiz->index++;
             break;
@@ -133,7 +133,7 @@ static JsonValue * JsonDecoderCompact_PeakValue(JsonDecoderCompact *thiz)
 }
 
 TINY_LOR
-static JsonArray * JsonDecoderCompact_PeakArray(JsonDecoderCompact *thiz)
+static JsonArray * JsonDecoderCompact_DecodeArray(JsonDecoderCompact *thiz)
 {
     JsonArray * array = NULL;
 
@@ -183,7 +183,7 @@ static JsonArray * JsonDecoderCompact_PeakArray(JsonDecoderCompact *thiz)
             }
 
             // value
-            value = JsonDecoderCompact_PeakValue(thiz);
+            value = JsonDecoderCompact_DecodeValue(thiz);
             if (value == NULL)
             {
                 result = TOKEN_ANALYSIS_E_ARRAY_VALUE_INVALID;
@@ -236,7 +236,7 @@ static JsonArray * JsonDecoderCompact_PeakArray(JsonDecoderCompact *thiz)
 }
 
 TINY_LOR
-static JsonString * JsonDecoderCompact_PeakString(JsonDecoderCompact *thiz, JsonToken *token)
+static JsonString * JsonDecoderCompact_DecodeString(JsonDecoderCompact *thiz, JsonToken *token)
 {
     JsonString * string = NULL;
 
@@ -265,7 +265,7 @@ static JsonString * JsonDecoderCompact_PeakString(JsonDecoderCompact *thiz, Json
 }
 
 TINY_LOR
-static JsonNumber * JsonDecoderCompact_PeakNumber(JsonDecoderCompact *thiz, JsonToken *token)
+static JsonNumber * JsonDecoderCompact_DecodeNumber(JsonDecoderCompact *thiz, JsonToken *token)
 {
     JsonNumber * number = NULL;
     
@@ -306,7 +306,7 @@ static JsonNumber * JsonDecoderCompact_PeakNumber(JsonDecoderCompact *thiz, Json
 }
 
 TINY_LOR
-static JsonObject * JsonDecoderCompact_PeakObject(JsonDecoderCompact *thiz)
+static JsonObject * JsonDecoderCompact_DecodeObject(JsonDecoderCompact *thiz)
 {
     JsonObject *object = NULL;
 
@@ -399,7 +399,7 @@ static JsonObject * JsonDecoderCompact_PeakObject(JsonDecoderCompact *thiz)
             JsonTokenizer_Pop(&thiz->tokenizer);
 
             // value
-            value = JsonDecoderCompact_PeakValue(thiz);
+            value = JsonDecoderCompact_DecodeValue(thiz);
             if (value == NULL)
             {
                 LOG_D(TAG, "JsonValue invalid: %s", key);
@@ -467,7 +467,7 @@ JsonObject * JsonDecoderCompact_Parse(JsonDecoderCompact *thiz, const char *stri
             break;
         }
 
-        object = JsonDecoderCompact_PeakObject(thiz);
+        object = JsonDecoderCompact_DecodeObject(thiz);
         if (object == NULL)
         {
             break;

@@ -53,7 +53,7 @@ const char * samples[8] =
 
 static int test1(void)
 {
-    for (int i = 0; i < 8; ++i)
+    for (int i = 5; i < 8; ++i)
     {
         printf("JSON [%d]: %s\n", i, samples[i]);
         JsonObject *object = JsonObject_NewString(samples[i]);

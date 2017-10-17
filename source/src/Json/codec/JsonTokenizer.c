@@ -509,10 +509,20 @@ JsonToken * JsonTokenizer_Head(JsonTokenizer * thiz)
     }
     else
     {
-        if (JsonTokenizer_ParseToken(thiz) == TOKEN_PARSE_OK)
+        while (true) 
         {
-            token = (JsonToken *) TinyQueue_Head(&thiz->queue);
+            if (JsonTokenizer_ParseToken(thiz) != TOKEN_PARSE_OK) 
+            {
+                break;
+            }
+
+            if (thiz->queue.size > 0) 
+            {
+                break;
+            }
         }
+
+        token = (JsonToken *) TinyQueue_Head(&thiz->queue);
     }
 
     return token;
@@ -522,4 +532,47 @@ TINY_LOR
 void JsonTokenizer_Pop(JsonTokenizer * thiz)
 {
     TinyQueue_Pop(&thiz->queue);
+}
+
+TINY_LOR
+static const char * JsonToken_TypeToString(JsonTokenType type)
+{
+    switch (type)
+    {
+    case JSON_TOKEN_OBJECT_START:
+        return "ObjectStart";
+
+    case JSON_TOKEN_OBJECT_END:
+        return "ObjectEnd  ";
+
+    case JSON_TOKEN_ARRAY_START:
+        return "ArrayStart ";
+
+    case JSON_TOKEN_ARRAY_END:
+        return "ArrayEnd   ";
+
+    case JSON_TOKEN_COMMA:
+        return "Comma      ";
+
+    case JSON_TOKEN_COLON:
+        return "Colon      ";
+
+    case JSON_TOKEN_NULL:
+        return "Null       ";
+
+    case JSON_TOKEN_TRUE:
+        return "True       ";
+
+    case JSON_TOKEN_FALSE:
+        return "False      ";
+
+    case JSON_TOKEN_STRING:
+        return "String     ";
+
+    case JSON_TOKEN_NUMBER:
+        return "Number     ";
+
+    default:
+        return "UNDEFINED  ";
+    }
 }
