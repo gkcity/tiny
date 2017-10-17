@@ -44,6 +44,7 @@ static TinyRet StringArray_Parse(StringArray *thiz, const char *string, const ch
         value = tiny_malloc(length + 1);
         if (value == NULL)
         {
+            LOG_E(TAG, "tiny_malloc FAILED");
             ret = TINY_RET_E_NEW;
             break;
         }
@@ -51,7 +52,13 @@ static TinyRet StringArray_Parse(StringArray *thiz, const char *string, const ch
         memset(value, 0, length + 1);
         strncpy(value, p1, length);
 
-        TinyList_AddTail(&thiz->values, value);
+        ret = TinyList_AddTail(&thiz->values, value);
+        if (RET_FAILED(ret))
+        {
+            LOG_E(TAG, "TinyList_AddTail FAILED");
+            ret = TINY_RET_E_NEW;
+            break;
+        }
 
         if (p2 == NULL)
         {
@@ -114,6 +121,7 @@ StringArray * StringArray_NewString(const char *string, const char *separator)
         thiz = (StringArray *)tiny_malloc(sizeof(StringArray));
         if (thiz == NULL)
         {
+            LOG_E(TAG, "tiny_malloc FAILED");
             break;
         }
 
