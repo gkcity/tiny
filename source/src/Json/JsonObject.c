@@ -17,7 +17,6 @@
 #include "value/JsonNumber.h"
 #include "codec/JsonEncoder.h"
 #include "codec/JsonDecoder.h"
-#include "codec/JsonDecoderCompact.h"
 
 #define TAG     "JsonObject"
 
@@ -102,25 +101,15 @@ TINY_LOR
 JsonObject * JsonObject_NewStringFast(const char *string)
 {
     JsonObject *object = NULL;
+    JsonDecoder decoder;
 
     RETURN_VAL_IF_FAIL(string, NULL);
 
-    do
+    if (RET_SUCCEEDED(JsonDecoder_Construct(&decoder)))
     {
-        JsonDecoder decoder;
-
-        if (RET_FAILED(JsonDecoder_Construct(&decoder)))
-        {
-            break;
-        }
-
-        if (RET_SUCCEEDED(JsonDecoder_Parse(&decoder, string)))
-        {
-            object = JsonDecoder_ConvertToObject(&decoder);
-        }
-
+        object = JsonDecoder_Parse(&decoder, string, JSON_DECODE_NORMAL);
         JsonDecoder_Dispose(&decoder);
-    } while (false);
+    }
 
     return object;
 }
@@ -129,22 +118,15 @@ TINY_LOR
 JsonObject * JsonObject_NewString(const char *string)
 {
     JsonObject *object = NULL;
+    JsonDecoder decoder;
 
     RETURN_VAL_IF_FAIL(string, NULL);
 
-    do
+    if (RET_SUCCEEDED(JsonDecoder_Construct(&decoder)))
     {
-        JsonDecoderCompact decoder;
-
-        if (RET_FAILED(JsonDecoderCompact_Construct(&decoder)))
-        {
-            break;
-        }
-
-        object = JsonDecoderCompact_Parse(&decoder, string);
-
-        JsonDecoderCompact_Dispose(&decoder);
-    } while (false);
+        object = JsonDecoder_Parse(&decoder, string, JSON_DECODE_LOW_MEMORY);
+        JsonDecoder_Dispose(&decoder);
+    }
 
     return object;
 }

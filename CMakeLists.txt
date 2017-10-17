@@ -85,12 +85,14 @@ SET(TinyContainer_Header
         ${SOURCE_ROOT}/TinyContainer/TinyList.h
         ${SOURCE_ROOT}/TinyContainer/TinyMap.h
         ${SOURCE_ROOT}/TinyContainer/TinyMapItem.h
+        ${SOURCE_ROOT}/TinyContainer/TinyQueue.h
         )
 
 SET(TinyContainer_Source
         ${SOURCE_ROOT}/TinyContainer/TinyList.c
         ${SOURCE_ROOT}/TinyContainer/TinyMap.c
         ${SOURCE_ROOT}/TinyContainer/TinyMapItem.c
+        ${SOURCE_ROOT}/TinyContainer/TinyQueue.c
         )
 
 #---------------------------
@@ -205,6 +207,7 @@ SET(Json_Header
         ${SOURCE_ROOT}/Json/codec/JsonDecoder.h
         ${SOURCE_ROOT}/Json/codec/JsonEncoder.h
         ${SOURCE_ROOT}/Json/codec/JsonToken.h
+        ${SOURCE_ROOT}/Json/codec/JsonTokenizer.h
         ${SOURCE_ROOT}/Json/value/JsonNumber.h
         ${SOURCE_ROOT}/Json/value/JsonBoolean.h
         ${SOURCE_ROOT}/Json/value/JsonString.h
@@ -217,6 +220,7 @@ SET(Json_Source
         ${SOURCE_ROOT}/Json/codec/JsonDecoder.c
         ${SOURCE_ROOT}/Json/codec/JsonEncoder.c
         ${SOURCE_ROOT}/Json/codec/JsonToken.c
+        ${SOURCE_ROOT}/Json/codec/JsonTokenizer.c
         ${SOURCE_ROOT}/Json/value/JsonString.c
         ${SOURCE_ROOT}/Json/value/JsonNumber.c
         ${SOURCE_ROOT}/Json/value/JsonBoolean.c

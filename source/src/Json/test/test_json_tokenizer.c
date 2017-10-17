@@ -41,6 +41,48 @@ const char * samples[6] =
                 JSON_SAMPLE_5,
         };
 
+static const char * JsonToken_TypeToString(JsonTokenType type)
+{
+    switch (type)
+    {
+        case JSON_TOKEN_OBJECT_START:
+            return "ObjectStart";
+
+        case JSON_TOKEN_OBJECT_END:
+            return "ObjectEnd  ";
+
+        case JSON_TOKEN_ARRAY_START:
+            return "ArrayStart ";
+
+        case JSON_TOKEN_ARRAY_END:
+            return "ArrayEnd   ";
+
+        case JSON_TOKEN_COMMA:
+            return "Comma      ";
+
+        case JSON_TOKEN_COLON:
+            return "Colon      ";
+
+        case JSON_TOKEN_NULL:
+            return "Null       ";
+
+        case JSON_TOKEN_TRUE:
+            return "True       ";
+
+        case JSON_TOKEN_FALSE:
+            return "False      ";
+
+        case JSON_TOKEN_STRING:
+            return "String     ";
+
+        case JSON_TOKEN_NUMBER:
+            return "Number     ";
+
+        default:
+            return "UNDEFINED  ";
+    }
+}
+
 static void JsonToken_Print(JsonTokenizer * thiz, JsonToken *token, int index) 
 {
     char buf[128];

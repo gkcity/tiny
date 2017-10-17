@@ -11,7 +11,6 @@ SET(Json_Header
         codec/JsonToken.h
         codec/JsonTokenizer.h
         codec/JsonDecoder.h
-        codec/JsonDecoderCompact.h
         codec/JsonEncoder.h
         value/JsonString.h
         value/JsonNumber.h
@@ -25,7 +24,6 @@ SET(Json_Source
         codec/JsonToken.c
         codec/JsonTokenizer.c
         codec/JsonDecoder.c
-        codec/JsonDecoderCompact.c
         codec/JsonEncoder.c
         value/JsonString.c
         value/JsonNumber.c
