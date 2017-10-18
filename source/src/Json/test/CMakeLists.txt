@@ -1,6 +1,7 @@
 ADD_EXECUTABLE(test_json_encode test_json_encode.c)
 TARGET_LINK_LIBRARIES(test_json_encode
         json_static
+        tiny_buffer_static
         tiny_string_util_static
         tiny_container_static
         tiny_log_static
@@ -11,6 +12,7 @@ TARGET_LINK_LIBRARIES(test_json_encode
 ADD_EXECUTABLE(test_json_decode test_json_decode.c)
 TARGET_LINK_LIBRARIES(test_json_decode
         json_static
+        tiny_buffer_static
         tiny_string_util_static
         tiny_container_static
         tiny_log_static
@@ -21,6 +23,7 @@ TARGET_LINK_LIBRARIES(test_json_decode
 ADD_EXECUTABLE(test_json_tokenizer test_json_tokenizer.c)
 TARGET_LINK_LIBRARIES(test_json_tokenizer
         json_static
+        tiny_buffer_static
         tiny_string_util_static
         tiny_container_static
         tiny_log_static

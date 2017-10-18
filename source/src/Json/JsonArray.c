@@ -12,10 +12,8 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include <tiny_buffer_append.h>
 #include <codec/JsonEncoder.h>
 #include "JsonArray.h"
-#include "JsonObject.h"
 
 #define TAG     "JsonArray"
 
@@ -94,37 +92,6 @@ void JsonArray_Delete(JsonArray *thiz)
 {
     JsonArray_Dispose(thiz);
     tiny_free(thiz);
-}
-
-TINY_LOR
-TinyRet JsonArray_Encode(JsonArray *thiz, bool pretty)
-{
-    int length = 0;
-
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-
-    length = JsonEncoder_EncodeArray(thiz, pretty, 0, NULL, 0, 0);
-    if (length < 0)
-    {
-        return TINY_RET_E_INTERNAL;
-    }
-
-    if (thiz->string != NULL)
-    {
-        tiny_free(thiz->string);
-    }
-
-    thiz->string = tiny_malloc((size_t)length + 1);
-    if (thiz->string == NULL)
-    {
-        return TINY_RET_E_NEW;
-    }
-
-    memset(thiz->string, 0, (size_t)length + 1);
-
-    JsonEncoder_EncodeArray(thiz, pretty, 0, thiz->string, (uint32_t) length, 0);
-
-    return TINY_RET_OK;
 }
 
 TINY_LOR

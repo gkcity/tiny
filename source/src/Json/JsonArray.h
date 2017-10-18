@@ -37,10 +37,6 @@ void JsonArray_Delete(JsonArray *thiz);
 
 TINY_LOR
 TINY_API
-TinyRet JsonArray_Encode(JsonArray *thiz, bool pretty);
-
-TINY_LOR
-TINY_API
 TinyRet JsonArray_AddString(JsonArray *thiz, const char *value);
 
 TINY_LOR

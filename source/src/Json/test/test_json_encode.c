@@ -9,6 +9,7 @@
 #include <tiny_debug.h>
 #include <JsonObject.h>
 #include <JsonArray.h>
+#include <codec/JsonEncoder.h>
 
 #define TAG			"test"
 
@@ -187,13 +188,73 @@ static int test5(void)
     return 0;
 }
 
+static void _Output (const char *string, void *ctx)
+{
+    printf("%s", string);
+//    printf("test: [%s]\n", string);
+}
+
+static int test6(void)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    JsonObject * root = JsonObject_New();
+    RETURN_VAL_IF_FAIL(root != NULL, -1);
+
+    ret = JsonObject_PutInteger(root, "age", 10);
+    RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
+
+    ret = JsonObject_PutFloat(root, "temp", 10.0);
+    RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
+
+    ret = JsonObject_PutString(root, "name", "hello");
+    RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
+
+    ret = JsonObject_PutInteger(root, "c", 10);
+    RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
+
+    ret = JsonObject_PutBoolean(root, "online", false);
+    RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
+
+    JsonArray *array = JsonArray_New(JSON_STRING);
+    RETURN_VAL_IF_FAIL(array != NULL, -1);
+
+    JsonArray_AddString(array, "Monday");
+    JsonArray_AddString(array, "Tuesday");
+    JsonArray_AddString(array, "Wednesday");
+    JsonArray_AddString(array, "Thursday");
+    JsonArray_AddString(array, "Friday");
+    JsonArray_AddString(array, "Saturday");
+    JsonArray_AddString(array, "Sunday");
+
+    ret = JsonObject_PutArray(root, "week", array);
+    RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
+
+//    JsonObject_Encode(root, true);
+//    printf("json encode ->\n%s\n", root->string);
+
+//    JsonObject_Encode(root, false);
+//    printf("json encode ->\n%s\n", root->string);
+
+    JsonEncoder encoder;
+    ret = JsonEncoder_Construct(&encoder, root, true, 0);
+    RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
+
+    printf("\nencode petty (%d):\n", encoder.size);
+    JsonEncoder_EncodeObject(&encoder, _Output, NULL);
+
+    JsonObject_Delete(root);
+
+    return 1;
+}
 int main(int argc, char *argv[])
 {
-	test1();
-    test2();
-    test3();
-    test4();
-    test5();
+//	test1();
+//    test2();
+//    test3();
+//    test4();
+//    test5();
+    test6();
 
 #ifdef _WIN32
     _CrtDumpMemoryLeaks();

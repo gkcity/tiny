@@ -25,7 +25,6 @@ typedef struct _JsonDecoder
     JsonTokenizer   tokenizer;
 } JsonDecoder;
 
-
 typedef enum _JsonDecoderMode
 {
     JSON_DECODE_NORMAL      = 0,

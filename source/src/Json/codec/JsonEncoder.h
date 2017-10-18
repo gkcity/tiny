@@ -15,22 +15,37 @@
 
 #include <tiny_base.h>
 #include <TinyList.h>
+#include <TinyBuffer.h>
 #include "JsonObject.h"
 
 TINY_BEGIN_DECLS
 
 
-TINY_API
-TINY_LOR
-int JsonEncoder_EncodeObject(JsonObject *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
+typedef void (*JsonOutput) (const char *string, void *ctx);
+
+
+typedef struct _JsonEncoder
+{
+    JsonOutput            output;
+    void                * ctx;
+    TinyBuffer          * buffer;
+    JsonObject          * object;
+    bool                  pretty;
+    uint32_t              size;
+    uint32_t              out;
+} JsonEncoder;
 
 TINY_API
 TINY_LOR
-int JsonEncoder_EncodeArray(JsonArray *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
+TinyRet JsonEncoder_Construct(JsonEncoder *thiz, JsonObject *object, bool pretty, uint32_t bufferSize);
 
 TINY_API
 TINY_LOR
-int JsonEncoder_EncodeValue(JsonValue *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset);
+void JsonEncoder_Dispose(JsonEncoder *thiz);
+
+TINY_API
+TINY_LOR
+void JsonEncoder_EncodeObject(JsonEncoder *thiz, JsonOutput output, void *ctx);
 
 
 TINY_END_DECLS

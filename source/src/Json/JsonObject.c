@@ -13,6 +13,8 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <TinyMapItem.h>
+#include <codec/JsonEncoder.h>
+#include <tiny_buffer_append.h>
 #include "JsonObject.h"
 #include "value/JsonNumber.h"
 #include "codec/JsonEncoder.h"
@@ -132,35 +134,50 @@ JsonObject * JsonObject_NewString(const char *string)
 }
 
 TINY_LOR
+static void _Output (const char *string, void *ctx)
+{
+    JsonObject *thiz = (JsonObject *)ctx;
+    strncat(thiz->string, string, thiz->size);
+}
+
+TINY_LOR
 TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
 {
-    int length = 0;
+    TinyRet ret = TINY_RET_OK;
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    length = JsonEncoder_EncodeObject(thiz, pretty, 0, NULL, 0, 0);
-    if (length < 0)
+    do
     {
-        return TINY_RET_E_INTERNAL;
-    }
+        JsonEncoder encoder;
 
-    if (thiz->string != NULL)
-    {
-        tiny_free(thiz->string);
-    }
+        ret = JsonEncoder_Construct(&encoder, thiz, pretty, 0);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
 
-    thiz->string = tiny_malloc((size_t)length + 1);
-    if (thiz->string == NULL)
-    {
-        return TINY_RET_E_NEW;
-    }
+        if (thiz->string != NULL)
+        {
+            tiny_free(thiz->string);
+        }
 
-    memset(thiz->string, 0, (size_t)length + 1);
-    thiz->size = (uint32_t)length;
+        thiz->string = tiny_malloc(encoder.size + 1);
+        if (thiz->string == NULL)
+        {
+            ret = TINY_RET_E_NEW;
+            JsonEncoder_Dispose(&encoder);
+            break;
+        }
 
-    JsonEncoder_EncodeObject(thiz, pretty, 0, thiz->string, (uint32_t) length, 0);
+        memset(thiz->string, 0, encoder.size  + 1);
+        thiz->size = encoder.size;
 
-    return TINY_RET_OK;
+        JsonEncoder_EncodeObject(&encoder, _Output, thiz);
+        JsonEncoder_Dispose(&encoder);
+    } while (false);
+
+    return ret;
 }
 
 TINY_LOR

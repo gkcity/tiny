@@ -15,6 +15,7 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyContainer)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyRandom)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyBuffer)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Netty)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Json)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/HttpClient)
@@ -144,6 +145,18 @@ SET(TinyRandom_Header
 
 SET(TinyRandom_Source
         ${SOURCE_ROOT}/TinyRandom/tiny_random.c
+        )
+
+#---------------------------
+# TinyBuffer
+#---------------------------
+
+SET(TinyBuffer_Header
+        ${SOURCE_ROOT}/TinyBuffer/TinyBuffer.h
+        )
+
+SET(TinyBuffer_Source
+        ${SOURCE_ROOT}/TinyBuffer/TinyBuffer.c
         )
 
 #-----------------------
@@ -282,6 +295,8 @@ SOURCE_GROUP(TinyLog\\headers FILES ${TinyLog_Header})
 SOURCE_GROUP(TinyLog\\sources FILES ${TinyLog_Source})
 SOURCE_GROUP(TinyStringUtil\\headers FILES ${TinyStringUtil_Header})
 SOURCE_GROUP(TinyStringUtil\\sources FILES ${TinyStringUtil_Source})
+SOURCE_GROUP(TinyBuffer\\headers FILES ${TinyBuffer_Header})
+SOURCE_GROUP(TinyBuffer\\sources FILES ${TinyBuffer_Source})
 SOURCE_GROUP(Netty\\headers FILES ${Netty_Header})
 SOURCE_GROUP(Netty\\sources FILES ${Netty_Source})
 SOURCE_GROUP(Json\\headers FILES ${Json_Header})
@@ -308,6 +323,8 @@ IF (TINY_THREAD_ENABLED EQUAL 1)
             ${TinyStringUtil_Source}
             ${TinyRandom_Header}
             ${TinyRandom_Source}
+            ${TinyBuffer_Header}
+            ${TinyBuffer_Source}
             ${Netty_Header}
             ${Netty_Source}
             ${Json_Header}

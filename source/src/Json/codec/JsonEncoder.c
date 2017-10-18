@@ -4,13 +4,12 @@
  * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
- * @file   JsonDecoder.h
+ * @file   JsonEncoder.h
  *
  * @remark
  *
  */
 
-#include <tiny_buffer_append.h>
 #include <TinyMapItem.h>
 #include <tiny_snprintf.h>
 #include <value/JsonBoolean.h>
@@ -19,133 +18,66 @@
 #include <JsonArray.h>
 #include "JsonEncoder.h"
 
-TINY_LOR
-static int JsonEncoder_EncodeNumber(JsonNumber *thiz, char *buf, uint32_t length, uint32_t offset)
-{
-    char string[32];
-
-    switch (thiz->type)
-    {
-        case JSON_NUMBER_INTEGER:
-            tiny_snprintf(string, 32, "%d", thiz->value.intValue);
-            break;
-
-        case JSON_NUMBER_FLOAT:
-            tiny_snprintf(string, 32, "%f", thiz->value.floatValue);
-            break;
-    }
-
-    return tiny_buffer_append_string(buf, length, offset, string);
-}
+#define TAG     "JsonEncoder"
 
 TINY_LOR
-int JsonEncoder_EncodeValue(JsonValue *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset)
-{
-    int size = 0;
-
-    switch (thiz->type)
-    {
-        case JSON_STRING:
-            size += tiny_buffer_append_byte((uint8_t *) buf, length, offset + size, '"');
-            size += tiny_buffer_append_string(buf, length, offset + size, thiz->data.string->value);
-            size += tiny_buffer_append_byte((uint8_t *) buf, length, offset + size, '"');
-            break;
-
-        case JSON_NUMBER:
-            size = JsonEncoder_EncodeNumber(thiz->data.number, buf, length, offset);
-            break;
-
-        case JSON_OBJECT:
-            size = JsonEncoder_EncodeObject(thiz->data.object, pretty, depth, buf, length, offset);
-            break;
-
-        case JSON_ARRAY:
-            size = JsonEncoder_EncodeArray(thiz->data.array, pretty, depth, buf, length, offset);
-            break;
-
-        case JSON_BOOLEAN:
-            size = tiny_buffer_append_string(buf, length, offset, thiz->data.boolean->value ? "true" : "false");
-            break;
-
-        case JSON_NULL:
-            size = tiny_buffer_append_string(buf, length, offset, "null");
-            break;
-
-        default:
-            break;
-    }
-
-    return size;
-}
+static void _EncodeObject(JsonEncoder *thiz, JsonObject *object, bool pretty, int depth);
 
 TINY_LOR
-int JsonEncoder_EncodeArray(JsonArray *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset)
-{
-    int size = 0;
-
-    size += tiny_buffer_append_string(buf, length, offset + size, "[");
-
-    for (uint32_t i = 0; i < thiz->values.size; ++i)
-    {
-        size += JsonEncoder_EncodeValue((JsonValue *) TinyList_GetAt(&thiz->values, i), pretty, depth, buf, length,
-                                        offset + size);
-
-        if (i < thiz->values.size - 1)
-        {
-            size += tiny_buffer_append_string(buf, length, offset + size, ",");
-        }
-    }
-
-    size += tiny_buffer_append_string(buf, length, offset + size, "]");
-
-    return size;
-}
+static void _EncodeArray(JsonEncoder *thiz, JsonArray *array, bool pretty, int depth);
 
 TINY_LOR
-int JsonEncoder_EncodeObject(JsonObject *thiz, bool pretty, int depth, char *buf, uint32_t length, uint32_t offset)
+static void _EncodeNumber(JsonEncoder *thiz, JsonNumber *number);
+
+TINY_LOR
+static void _EncodeValue(JsonEncoder *thiz, JsonValue *value, bool pretty, int depth);
+
+TINY_LOR
+static void _Append(JsonEncoder *thiz, const char *string);
+
+TINY_LOR
+static void _EncodeObject(JsonEncoder *thiz, JsonObject *object, bool pretty, int depth)
 {
-    int size = 0;
+    RETURN_IF_FAIL(thiz);
 
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-
-    size += tiny_buffer_append_string(buf, length, offset + size, "{");
+    _Append(thiz, "{");
 
     if (pretty)
     {
-        size += tiny_buffer_append_string(buf, length, offset + size, "\n");
+        _Append(thiz, "\n");
     }
 
-    for (uint32_t i = 0; i < thiz->data.list.size; ++i)
+    for (uint32_t i = 0; i < object->data.list.size; ++i)
     {
-        TinyMapItem *item = TinyList_GetAt(&thiz->data.list, i);
-        char key[64];
+        TinyMapItem *item = TinyList_GetAt(&object->data.list, i);
 
         if (pretty)
         {
             for (int d = 0; d <= depth; ++d)
             {
-                size += tiny_buffer_append_string(buf, length, offset + size, "    ");
+                _Append(thiz, "    ");
             }
         }
 
-        tiny_snprintf(key, 64, "\"%s\":", item->key);
-        size += tiny_buffer_append_string(buf, length, offset + size, key);
+        _Append(thiz, "\"");
+        _Append(thiz, item->key);
+        _Append(thiz, "\":");
 
         if (pretty)
         {
-            size += tiny_buffer_append_string(buf, length, offset + size, " ");
+            _Append(thiz, " ");
         }
 
-        size += JsonEncoder_EncodeValue(item->value, pretty, depth + 1, buf, length, offset + size);
+        _EncodeValue(thiz, item->value, pretty, depth + 1);
 
-        if (i < thiz->data.list.size - 1)
+        if (i < object->data.list.size - 1)
         {
-            size += tiny_buffer_append_string(buf, length, offset + size, ",");
+            _Append(thiz, ",");
         }
 
         if (pretty)
         {
-            size += tiny_buffer_append_string(buf, length, offset + size, "\n");
+            _Append(thiz, "\n");
         }
     }
 
@@ -153,11 +85,186 @@ int JsonEncoder_EncodeObject(JsonObject *thiz, bool pretty, int depth, char *buf
     {
         for (int d = 0; d < depth; ++d)
         {
-            size += tiny_buffer_append_string(buf, length, offset + size, "    ");
+            _Append(thiz, "    ");
         }
     }
 
-    size += tiny_buffer_append_string(buf, length, offset + size, "}");
+    _Append(thiz, "}");
+}
 
-    return size;
+TINY_LOR
+static void _EncodeArray(JsonEncoder *thiz, JsonArray *array, bool pretty, int depth)
+{
+    _Append(thiz, "[");
+
+    for (uint32_t i = 0; i < array->values.size; ++i)
+    {
+        _EncodeValue(thiz, (JsonValue *) TinyList_GetAt(&array->values, i), pretty, depth);
+        if (i < array->values.size - 1)
+        {
+            _Append(thiz, ",");
+        }
+    }
+
+    _Append(thiz, "]");
+}
+
+
+TINY_LOR
+static void _EncodeNumber(JsonEncoder *thiz, JsonNumber *number)
+{
+    char string[32];
+
+    memset(string, 0, 32);
+
+    switch (number->type)
+    {
+        case JSON_NUMBER_INTEGER:
+            tiny_snprintf(string, 32, "%d", number->value.intValue);
+            break;
+
+        case JSON_NUMBER_FLOAT:
+            tiny_snprintf(string, 32, "%f", number->value.floatValue);
+            break;
+    }
+
+    _Append(thiz, string);
+}
+
+TINY_LOR
+static void _EncodeValue(JsonEncoder *thiz, JsonValue *value, bool pretty, int depth)
+{
+    switch (value->type)
+    {
+        case JSON_STRING:
+            _Append(thiz, "\"");
+            _Append(thiz, value->data.string->value);
+            _Append(thiz, "\"");
+            break;
+
+        case JSON_NUMBER:
+            _EncodeNumber(thiz, value->data.number);
+            break;
+
+        case JSON_OBJECT:
+            _EncodeObject(thiz, value->data.object, pretty, depth);
+            break;
+
+        case JSON_ARRAY:
+            _EncodeArray(thiz, value->data.array, pretty, depth);
+            break;
+
+        case JSON_BOOLEAN:
+            _Append(thiz, value->data.boolean->value ? "true" : "false");
+            break;
+
+        case JSON_NULL:
+            _Append(thiz, "null");
+            break;
+
+        default:
+            break;
+    }
+}
+
+TINY_LOR
+static void _Append(JsonEncoder *thiz, const char *string)
+{
+    if (thiz->buffer == NULL)
+    {
+        thiz->output(string, thiz->ctx);
+    }
+    else
+    {
+        uint32_t length = (uint32_t) strlen(string);
+        uint32_t offset = 0;
+
+        while (length > 0)
+        {
+            uint32_t size = TinyBuffer_Add(thiz->buffer, (uint8_t *)string, offset, length);
+            offset += size;
+            length -= size;
+
+            if (TinyBuffer_IsFull(thiz->buffer))
+            {
+                thiz->out += thiz->buffer->used;
+                thiz->output((const char *)thiz->buffer->bytes, thiz->ctx);
+
+                TinyBuffer_Clear(thiz->buffer);
+            }
+            else
+            {
+                if (thiz->size == thiz->out + thiz->buffer->used)
+                {
+                    thiz->out += thiz->buffer->used;
+                    thiz->output((const char *)thiz->buffer->bytes, thiz->ctx);
+                }
+            }
+        }
+    }
+}
+
+TINY_LOR
+static void _Count (const char *string, void *ctx)
+{
+    JsonEncoder *thiz = (JsonEncoder *)ctx;
+    thiz->size += strlen(string);
+}
+
+TINY_LOR
+TinyRet JsonEncoder_Construct(JsonEncoder *thiz, JsonObject *object, bool pretty, uint32_t bufferSize)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    do
+    {
+        memset(thiz, 0, sizeof(JsonEncoder));
+
+        thiz->object = object;
+        thiz->pretty = pretty;
+
+        /**
+         * count output size
+         */
+        thiz->buffer = NULL;
+        thiz->output = _Count;
+        thiz->ctx = thiz;
+        thiz->size = 0;
+        thiz->out = 0;
+        _EncodeObject(thiz, object, pretty, 0);
+        thiz->output = NULL;
+        thiz->ctx = NULL;
+
+        if (bufferSize == 0)
+        {
+            break;
+        }
+
+        thiz->buffer = TinyBuffer_New(bufferSize);
+        if (thiz->buffer == NULL)
+        {
+            ret = TINY_RET_E_NEW;
+            break;
+        }
+    } while (false);
+
+    return ret;
+}
+
+TINY_LOR
+void JsonEncoder_Dispose(JsonEncoder *thiz)
+{
+    TinyBuffer_Delete(thiz->buffer);
+}
+
+TINY_LOR
+void JsonEncoder_EncodeObject(JsonEncoder *thiz, JsonOutput output, void *ctx)
+{
+    RETURN_IF_FAIL(thiz);
+    RETURN_IF_FAIL(output);
+
+    thiz->output = output;
+    thiz->ctx = ctx;
+
+    _EncodeObject(thiz, thiz->object, thiz->pretty, 0);
 }
