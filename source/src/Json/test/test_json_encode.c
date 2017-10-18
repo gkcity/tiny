@@ -230,11 +230,11 @@ static int test6(void)
     ret = JsonObject_PutArray(root, "week", array);
     RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
 
-//    JsonObject_Encode(root, true);
-//    printf("json encode ->\n%s\n", root->string);
+    JsonObject_Encode(root, true);
+    printf("json encode ->\n%s\n", root->string);
 
-//    JsonObject_Encode(root, false);
-//    printf("json encode ->\n%s\n", root->string);
+    JsonObject_Encode(root, false);
+    printf("json encode ->\n%s\n", root->string);
 
     JsonEncoder encoder;
     ret = JsonEncoder_Construct(&encoder, root, true, 0);

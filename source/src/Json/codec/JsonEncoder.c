@@ -254,7 +254,10 @@ TinyRet JsonEncoder_Construct(JsonEncoder *thiz, JsonObject *object, bool pretty
 TINY_LOR
 void JsonEncoder_Dispose(JsonEncoder *thiz)
 {
-    TinyBuffer_Delete(thiz->buffer);
+    if (thiz->buffer != NULL) 
+    {
+        TinyBuffer_Delete(thiz->buffer);
+    }
 }
 
 TINY_LOR
