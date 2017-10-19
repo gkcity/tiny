@@ -166,7 +166,11 @@ void HttpMessageEncoder_Encode(HttpMessageEncoder *thiz, TinyBuffer *buffer, Htt
     thiz->buffer = buffer;
     thiz->output = output;
     thiz->ctx = ctx;
+    
+    if (thiz->buffer != NULL)
+    {
+        TinyBuffer_Clear(thiz->buffer);
+    }
 
-    TinyBuffer_Clear(thiz->buffer);
     _Encode(thiz, thiz->message);
 }

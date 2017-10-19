@@ -247,6 +247,10 @@ void JsonEncoder_EncodeObject(JsonEncoder *thiz, TinyBuffer *buffer, JsonOutput 
     thiz->output = output;
     thiz->ctx = ctx;
 
-    TinyBuffer_Clear(thiz->buffer);
+    if (thiz->buffer != NULL) 
+    {
+        TinyBuffer_Clear(thiz->buffer);
+    }
+
     _EncodeObject(thiz, thiz->object, thiz->pretty, 0);
 }
