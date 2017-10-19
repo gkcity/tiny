@@ -9,6 +9,7 @@ TARGET_LINK_LIBRARIES(example_http_get
         json_static
         http_client_static
         netty_static
+        tiny_buffer_static
         tiny_string_util_static
         tiny_container_static
         tiny_log_static
@@ -22,6 +23,7 @@ TARGET_LINK_LIBRARIES(example_http_post
         json_static
         http_client_static
         netty_static
+        tiny_buffer_static
         tiny_string_util_static
         tiny_container_static
         tiny_log_static

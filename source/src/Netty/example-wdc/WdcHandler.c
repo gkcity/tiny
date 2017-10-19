@@ -16,6 +16,8 @@
 #include <tiny_log.h>
 #include <codec-http/HttpMessage.h>
 #include <channel/SocketChannel.h>
+#include <TinyBuffer.h>
+#include <codec-http/HttpMessageEncoder.h>
 #include "WdcHandler.h"
 
 #define TAG "WdcHandler"
@@ -114,51 +116,67 @@ static TinyRet WdcHandler_Dispose(ChannelHandler *thiz)
     return TINY_RET_OK;
 }
 
+static void _Output (const uint8_t *data, uint32_t size, void *ctx)
+{
+    Channel *channel = (Channel *)ctx;
+    SocketChannel_StartWrite(channel, DATA_RAW, data, size);
+}
+
 TINY_LOR
 static void sendResponse(ChannelHandler *thiz, Channel *channel, int code, const char *status, const char *type, const char *body)
 {
+    HttpMessageEncoder encoder;
+    TinyBuffer * buffer = NULL;
     HttpMessage response;
 
     printf("sendResponse: %d %s\n", code, status);
 
-    if (RET_SUCCEEDED(HttpMessage_Construct(&response)))
+    do
     {
-        const char *bytes = NULL;
-        uint32_t size = 0;
-        uint32_t length = (uint32_t) ((body == NULL) ? 0 : strlen(body));
+        buffer = TinyBuffer_New(1024);
+        if (buffer == NULL)
+        {
+            LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
+            break;
+        }
 
-        printf("1\n");
+        if (RET_FAILED(HttpMessage_Construct(&response)))
+        {
+            LOG_E(TAG, "HttpMessage_Construct FAILED");
+            break;
+        }
+
+        uint32_t length = (uint32_t) ((body == NULL) ? 0 : strlen(body));
 
         HttpMessage_SetResponse(&response, code, status);
         HttpMessage_SetVersion(&response, 1, 1);
-
-        printf("2: %s\n", type);
-
         HttpHeader_Set(&response.header, "Content-Type", type);
-
-        printf("3: %d\n", length);
-
         HttpHeader_SetInteger(&response.header, "Content-Length", length);
 
-        printf("4\n");
+        if (RET_FAILED(HttpMessageEncoder_Construct(&encoder, &response)))
+        {
+            LOG_E(TAG, "HttpMessageEncoder_Construct FAILED");
+            break;
+        }
 
-        bytes = HttpMessage_GetBytesWithoutContent(&response);
-        size = HttpMessage_GetBytesSizeWithoutContent(&response);
-
-        printf("5\n");
-
-        SocketChannel_StartWrite(channel, DATA_RAW, bytes, size);
-
-        printf("6\n");
+        HttpMessageEncoder_Encode(&encoder, buffer, _Output, channel);
 
         if (body != NULL)
         {
             SocketChannel_StartWrite(channel, DATA_RAW, body, length);
         }
 
-        Channel_Close(channel);
-        HttpMessage_Dispose(&response);
+    } while (false);
+
+    if (buffer != NULL)
+    {
+        TinyBuffer_Delete(buffer);
     }
+
+    HttpMessage_Dispose(&response);
+    HttpMessageEncoder_Dispose(&encoder);
+
+    Channel_Close(channel);
 }
 
 TINY_LOR

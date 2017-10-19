@@ -17,25 +17,16 @@
 #include <TinyMapItem.h>
 #include "HttpMessage.h"
 #include "tiny_char_util.h"
-#include "tiny_url_split.h"
 #include "tiny_log.h"
-#include "Bytes.h"
 
 #define TAG                 "HttpMessage"
 
 /* HTTP/1.1 0 X */
 #define HTTP_STATUS_LINE_MIN_LEN        14  /* strlen(HTTP/1.1 X 2\r\n) */
 #define HTTP_REQUEST_LINE_MIN_LEN       14  /* X * HTTP/1.1\r\n */
-#define HTTP_LINE_LEN                   256
-
-TINY_LOR
-static uint32_t HttpMessage_GetLineSize(HttpMessage * thiz);
 
 TINY_LOR
 static bool HttpMessage_ParseLine(HttpMessage * thiz, Line *line);
-
-TINY_LOR
-static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz);
 
 TINY_LOR
 HttpMessage * HttpMessage_New(void)
@@ -102,13 +93,6 @@ TinyRet HttpMessage_Dispose(HttpMessage *thiz)
 
     HttpContent_Dispose(&thiz->content);
     HttpHeader_Dispose(&thiz->header);
-
-	if (thiz->_bytes != NULL)
-	{
-        tiny_free(thiz->_bytes);
-		thiz->_bytes = NULL;
-		thiz->_size = 0;
-	}
 
     return TINY_RET_OK;
 }
@@ -216,116 +200,6 @@ TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *data, uint32_t length)
 }
 
 TINY_LOR
-const char * HttpMessage_GetBytesWithoutContent(HttpMessage *thiz)
-{
-	RETURN_VAL_IF_FAIL(thiz, NULL);
-
-	if (thiz->_bytes == NULL)
-	{
-		HttpMessage_ToBytesWithoutContent(thiz);
-	}
-
-	return thiz->_bytes;
-}
-
-TINY_LOR
-uint32_t HttpMessage_GetBytesSizeWithoutContent(HttpMessage *thiz)
-{
-	if (thiz->_bytes == NULL)
-	{
-		HttpMessage_ToBytesWithoutContent(thiz);
-	}
-
-	return thiz->_size;
-}
-
-TINY_LOR
-static void HttpMessage_ToBytesWithoutContent(HttpMessage *thiz)
-{
-	do
-	{
-		uint32_t buffer_size = 0;
-		char line[HTTP_LINE_LEN];
-
-		if (thiz->_bytes != NULL)
-		{
-			tiny_free(thiz->_bytes);
-			thiz->_bytes = NULL;
-			break;
-		}
-
-		if (thiz->type == HTTP_UNDEFINED)
-		{
-            LOG_D(TAG, "HTTP TYPE invalid");
-			break;
-		}
-
-		// calculate size
-		buffer_size = HttpMessage_GetLineSize(thiz) + HttpHeader_GetSize(&thiz->header) + 1;
-
-		thiz->_bytes = (char *)tiny_malloc(buffer_size);
-		if (thiz->_bytes == NULL)
-		{
-            LOG_E(TAG, "tiny_malloc failed: %d", buffer_size);
-			break;
-		}
-
-		memset(thiz->_bytes, 0, buffer_size);
-
-		// first line
-		memset(line, 0, HTTP_LINE_LEN);
-		if (thiz->type == HTTP_REQUEST)
-		{
-			tiny_snprintf(line,
-				HTTP_LINE_LEN,
-				"%s %s %s/%d.%d\r\n",
-				thiz->request_line.method,
-				thiz->request_line.uri,
-				thiz->protocol_identifier,
-				thiz->version.major,
-				thiz->version.minor);
-		}
-		else
-		{
-			// RESPONSE
-			tiny_snprintf(line,
-				HTTP_LINE_LEN,
-				"%s/%d.%d %d %s\r\n",
-				thiz->protocol_identifier,
-				thiz->version.major,
-				thiz->version.minor,
-				thiz->status_line.code,
-				thiz->status_line.status);
-		}
-		line[HTTP_LINE_LEN - 1] = 0;
-
-		strncat(thiz->_bytes, line, buffer_size);
-		thiz->_size = (uint32_t)(strlen(thiz->_bytes));
-
-		// headers
-		for (uint32_t i = 0; i < thiz->header.values.list.size; ++i)
-		{
-            TinyMapItem *item = (TinyMapItem *) TinyList_GetAt(&thiz->header.values.list, i);
-
-			memset(line, 0, HTTP_LINE_LEN);
-			tiny_snprintf(line, HTTP_LINE_LEN, "%s: %s\r\n", item->key, (const char *)item->value);
-			line[HTTP_LINE_LEN - 1] = 0;
-
-            strncat(thiz->_bytes, line, buffer_size);
-			thiz->_size = (uint32_t)(strlen(thiz->_bytes));
-		}
-
-		// \r\n
-		memset(line, 0, HTTP_LINE_LEN);
-		tiny_snprintf(line, HTTP_LINE_LEN, "\r\n");
-		line[HTTP_LINE_LEN - 1] = 0;
-
-		strncat(thiz->_bytes, line, buffer_size);
-		thiz->_size = (uint32_t)(strlen(thiz->_bytes));
-	} while (0);
-}
-
-TINY_LOR
 void HttpMessage_SetMethod(HttpMessage *thiz, const char * method)
 {
     RETURN_IF_FAIL(thiz);
@@ -369,42 +243,6 @@ bool HttpMessage_IsContentFull(HttpMessage *thiz)
     RETURN_VAL_IF_FAIL(thiz, false);
 
     return (thiz->content.buf_size == thiz->content.data_size);
-}
-
-TINY_LOR
-static uint32_t HttpMessage_GetLineSize(HttpMessage * thiz)
-{
-    char buf[HTTP_LINE_LEN];
-
-    RETURN_VAL_IF_FAIL(thiz, 0);
-
-    memset(buf, 0, HTTP_LINE_LEN);
-
-    switch (thiz->type)
-    {
-        case HTTP_REQUEST:
-            tiny_snprintf(buf, HTTP_LINE_LEN, "%s %s %s/%d.%d\r\n",
-                          thiz->request_line.method,
-                          thiz->request_line.uri,
-                          thiz->protocol_identifier,
-                          thiz->version.major,
-                          thiz->version.minor);
-            break;
-
-        case HTTP_RESPONSE:
-            tiny_snprintf(buf, HTTP_LINE_LEN, "%s/%d.%d %d %s\r\n",
-                          thiz->protocol_identifier,
-                          thiz->version.major,
-                          thiz->version.minor,
-                          thiz->status_line.code,
-                          thiz->status_line.status);
-            break;
-
-        default:
-            break;
-    }
-
-    return (strlen(buf) + 1);
 }
 
 TINY_LOR

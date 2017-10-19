@@ -325,14 +325,14 @@ IF (TINY_THREAD_ENABLED EQUAL 1)
             ${TinyRandom_Source}
             ${TinyBuffer_Header}
             ${TinyBuffer_Source}
+            ${StringArray_Header}
+            ${StringArray_Source}
             ${Netty_Header}
             ${Netty_Source}
             ${Json_Header}
             ${Json_Source}
             ${HttpClient_Header}
             ${HttpClient_Source}
-            ${StringArray_Header}
-            ${StringArray_Source}
             ${TinyThread_Header}
             ${TinyThread_Source}
             )
@@ -351,14 +351,16 @@ ELSE ()
             ${TinyStringUtil_Source}
             ${TinyRandom_Header}
             ${TinyRandom_Source}
+            ${TinyBuffer_Header}
+            ${TinyBuffer_Source}
+            ${StringArray_Header}
+            ${StringArray_Source}
             ${Netty_Header}
             ${Netty_Source}
             ${Json_Header}
             ${Json_Source}
             ${HttpClient_Header}
             ${HttpClient_Source}
-            ${StringArray_Header}
-            ${StringArray_Source}
             )
 ENDIF ()
 

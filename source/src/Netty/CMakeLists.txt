@@ -67,6 +67,7 @@ SET(Codec_http_Header
         codec-http/HttpContent.h
         codec-http/HttpHeader.h
         codec-http/HttpMessage.h
+        codec-http/HttpMessageEncoder.h
         codec-http/Bytes.h
     )
 
@@ -75,6 +76,7 @@ SET(Codec_http_Source
         codec-http/HttpContent.c
         codec-http/HttpHeader.c
         codec-http/HttpMessage.c
+        codec-http/HttpMessageEncoder.c
         codec-http/Bytes.c
     )
 

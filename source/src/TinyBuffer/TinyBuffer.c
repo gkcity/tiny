@@ -26,6 +26,7 @@ TinyBuffer * TinyBuffer_New(uint32_t size)
         thiz = (TinyBuffer *) tiny_malloc(sizeof(TinyBuffer));
         if (thiz == NULL)
         {
+            LOG_D(TAG, "tiny_malloc FAILED!");
             break;
         }
 
@@ -53,7 +54,7 @@ TinyRet TinyBuffer_Construct(TinyBuffer *thiz, uint32_t size)
 {
     TinyRet ret = TINY_RET_OK;
 
-    LOG_D(TAG, "TinyBuffer_Initialize: %d", size);
+    LOG_D(TAG, "TinyBuffer_Construct: %d", size);
 
     do
     {

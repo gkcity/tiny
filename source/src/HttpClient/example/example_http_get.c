@@ -31,7 +31,7 @@ int main(void)
 
         if (RET_SUCCEEDED(HttpClient_Send(client, exchange)))
         {
-            printf("%d\n", exchange->status);
+            printf("HTTP/1.1 %d\n\n", exchange->status);
 
             if (exchange->status == HTTP_STATUS_OK)
             {

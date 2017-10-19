@@ -137,9 +137,6 @@ typedef struct _HttpMessage
 
     HttpHeader          header;
     HttpContent         content;
-
-    char              * _bytes;
-    uint32_t            _size;
 } HttpMessage;
 
 TINY_API
@@ -165,14 +162,6 @@ void HttpMessage_SetProtocolIdentifier(HttpMessage * thiz, const char *identifie
 TINY_API
 TINY_LOR
 TinyRet HttpMessage_Parse(HttpMessage * thiz, const char *bytes, uint32_t length);
-
-TINY_API
-TINY_LOR
-const char * HttpMessage_GetBytesWithoutContent(HttpMessage *thiz);
-
-TINY_API
-TINY_LOR
-uint32_t HttpMessage_GetBytesSizeWithoutContent(HttpMessage *thiz);
 
 TINY_API
 TINY_LOR

@@ -37,7 +37,7 @@ typedef struct _JsonEncoder
 
 TINY_API
 TINY_LOR
-TinyRet JsonEncoder_Construct(JsonEncoder *thiz, JsonObject *object, bool pretty, uint32_t bufferSize);
+TinyRet JsonEncoder_Construct(JsonEncoder *thiz, JsonObject *object, bool pretty);
 
 TINY_API
 TINY_LOR
@@ -45,7 +45,7 @@ void JsonEncoder_Dispose(JsonEncoder *thiz);
 
 TINY_API
 TINY_LOR
-void JsonEncoder_EncodeObject(JsonEncoder *thiz, JsonOutput output, void *ctx);
+void JsonEncoder_EncodeObject(JsonEncoder *thiz, TinyBuffer *buffer, JsonOutput output, void *ctx);
 
 
 TINY_END_DECLS

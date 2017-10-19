@@ -516,7 +516,7 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         if (handler == NULL)
         {
             LOG_D(TAG, "tiny_send: %d", len);
-            int sent = (int) tiny_send(thiz->fd, data, len, 0);
+            int sent = tiny_send(thiz->fd, data, len, 0);
             if (sent != len)
             {
                 Channel_Close(thiz);

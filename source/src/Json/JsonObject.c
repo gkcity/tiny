@@ -151,7 +151,7 @@ TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
     {
         JsonEncoder encoder;
 
-        ret = JsonEncoder_Construct(&encoder, thiz, pretty, 0);
+        ret = JsonEncoder_Construct(&encoder, thiz, pretty);
         if (RET_FAILED(ret))
         {
             break;
@@ -173,7 +173,7 @@ TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty)
         memset(thiz->string, 0, encoder.size  + 1);
         thiz->size = encoder.size;
 
-        JsonEncoder_EncodeObject(&encoder, _Output, thiz);
+        JsonEncoder_EncodeObject(&encoder, NULL, _Output, thiz);
         JsonEncoder_Dispose(&encoder);
     } while (false);
 

@@ -212,62 +212,41 @@ static void _Count (const char *string, void *ctx)
 }
 
 TINY_LOR
-TinyRet JsonEncoder_Construct(JsonEncoder *thiz, JsonObject *object, bool pretty, uint32_t bufferSize)
+TinyRet JsonEncoder_Construct(JsonEncoder *thiz, JsonObject *object, bool pretty)
 {
-    TinyRet ret = TINY_RET_OK;
+    memset(thiz, 0, sizeof(JsonEncoder));
 
-    do
-    {
-        memset(thiz, 0, sizeof(JsonEncoder));
+    thiz->object = object;
+    thiz->pretty = pretty;
+    thiz->buffer = NULL;
 
-        thiz->object = object;
-        thiz->pretty = pretty;
+    thiz->output = _Count;
+    thiz->ctx = thiz;
+    thiz->size = 0;
+    thiz->out = 0;
 
-        /**
-         * count output size
-         */
-        thiz->buffer = NULL;
-        thiz->output = _Count;
-        thiz->ctx = thiz;
-        thiz->size = 0;
-        thiz->out = 0;
-        _EncodeObject(thiz, object, pretty, 0);
-        thiz->output = NULL;
-        thiz->ctx = NULL;
+    _EncodeObject(thiz, object, pretty, 0);
+    thiz->output = NULL;
+    thiz->ctx = NULL;
 
-        if (bufferSize == 0)
-        {
-            break;
-        }
-
-        thiz->buffer = TinyBuffer_New(bufferSize);
-        if (thiz->buffer == NULL)
-        {
-            ret = TINY_RET_E_NEW;
-            break;
-        }
-    } while (false);
-
-    return ret;
+    return TINY_RET_OK;
 }
 
 TINY_LOR
 void JsonEncoder_Dispose(JsonEncoder *thiz)
 {
-    if (thiz->buffer != NULL) 
-    {
-        TinyBuffer_Delete(thiz->buffer);
-    }
 }
 
 TINY_LOR
-void JsonEncoder_EncodeObject(JsonEncoder *thiz, JsonOutput output, void *ctx)
+void JsonEncoder_EncodeObject(JsonEncoder *thiz, TinyBuffer *buffer, JsonOutput output, void *ctx)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(output);
 
+    thiz->buffer = buffer;
     thiz->output = output;
     thiz->ctx = ctx;
 
+    TinyBuffer_Clear(thiz->buffer);
     _EncodeObject(thiz, thiz->object, thiz->pretty, 0);
 }

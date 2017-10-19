@@ -123,7 +123,7 @@ static int test1(void)
                 break;
             }
 
-            JsonTokenizer_Print(&tokenizer, token, index ++);
+            JsonToken_Print(&tokenizer, token, index ++);
             JsonTokenizer_Pop(&tokenizer);
         }
 

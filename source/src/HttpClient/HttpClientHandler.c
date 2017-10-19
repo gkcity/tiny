@@ -17,6 +17,8 @@
 #include <codec-http/HttpMessage.h>
 #include <channel/SocketChannel.h>
 #include <TinyMapItem.h>
+#include <TinyBuffer.h>
+#include <codec-http/HttpMessageEncoder.h>
 #include "HttpClientHandler.h"
 
 #define TAG "HttpClientHandler"
@@ -102,19 +104,40 @@ static TinyRet HttpClientHandler_Dispose(ChannelHandler *thiz)
     return TINY_RET_OK;
 }
 
+static void _Output (const uint8_t *data, uint32_t size, void *ctx)
+{
+    Channel *channel = (Channel *)ctx;
+    SocketChannel_StartWrite(channel, DATA_RAW, data, size);
+}
+
 TINY_LOR
 static void _channelActive(ChannelHandler *thiz, Channel *channel)
 {
     HttpExchange *exchange = (HttpExchange *)thiz->context;
+    TinyBuffer * buffer = NULL;
     HttpMessage request;
+    HttpMessageEncoder encoder;
 
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(channel);
 
     LOG_D(TAG, "_channelActive");
 
-    if (RET_SUCCEEDED(HttpMessage_Construct(&request)))
+    do
     {
+        buffer = TinyBuffer_New(1024);
+        if (buffer == NULL)
+        {
+            LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
+            break;
+        }
+
+        if (RET_FAILED(HttpMessage_Construct(&request)))
+        {
+            LOG_E(TAG, "HttpMessage_Construct FAILED");
+            break;
+        }
+
         HttpMessage_SetRequest(&request, exchange->method, exchange->uri);
         HttpHeader_Set(&request.header, "Accept", "*/*");
         HttpHeader_SetHost(&request.header, exchange->ip, exchange->port);
@@ -126,15 +149,27 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
             HttpHeader_Set(&request.header, item->key, (const char *)(item->value));
         }
 
-        SocketChannel_StartWrite(channel, DATA_RAW, HttpMessage_GetBytesWithoutContent(&request), HttpMessage_GetBytesSizeWithoutContent(&request));
+        if (RET_FAILED(HttpMessageEncoder_Construct(&encoder, &request)))
+        {
+            LOG_E(TAG, "HttpMessageEncoder_Construct FAILED");
+            break;
+        }
+
+        HttpMessageEncoder_Encode(&encoder, buffer, _Output, channel);
 
         if (exchange->content != NULL)
         {
             SocketChannel_StartWrite(channel, DATA_RAW, exchange->content, exchange->length);
         }
+    } while (false);
 
-        HttpMessage_Dispose(&request);
+    if (buffer != NULL)
+    {
+        TinyBuffer_Delete(buffer);
     }
+
+    HttpMessage_Dispose(&request);
+    HttpMessageEncoder_Dispose(&encoder);
 }
 
 TINY_LOR

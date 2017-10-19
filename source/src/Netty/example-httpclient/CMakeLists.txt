@@ -12,6 +12,7 @@ SET(SRC MyClientHandler.h
 ADD_EXECUTABLE(sample_http_client ${SRC})
 TARGET_LINK_LIBRARIES(sample_http_client
         netty_static
+        tiny_buffer_static
         tiny_string_util_static
         tiny_container_static
         tiny_log_static

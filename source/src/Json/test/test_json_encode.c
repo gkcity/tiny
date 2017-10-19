@@ -231,17 +231,20 @@ static int test6(void)
     RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
 
     JsonObject_Encode(root, true);
-    printf("json encode ->\n%s\n", root->string);
+    printf("json encode (%d) ->\n%s\n", root->size, root->string);
 
     JsonObject_Encode(root, false);
-    printf("json encode ->\n%s\n", root->string);
+    printf("json encode (%d) ->\n%s\n", root->size, root->string);
+
+    TinyBuffer *buffer = TinyBuffer_New(20);
+    RETURN_VAL_IF_FAIL(buffer != NULL, -1);
 
     JsonEncoder encoder;
-    ret = JsonEncoder_Construct(&encoder, root, true, 0);
+    ret = JsonEncoder_Construct(&encoder, root, true);
     RETURN_VAL_IF_FAIL(ret == TINY_RET_OK, -1);
 
     printf("\nencode petty (%d):\n", encoder.size);
-    JsonEncoder_EncodeObject(&encoder, _Output, NULL);
+    JsonEncoder_EncodeObject(&encoder, buffer, _Output, NULL);
 
     JsonObject_Delete(root);
 
