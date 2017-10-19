@@ -88,6 +88,7 @@ static void _Encode(HttpMessageEncoder *thiz, HttpMessage *message)
         _Append(thiz, (uint8_t *)code, strlen(code));
         _Append(thiz, (uint8_t *)" ", 1);
         _Append(thiz, (uint8_t *)message->status_line.status, strlen(message->status_line.status));
+        _Append(thiz, (uint8_t *)"\r\n", 2);
     }
 
     for (uint32_t i = 0; i < message->header.values.list.size; ++i)
