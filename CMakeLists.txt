@@ -180,9 +180,10 @@ SET(Netty_Header
         ${SOURCE_ROOT}/Netty/channel/multicast/MulticastChannel.h
         ${SOURCE_ROOT}/Netty/channel/multicast/MulticastChannelContext.h
         ${SOURCE_ROOT}/Netty/codec-http/HttpMessageCodec.h
-        ${SOURCE_ROOT}/Netty/codec-http/HttpContent.h
-        ${SOURCE_ROOT}/Netty/codec-http/HttpHeader.h
+        ${SOURCE_ROOT}/Netty/codec-http/HttpMessageEncoder.h
         ${SOURCE_ROOT}/Netty/codec-http/HttpMessage.h
+        ${SOURCE_ROOT}/Netty/codec-http/HttpHeader.h
+        ${SOURCE_ROOT}/Netty/codec-http/HttpContent.h
         ${SOURCE_ROOT}/Netty/codec-http/Bytes.h
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.h
         ${SOURCE_ROOT}/Netty/bootstrap/LoopbackChannelHandler.h
@@ -201,6 +202,7 @@ SET(Netty_Source
         ${SOURCE_ROOT}/Netty/channel/multicast/MulticastChannel.c
         ${SOURCE_ROOT}/Netty/channel/multicast/MulticastChannelContext.c
         ${SOURCE_ROOT}/Netty/codec-http/HttpMessageCodec.c
+        ${SOURCE_ROOT}/Netty/codec-http/HttpMessageEncoder.c
         ${SOURCE_ROOT}/Netty/codec-http/HttpContent.c
         ${SOURCE_ROOT}/Netty/codec-http/HttpHeader.c
         ${SOURCE_ROOT}/Netty/codec-http/HttpMessage.c
