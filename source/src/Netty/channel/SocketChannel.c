@@ -64,6 +64,9 @@ void SocketChannel_Delete(Channel *thiz)
 TINY_LOR
 void SocketChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer)
 {
+    RETURN_IF_FAIL(thiz);
+    RETURN_IF_FAIL(selector);
+
     if (Channel_IsActive(thiz))
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
@@ -83,13 +86,13 @@ void SocketChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    LOG_D(TAG, "SocketChannel_OnActive: %s, handlers: %d", thiz->id, thiz->handlers.size);
+    LOG_I(TAG, "SocketChannel_OnActive: %s, handlers: %d", thiz->id, thiz->handlers.size);
 
     for (uint32_t i = 0; i < thiz->handlers.size; ++i)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
 
-        LOG_D(TAG, "ChannelHandler: %s", handler->name);
+        LOG_I(TAG, "ChannelHandler: %s", handler->name);
 
         if (handler->channelActive != NULL)
         {
@@ -515,10 +518,11 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter);
         if (handler == NULL)
         {
-            LOG_D(TAG, "tiny_send: %d", len);
             int sent = tiny_send(thiz->fd, data, len, 0);
             if (sent != len)
             {
+                // Found a bug on esp8266 !!!
+                LOG_E(TAG, "tiny_send: %d, sent:%d", len, sent);
                 Channel_Close(thiz);
             }
 

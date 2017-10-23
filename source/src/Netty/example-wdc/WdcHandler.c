@@ -14,9 +14,9 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include <codec-http/HttpMessage.h>
-#include <channel/SocketChannel.h>
 #include <TinyBuffer.h>
+#include <channel/SocketChannel.h>
+#include <codec-http/HttpMessage.h>
 #include <codec-http/HttpMessageEncoder.h>
 #include "WdcHandler.h"
 

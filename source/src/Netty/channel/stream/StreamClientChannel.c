@@ -104,7 +104,7 @@ static void StreamClientChannel_OnActive(Channel *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
-    LOG_D(TAG, "StreamClientChannel_OnActive");
+    LOG_I(TAG, "StreamClientChannel_OnActive");
 
     if (thiz->context != NULL)
     {
@@ -196,6 +196,8 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
             LOG_E(TAG, "SocketChannel_Open failed: %d", TINY_RET_CODE(ret));
             break;
         }
+
+        LOG_I(TAG, "SocketChannel_Open: fd = %d", thiz->fd);
 
         ret = SocketChannel_SetBlock(thiz, false);
         if (RET_FAILED(ret))

@@ -191,6 +191,7 @@ SET(Netty_Header
 
 SET(Netty_Source
         ${SOURCE_ROOT}/Netty/selector/Selector.c
+        ${SOURCE_ROOT}/Netty/channel/Channel.c
         ${SOURCE_ROOT}/Netty/channel/ChannelAddress.c
         ${SOURCE_ROOT}/Netty/channel/ChannelIdles.c
         ${SOURCE_ROOT}/Netty/channel/ChannelIdleStateHandler.c

@@ -94,6 +94,8 @@ static void HttpExchange_Dispose(HttpExchange *thiz)
     {
         tiny_free(thiz->content);
     }
+
+    HttpHeader_Dispose(&thiz->request);
 }
 
 TINY_LOR

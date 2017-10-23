@@ -44,7 +44,7 @@ TinyRet Bootstrap_InitializeLoopbackChannel(Bootstrap *thiz)
     }
 
     SocketChannel_Open(loopback, TYPE_UDP);
-    SocketChannel_Bind(loopback, 5454, false);
+    SocketChannel_Bind(loopback, 0, false);
     SocketChannel_SetBlock(loopback, false);
     SocketChannel_AddLast(loopback, LoopbackChannelHandler(&thiz->channels));
 
@@ -205,7 +205,7 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
         Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
         if (Channel_IsClosed(channel))
         {
-            LOG_D(TAG, "remove channel[%d]: %s, fd: %d", i, channel->id, channel->fd);
+            LOG_I(TAG, "remove channel[%d]: %s, fd: %d", i, channel->id, channel->fd);
             TinyList_RemoveAt(&thiz->channels, i);
         }
     }
@@ -213,9 +213,9 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
     LOG_I(TAG, "current channels: %d", thiz->channels.size);
 
 #ifndef NETTY_SHUTDOWN_DISABLED
-    // BUG ???
     if (thiz->channels.size == 1)
     {
+        // BUG ???
         LOG_E(TAG, "remove loopback channel");
         Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, 0);
         Channel_Close(channel);
@@ -256,11 +256,16 @@ static TinyRet PostSelect(Selector *selector, void *ctx)
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
         Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
+
+        LOG_I(TAG, "Channel: %s, fd: %d", channel->id, channel->fd);
+
         if (Channel_IsActive(channel))
         {
+            LOG_I(TAG, "Channel_IsActive");
+
             if (RET_FAILED(channel->_onReadWrite(channel, selector)))
             {
-                LOG_D(TAG, "channel [%d] read or write failed", channel->fd);
+                LOG_I(TAG, "channel [%d] read or write failed", channel->fd);
                 channel->_onInactive(channel);
                 Channel_Close(channel);
                 continue;

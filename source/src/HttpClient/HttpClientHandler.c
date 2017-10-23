@@ -14,14 +14,15 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include <codec-http/HttpMessage.h>
-#include <channel/SocketChannel.h>
 #include <TinyMapItem.h>
 #include <TinyBuffer.h>
+#include <channel/SocketChannel.h>
+#include <codec-http/HttpMessage.h>
 #include <codec-http/HttpMessageEncoder.h>
 #include "HttpClientHandler.h"
 
-#define TAG "HttpClientHandler"
+#define TAG                 "HttpClientHandler"
+#define HTTP_BUFFER_SIZE    512
 
 TINY_LOR
 static TinyRet HttpClientHandler_Construct(ChannelHandler *thiz, HttpExchange *context);
@@ -121,14 +122,14 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(channel);
 
-    LOG_D(TAG, "_channelActive");
+    LOG_I(TAG, "_channelActive");
 
     do
     {
-        buffer = TinyBuffer_New(1024);
+        buffer = TinyBuffer_New(HTTP_BUFFER_SIZE);
         if (buffer == NULL)
         {
-            LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
+            LOG_E(TAG, "TinyBuffer_New FAILED: %d", HTTP_BUFFER_SIZE);
             break;
         }
 
@@ -178,7 +179,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     HttpMessage *response = (HttpMessage *)data;
     HttpExchange *exchange = (HttpExchange *)thiz->context;
 
-    LOG_E(TAG, "_channelRead: %d %s", response->status_line.code, response->status_line.status);
+    LOG_I(TAG, "_channelRead: %d %s", response->status_line.code, response->status_line.status);
 
     exchange->status = response->status_line.code;
     if (exchange->status == HTTP_STATUS_OK)

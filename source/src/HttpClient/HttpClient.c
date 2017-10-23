@@ -10,11 +10,11 @@
  *
  */
 #include <tiny_log.h>
+#include <tiny_malloc.h>
 #include <channel/stream/StreamClientChannel.h>
 #include <channel/SocketChannel.h>
-#include <codec-http/HttpMessageCodec.h>
 #include <channel/ChannelIdleStateHandler.h>
-#include <tiny_malloc.h>
+#include <codec-http/HttpMessageCodec.h>
 #include "HttpClient.h"
 #include "HttpClientHandler.h"
 

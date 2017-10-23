@@ -36,6 +36,7 @@ SET(Channel_Header
         )
 
 SET(Channel_Source
+        channel/Channel.c
         channel/ChannelAddress.c
         channel/ChannelIdles.c
         channel/ChannelIdleStateHandler.c
