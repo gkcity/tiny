@@ -17,8 +17,8 @@
 
 
 #if LWIP_TIMEVAL_PRIVATE
-    #include <lwip/lwip/sockets.h>
-    #include <lwip/apps/time.h>
+    #include <lwip/sockets.h>
+    #include <apps/time.h>
 #else
     #include <sys/time.h>
 #endif

@@ -16,18 +16,13 @@
 #ifndef __TINY_LOR_ESP32_H__
 #define __TINY_LOR_ESP32_H__
 
+
 /**
- * TINY_LOR = Load On Runtime
+ * copy from <espressif/c_types.h>
  */
 
-#ifndef ICACHE_FLASH
-    #define ICACHE_FLASH
-#endif
-
-#include <espressif/c_types.h>
-#define TINY_LOR            ICACHE_FLASH_ATTR
-#define TINY_LOR_VAR        ICACHE_RODATA_ATTR
-
+#define TINY_LOR            __attribute__((section(".irom0.text")))
+#define TINY_LOR_VAR        __attribute__((section(".irom.text")))
 
 
 #endif /* __TINY_LOR_ESP32_H__ */

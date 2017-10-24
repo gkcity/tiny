@@ -25,8 +25,10 @@
     #include <sys/time.h>
 #endif
 
-#include <lwip/lwip/sockets.h>
-
+//#ifndef PORTABLE_H
+//#define PORTABLE_H
+//#include <lwip/sockets.h>
+#include "lwip/sockets.h"
 
 TINY_BEGIN_DECLS
 
@@ -71,11 +73,13 @@ int tiny_socket_reuse_address(int fd);
 TINY_LOR
 uint16_t tiny_socket_get_port(int fd);
 
+#if 0
 #define inet_ntop(af,src,dst,size) \
     (((af) == AF_INET) ? ipaddr_ntoa_r(((struct ip_addr *)src),(dst),(size)) : NULL)
 
 #define inet_pton(af,src,dst) \
     (((af) == AF_INET) ? inet_aton((src),(dst)) : 0)
+#endif
 
 
 TINY_END_DECLS

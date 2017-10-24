@@ -17,7 +17,8 @@
 #define __TINY_MALLOC_ESP32_H__
 
 #include "tiny_base.h"
-#include <espressif/esp_libc.h>
+
+//#include <espressif/esp_libc.h>
 
 
 void tiny_print_mem_info(const char *tag, const char *function);

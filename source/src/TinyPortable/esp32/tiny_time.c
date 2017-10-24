@@ -14,13 +14,18 @@
 
 #include "tiny_time.h"
 #include <sys/unistd.h>
-#include <espressif/esp_system.h>
+#include <esp_system.h>
 #include <tiny_snprintf.h>
 
 TINY_LOR
 uint64_t tiny_current_microsecond(void)
 {
-    return system_get_time();
+    struct timeval tv;
+
+    memset(&tv, 0, sizeof(struct timeval));
+    tiny_gettimeofday(&tv, NULL);
+
+    return (uint64_t)(tv.tv_sec * 1000 * 1000 + tv.tv_usec);
 }
 
 TINY_LOR
