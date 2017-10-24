@@ -7,13 +7,12 @@
 
 SET(Header
         tiny_log.h
-        tiny_log_print.h
-        tiny_log_binary.h
+        tiny_print_binary.h
     )
 
 SET(Source
-        tiny_log_print.c
-        tiny_log_binary.c
+        tiny_log.c
+        tiny_print_binary.c
     )
 
 SET(SRC

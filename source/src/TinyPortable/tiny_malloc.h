@@ -16,24 +16,20 @@
 #ifndef __TINY_MALLOC_H__
 #define __TINY_MALLOC_H__
 
-#include <tiny_typedef.h>
-#include "tiny_base.h"
-#include "tiny_api.h"
 
-TINY_BEGIN_DECLS
-
-
-#ifdef ESP
-    #include "tiny_malloc_esp.h"
+#if defined(__ANDROID__)
+    #include "linux/tiny_malloc.h"
+#elif defined(ESP32)
+    #include "esp32/tiny_malloc.h"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_malloc.h"
+#elif defined(__LINUX__)
+    #include "linux/tiny_malloc.h"
+#elif defined(__WIN32__)
+    #include "windows/tiny_malloc.h"
 #else
-    #ifdef WIN32
-        #include "tiny_malloc_windows.h"
-    #else
-        #include "tiny_malloc_linux.h"
-    #endif
+    error "tiny_malloc not implemented!!!"
 #endif
 
-
-TINY_END_DECLS
 
 #endif /* __TINY_MALLOC_H__ */

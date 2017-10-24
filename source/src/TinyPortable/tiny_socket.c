@@ -12,12 +12,16 @@
  *      set expandtab
  */
 
-#ifdef LWIP_SOCKET
-    #include "tiny_socket_lwip.c"
+#if defined(__ANDROID__)
+    #include "linux/tiny_socket.c"
+#elif defined(ESP32)
+    #include "esp32/tiny_socket.c"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_socket.c"
+#elif defined(__LINUX__)
+    #include "linux/tiny_socket.c"
+#elif defined(__WIN32__)
+    #include "windows/tiny_socket.c"
 #else
-    #ifdef WIN32
-        #include "tiny_socket_windows.c"
-    #else
-        #include "tiny_socket_linux.c"
-    #endif
+    error "tiny_socket not implemented!!!"
 #endif

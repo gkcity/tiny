@@ -19,26 +19,21 @@
 #include <tiny_lor.h>
 #include <tiny_api.h>
 
-#ifdef ESP
-    #if LWIP_TIMEVAL_PRIVATE
-        #include <lwip/lwip/sockets.h>
-        #include <lwip/apps/time.h>
-    #else
-        #include <sys/time.h>
-    #endif
+#if defined(__ANDROID__)
+    #include "linux/tiny_time.h"
+#elif defined(ESP32)
+    #include "esp32/tiny_time.h"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_time.h"
+#elif defined(__LINUX__)
+    #include "linux/tiny_time.h"
+#elif defined(__WIN32__)
+    #include "windows/tiny_time.h"
 #else
-    #ifdef WIN32
-	    #include <winsock2.h>
-		#include <windows.h>
-        #include <time.h>
-    #else
-        #include <time.h>
-        #include <sys/time.h>
-    #endif
+    error "tiny_time not implemented!!!"
 #endif
 
 TINY_BEGIN_DECLS
-
 
 TINY_API
 TINY_LOR
@@ -50,7 +45,7 @@ uint64_t tiny_current_microsecond(void);
 
 TINY_API
 TINY_LOR
-int tiny_getstrtime(char buf[], int len);
+int tiny_getstrtime(char buf[], size_t len);
 
 
 TINY_END_DECLS

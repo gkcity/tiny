@@ -20,16 +20,18 @@
  * TINY_LOR = Load On Runtime
  */
 
-#ifdef ESP
-    #ifndef ICACHE_FLASH
-        #define ICACHE_FLASH
-    #endif
-    #include <espressif/c_types.h>
-    #define TINY_LOR            ICACHE_FLASH_ATTR
-    #define TINY_LOR_VAR        ICACHE_RODATA_ATTR
+#if defined(__ANDROID__)
+    #include "linux/tiny_lor.h"
+#elif defined(ESP32)
+    #include "esp32/tiny_lor.h"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_lor.h"
+#elif defined(__LINUX__)
+    #include "linux/tiny_lor.h"
+#elif defined(__WIN32__)
+    #include "windows/tiny_lor.h"
 #else
-    #define TINY_LOR
-    #define TINY_LOR_VAR
+    error "tiny_lor not implemented!!!"
 #endif
 
 

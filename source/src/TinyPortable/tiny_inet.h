@@ -16,16 +16,18 @@
 #define __TINY_INET_H__
 
 
-#ifdef LWIP_SOCKET
-    #include <lwip/inet.h>
+#if defined(__ANDROID__)
+    #include "linux/tiny_inet.h"
+#elif defined(ESP32)
+    #include "esp32/tiny_inet.h"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_inet.h"
+#elif defined(__LINUX__)
+    #include "linux/tiny_inet.h"
+#elif defined(__WIN32__)
+    #include "windows/tiny_inet.h"
 #else
-	#ifdef WIN32
-        #include <winsock2.h>
-        #include <Windows.h>
-    #else
-        #include <netinet/in.h>
-        #include <arpa/inet.h>
-	#endif
+    error "tiny_inet not implemented!!!"
 #endif
 
 

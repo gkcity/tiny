@@ -62,19 +62,21 @@ SET(TinyBase_Source
 #---------------------------
 
 SET(TinyPortable_Header
+        ${SOURCE_ROOT}/TinyPortable/tiny_inet.h
+        ${SOURCE_ROOT}/TinyPortable/tiny_inline.h
         ${SOURCE_ROOT}/TinyPortable/tiny_lor.h
         ${SOURCE_ROOT}/TinyPortable/tiny_malloc.h
-        ${SOURCE_ROOT}/TinyPortable/tiny_strdup.h
         ${SOURCE_ROOT}/TinyPortable/tiny_snprintf.h
         ${SOURCE_ROOT}/TinyPortable/tiny_socket.h
-        ${SOURCE_ROOT}/TinyPortable/tiny_inline.h
+        ${SOURCE_ROOT}/TinyPortable/tiny_strdup.h
         ${SOURCE_ROOT}/TinyPortable/tiny_time.h
         )
 
 SET(TinyPortable_Source
+        ${SOURCE_ROOT}/TinyPortable/tiny_malloc.c
+        ${SOURCE_ROOT}/TinyPortable/tiny_socket.c
         ${SOURCE_ROOT}/TinyPortable/tiny_strdup.c
         ${SOURCE_ROOT}/TinyPortable/tiny_time.c
-        ${SOURCE_ROOT}/TinyPortable/tiny_socket.c
         )
 
 #---------------------------
@@ -102,13 +104,12 @@ SET(TinyContainer_Source
 
 SET(TinyLog_Header
         ${SOURCE_ROOT}/TinyLog/tiny_log.h
-        ${SOURCE_ROOT}/TinyLog/tiny_log_print.h
-        ${SOURCE_ROOT}/TinyLog/tiny_log_binary.h
+        ${SOURCE_ROOT}/TinyLog/tiny_print_binary.h
         )
 
 SET(TinyLog_Source
-        ${SOURCE_ROOT}/TinyLog/tiny_log_print.c
-        ${SOURCE_ROOT}/TinyLog/tiny_log_binary.c
+        ${SOURCE_ROOT}/TinyLog/tiny_log.c
+        ${SOURCE_ROOT}/TinyLog/tiny_print_binary.c
         )
 
 #---------------------------

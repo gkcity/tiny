@@ -13,51 +13,16 @@
  *
  */
 
-#include "tiny_malloc.h"
-
-#ifdef TINY_UMM
-#include "umm_malloc.h"
-
-TINY_LOR
-void * tiny_malloc(uint32_t size)
-{
-    return umm_malloc(size);
-}
-
-TINY_LOR
-void * tiny_realloc(void *p, uint32_t size)
-{
-    return umm_realloc(p, size);
-}
-
-TINY_LOR
-void tiny_free(void *p)
-{
-    umm_free(p);
-}
+#if defined(__ANDROID__)
+    #include "linux/tiny_malloc.c"
+#elif defined(ESP32)
+    #include "esp32/tiny_malloc.c"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_malloc.c"
+#elif defined(__LINUX__)
+    #include "linux/tiny_malloc.c"
+#elif defined(__WIN32__)
+    #include "windows/tiny_malloc.c"
 #else
-
-TINY_LOR
-void * tiny_malloc(uint32_t size)
-{
-    return malloc(size);
-}
-
-TINY_LOR
-void * tiny_calloc(uint32_t n, size_t size)
-{
-    return calloc(n, size);
-}
-
-TINY_LOR
-void * tiny_realloc(void *p, uint32_t size)
-{
-    return realloc(p, size);
-}
-
-TINY_LOR
-void tiny_free(void *p)
-{
-    free(p);
-}
+    error "tiny_malloc not implemented!!!"
 #endif

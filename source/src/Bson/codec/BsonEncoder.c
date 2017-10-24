@@ -13,7 +13,7 @@
 #include <TinyMapItem.h>
 #include <tiny_buffer_append.h>
 #include <tiny_log.h>
-#include <tiny_log_binary.h>
+#include <tiny_print_binary.h>
 #include "BsonEncoder.h"
 
 #define TAG     "BsonEncoder"

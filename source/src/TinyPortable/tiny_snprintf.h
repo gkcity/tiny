@@ -15,14 +15,19 @@
 #ifndef __TINY_SNPRINTF_H__
 #define __TINY_SNPRINTF_H__
 
-#ifdef ESP
-    #include "tiny_snprintf_esp.h"
+
+#if defined(__ANDROID__)
+    #include "linux/tiny_snprintf.h"
+#elif defined(ESP32)
+    #include "esp32/tiny_snprintf.h"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_snprintf.h"
+#elif defined(__LINUX__)
+    #include "linux/tiny_snprintf.h"
+#elif defined(__WIN32__)
+    #include "windows/tiny_snprintf.h"
 #else
-    #ifdef WIN32
-        #include "tiny_snprintf_windows.h"
-    #else
-        #include "tiny_snprintf_linux.h"
-    #endif
+    error "tiny_snprintf not implemented!!!"
 #endif
 
 

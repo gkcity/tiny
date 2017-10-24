@@ -5,9 +5,9 @@
 #-----------------------------------------------------------------------------
 
 SET(Header
-        tiny_lor.h
         tiny_inet.h
         tiny_malloc.h
+        tiny_lor.h
         tiny_strdup.h
         tiny_snprintf.h
         tiny_socket.h
@@ -16,6 +16,7 @@ SET(Header
         )
 
 SET(Source
+        tiny_malloc.c
         tiny_strdup.c
         tiny_time.c
         tiny_socket.c

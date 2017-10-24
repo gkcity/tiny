@@ -16,15 +16,20 @@
 #define __TINY_SOCKET_H__
 
 
-#ifdef LWIP_SOCKET
-    #include "tiny_socket_lwip.h"
+#if defined(__ANDROID__)
+    #include "linux/tiny_socket.h"
+#elif defined(ESP32)
+    #include "esp32/tiny_socket.h"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_socket.h"
+#elif defined(__LINUX__)
+    #include "linux/tiny_socket.h"
+#elif defined(__WIN32__)
+    #include "windows/tiny_socket.h"
 #else
-    #ifdef WIN32
-        #include "tiny_socket_windows.h"
-    #else
-        #include "tiny_socket_linux.h"
-    #endif
+    error "tiny_socket not implemented!!!"
 #endif
+
 
 
 #endif /* __TINY_SOCKET_H__ */

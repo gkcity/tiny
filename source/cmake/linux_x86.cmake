@@ -18,6 +18,7 @@ ADD_DEFINITIONS(-fPIC)
 ADD_DEFINITIONS(-std=c99)
 ADD_DEFINITIONS(-g)
 ADD_DEFINITIONS(-D_GNU_SOURCE)
+ADD_DEFINITIONS(-D__LINUX__)
 
 #----------------------------------------------------------------------------
 #

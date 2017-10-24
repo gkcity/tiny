@@ -16,14 +16,18 @@
 #define __TINY_INLINE_H__
 
 
-#ifdef ESP
-    #include "tiny_inline_esp.h"
+#if defined(__ANDROID__)
+    #include "linux/tiny_inline.h"
+#elif defined(ESP32)
+    #include "esp32/tiny_inline.h"
+#elif defined(ESP8266)
+    #include "esp8266/tiny_inline.h"
+#elif defined(__LINUX__)
+    #include "linux/tiny_inline.h"
+#elif defined(__WIN32__)
+    #include "windows/tiny_inline.h"
 #else
-    #ifdef WIN32
-        #include "tiny_inline_windows.h"
-    #else
-        #include "tiny_inline_linux.h"
-    #endif
+    error "tiny_inline not implemented!!!"
 #endif
 
 
