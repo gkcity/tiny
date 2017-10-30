@@ -10,6 +10,7 @@ SET(CMAKE_C_COMPILER /opt/xtensa-lx106-elf/bin/xtensa-lx106-elf-gcc)
 SET(CMAKE_CXX_COMPILER /opt/xtensa-lx106-elf/bin/xtensa-lx106-elf-g++)
 SET(CMAKE_RANLIB /opt/xtensa-lx106-elf/bin/xtensa-lx106-elf-ranlib)
 SET(CMAKE_AR /opt/xtensa-lx106-elf/bin/xtensa-lx106-elf-ar)
+SET(CMAKE_STRIP /opt/xtensa-lx106-elf/bin/xtensa-lx106-elf-strip)
 SET(CMAKE_C_FLAGS "-nostdlib -Wall -Werror -Os" CACHE STRING "" FORCE)
 
 ADD_DEFINITIONS(-DLWIP_SOCKET)

@@ -12,7 +12,7 @@ SET(CMAKE_CXX_COMPILER /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-g++)
 SET(CMAKE_ASM_COMPILER /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc)
 SET(CMAKE_RANLIB /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-ranlib)
 SET(CMAKE_AR /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-ar)
-set(CMAKE_STRIP /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-strip)
+SET(CMAKE_STRIP /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-strip)
 SET(CMAKE_C_FLAGS "-nostdlib -Wall -Werror -Os" CACHE STRING "" FORCE)
 
 ADD_DEFINITIONS(-DLWIP_SOCKET)
