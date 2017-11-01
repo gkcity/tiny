@@ -14,6 +14,7 @@
 
 #include "tiny_socket.h"
 #include "tiny_log.h"
+#include "../../TinyPorting/tiny_sleep.h"
 
 #define TAG		"tiny_socket"
 
@@ -124,27 +125,57 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
 TINY_LOR
 bool tiny_socket_has_error(int fd)
 {
-#if 0
+    bool error = false;
+
+    do
+    {
+        int error = 0;
+        socklen_t len = sizeof(error);
+
+        if (tiny_getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+        {
+            LOG_E(TAG, "tiny_socket_has_error -> tiny_getsockopt failed.");
+            error = true;
+            break;
+        }
+
+        if (error == 0)
+        {
+            break;
+        }
+
+        LOG_E(TAG, "tiny_socket_has_error: %d", error);
+
+        if (error == EAGAIN)
+        {
+            LOG_I(TAG, "ignore error: %d (EAGAIN)", error);
+            tiny_sleep(10 * 3);
+            break;
+        }
+
+        error = true;
+    } while (false);
+
+    return error;
+}
+
+TINY_LOR
+bool tiny_socket_error_again(int fd)
+{
     int error = 0;
     socklen_t len = sizeof(error);
 
-    LOG_D(TAG, "tiny_socket_has_error ?");
-
-    // BUG!!! ESP8266 will be crashed
-    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+    if (tiny_getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
     {
-        LOG_E(TAG, "tiny_socket_has_error -> getsockopt failed.");
-        return true;
+        LOG_E(TAG, "tiny_socket_has_error -> tiny_getsockopt failed.");
+        return false;
     }
 
     if (error != 0)
     {
         LOG_E(TAG, "tiny_socket_has_error: %d", error);
-        return true;
+        return (error == EAGAIN);
     }
-#endif
-
-    LOG_D(TAG, "tiny_socket_has_error: no");
 
     return false;
 }

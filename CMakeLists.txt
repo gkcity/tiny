@@ -11,6 +11,7 @@ SET(PROJ_NAME "Tiny")
 SET(SOURCE_ROOT ${PROJECT_SOURCE_DIR}/source/src)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyBase)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyPortable)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyPorting)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyContainer)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
@@ -77,6 +78,15 @@ SET(TinyPortable_Source
         ${SOURCE_ROOT}/TinyPortable/tiny_socket.c
         ${SOURCE_ROOT}/TinyPortable/tiny_strdup.c
         ${SOURCE_ROOT}/TinyPortable/tiny_time.c
+        )
+
+#---------------------------
+# TinyPorting
+#---------------------------
+
+SET(TinyPorting_Header
+        ${SOURCE_ROOT}/TinyPorting/tiny_sleep.h
+        ${SOURCE_ROOT}/TinyPorting/tiny_print_mem.h
         )
 
 #---------------------------
@@ -319,6 +329,7 @@ IF (TINY_THREAD_ENABLED EQUAL 1)
             ${TinyBase_Source}
             ${TinyPortable_Header}
             ${TinyPortable_Source}
+            ${TinyPorting_Header}
             ${TinyContainer_Header}
             ${TinyContainer_Source}
             ${TinyLog_Header}
@@ -347,6 +358,7 @@ ELSE ()
             ${TinyBase_Source}
             ${TinyPortable_Header}
             ${TinyPortable_Source}
+            ${TinyPorting_Header}
             ${TinyContainer_Header}
             ${TinyContainer_Source}
             ${TinyLog_Header}

@@ -13,6 +13,7 @@ SET(Header
         tiny_socket.h
         tiny_inline.h
         tiny_time.h
+        ../TinyPorting/tiny_sleep.h
         )
 
 SET(Source

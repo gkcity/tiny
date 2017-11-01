@@ -159,27 +159,34 @@ TinyRet SocketChannel_GetTimeout(Channel *thiz, ChannelTimer *timer, void *ctx)
 TINY_LOR
 TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector)
 {
-    char buf[CHANNEL_RECV_BUF_SIZE];
-    int ret = 0;
+    TinyRet ret = TINY_RET_OK;
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
 
-    LOG_MEM(TAG, "OnRead");
+    LOG_I(TAG, "SocketChannel_OnReadWrite");
 
-    if (! Selector_IsReadable(selector, thiz->fd))
+    if (Selector_IsReadable(selector, thiz->fd))
     {
-        return TINY_RET_OK;
+        char buf[CHANNEL_RECV_BUF_SIZE];
+        int count = 0;
+
+        memset(buf, 0, CHANNEL_RECV_BUF_SIZE);
+        count = (int) tiny_recv(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0);
+        if (count > 0)
+        {
+            SocketChannel_StartRead(thiz, DATA_RAW, buf, (uint32_t) ret);
+        }
+        else
+        {
+            if (tiny_socket_has_error(thiz->fd))
+            {
+                ret = TINY_RET_E_SOCKET_READ;
+            }
+        }
     }
 
-    memset(buf, 0, CHANNEL_RECV_BUF_SIZE);
-
-    ret = (int) tiny_recv(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0);
-    if (ret > 0)
-    {
-        SocketChannel_StartRead(thiz, DATA_RAW, buf, (uint32_t) ret);
-    }
-
-    return (ret > 0 ) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
+    return ret;
 }
 
 TINY_LOR
@@ -518,12 +525,25 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter);
         if (handler == NULL)
         {
-            int sent = tiny_send(thiz->fd, data, len, 0);
-            if (sent != len)
+            for (int i = 0; i < 10; ++i)
             {
+                int sent = (int) tiny_send(thiz->fd, data, len, 0);
+                if (sent == len)
+                {
+                    break;
+                }
+
                 // Found a bug on esp8266 !!!
                 LOG_E(TAG, "tiny_send: %d, sent:%d", len, sent);
-                Channel_Close(thiz);
+
+                if (sent == -1)
+                {
+                    if (tiny_socket_has_error(thiz->fd))
+                    {
+                        Channel_Close(thiz);
+                        break;
+                    }
+                }
             }
 
             break;

@@ -15,12 +15,6 @@
 
 #include "sample_http_get.h"
 
-void tiny_print_mem_info(const char *tag, const char *function)
-{
-    printf("[%s/%s] stack = %d, free heap size: %d\n", tag, function,
-      uxTaskGetStackHighWaterMark(NULL), system_get_free_heap_size());
-}
-
 #define URI "/homekit/instance/device?type=urn:homtkit-spec:device:lightbulb:00000000:arrizo-v1"
 
 /**
@@ -38,12 +32,14 @@ void tiny_print_mem_info(const char *tag, const char *function)
  */
 #define CHUNMI_COOKER "/instance/device?type=urn:miot-spec:device:cooker:00000A08:chunmi"
 
+#define TEST_URI "/homekit/instance/devices"
+
 void sample_http_get(void *pvParameters)
 {
     HttpClient *client = HttpClient_New();
 
     //HttpExchange *exchange = HttpExchange_New("47.93.60.147", 8080, "GET", CHUNMI_COOKER, 5, NULL, 0);
-    HttpExchange *exchange = HttpExchange_New("127.0.0.1", 9000, "GET", URI, 5, NULL, 0);
+    HttpExchange *exchange = HttpExchange_New("10.0.1.9", 9000, "GET", URI, 30, NULL, 0);
 
     if (RET_SUCCEEDED(HttpClient_Send(client, exchange)))
     {

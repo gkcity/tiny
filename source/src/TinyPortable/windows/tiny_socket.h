@@ -31,6 +31,7 @@ TINY_BEGIN_DECLS
 #define tiny_socket_close           closesocket
 #define tiny_socket                 socket
 #define tiny_setsockopt             setsockopt
+#define tiny_getsockopt             getsockopt
 #define tiny_accept                 accept
 #define tiny_recvfrom               recvfrom
 #define tiny_sendto                 sendto

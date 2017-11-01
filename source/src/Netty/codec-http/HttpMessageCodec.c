@@ -15,6 +15,7 @@
 #include <channel/SocketChannel.h>
 #include <tiny_log.h>
 #include <tiny_malloc.h>
+#include <tiny_print_mem.h>
 #include "HttpMessageCodec.h"
 #include "HttpMessage.h"
 

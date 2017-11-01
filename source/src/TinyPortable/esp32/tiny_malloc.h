@@ -18,17 +18,10 @@
 
 #include "tiny_base.h"
 
-//#include <espressif/esp_libc.h>
-
-
-void tiny_print_mem_info(const char *tag, const char *function);
-
 #define tiny_malloc             malloc
 #define tiny_calloc             calloc
 #define tiny_realloc            realloc
 #define tiny_free               free
-#define LOG_MEM(T,F)            tiny_print_mem_info(T,F)
-
 
 
 #endif /* __TINY_MALLOC_ESP32_H__ */

@@ -41,12 +41,12 @@ TINY_BEGIN_DECLS
 #define tiny_socket_close           close
 #define tiny_socket                 socket
 #define tiny_setsockopt             setsockopt
+#define tiny_getsockopt             getsockopt
 #define tiny_bind                   bind
 #define tiny_listen                 listen
 #define tiny_accept                 accept
 #define tiny_recv                   recv
 #define tiny_send                   send
-#define tiny_setsockopt             setsockopt
 #define tiny_recvfrom               recvfrom
 #define tiny_sendto                 sendto
 #define tiny_connect                connect
@@ -65,6 +65,9 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port);
 
 TINY_LOR
 bool tiny_socket_has_error(int fd);
+
+TINY_LOR
+bool tiny_socket_error_again(int fd);
 
 TINY_LOR
 int tiny_socket_reuse_port(int fd);

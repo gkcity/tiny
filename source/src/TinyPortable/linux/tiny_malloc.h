@@ -35,7 +35,6 @@ void * tiny_realloc(void *p, uint32_t size);
 TINY_LOR
 void tiny_free(void *p);
 
-#define LOG_MEM(T,F)
 
 
 TINY_END_DECLS

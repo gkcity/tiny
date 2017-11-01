@@ -12,6 +12,7 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
+#include <tiny_print_mem.h>
 #include "JsonToken.h"
 
 #define TAG     "JsonToken"

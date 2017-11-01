@@ -13,6 +13,7 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include "TinyBuffer.h"
+#include <tiny_print_mem.h>
 
 #define TAG     "TinyBuffer"
 

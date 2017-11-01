@@ -39,12 +39,12 @@ TINY_BEGIN_DECLS
 #define tiny_socket_close           lwip_close
 #define tiny_socket                 lwip_socket
 #define tiny_setsockopt             lwip_setsockopt
+#define tiny_getsockopt             lwip_getsockopt
 #define tiny_bind                   lwip_bind
 #define tiny_listen                 lwip_listen
 #define tiny_accept                 lwip_accept
 #define tiny_recv                   lwip_recv
 #define tiny_send                   lwip_send
-#define tiny_setsockopt             lwip_setsockopt
 #define tiny_recvfrom               lwip_recvfrom
 #define tiny_sendto                 lwip_sendto
 #define tiny_connect                lwip_connect

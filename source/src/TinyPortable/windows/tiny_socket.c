@@ -15,6 +15,7 @@
 #include "tiny_socket.h"
 #include "tiny_log.h"
 #include "tiny_debug.h"
+#include "../../TinyPorting/tiny_sleep.h"
 
 #define TAG		"tiny_socket"
 
@@ -177,22 +178,55 @@ TinyRet tiny_async_connect(int fd, const char *ip, uint16_t port)
 TINY_LOR
 bool tiny_socket_has_error(int fd)
 {
-    DWORD error = 0;
-    socklen_t len = sizeof(error);
+//    DWORD error = 0;
+//    socklen_t len = sizeof(error);
+//
+//    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&error, &len) < 0)
+//    {
+//        LOG_E(TAG, "getsockopt failed.");
+//        return true;
+//    }
+//
+//    if (error != 0)
+//    {
+//        LOG_E(TAG, "connect error: %d", error);
+//        return true;
+//    }
+//
+//    return false;
 
-    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&error, &len) < 0)
+    bool error = false;
+
+    do
     {
-        LOG_E(TAG, "getsockopt failed.");
-        return true;
-    }
+        DWORD e = 0;
+        socklen_t len = sizeof(e);
 
-    if (error != 0)
-    {
-        LOG_E(TAG, "connect error: %d", error);
-        return true;
-    }
+        if (tiny_getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&e, &len) < 0)
+        {
+            LOG_E(TAG, "tiny_socket_has_error -> tiny_getsockopt failed.");
+            error = true;
+            break;
+        }
 
-    return false;
+        if (e == 0)
+        {
+            break;
+        }
+
+        LOG_E(TAG, "tiny_socket_has_error: %d", e);
+
+        if (e == EAGAIN)
+        {
+            LOG_I(TAG, "ignore error: %d (EAGAIN)", e);
+            tiny_sleep(10 * 3);
+            break;
+        }
+
+        error = true;
+    } while (false);
+
+    return error;
 }
 
 TINY_LOR
