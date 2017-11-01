@@ -40,7 +40,7 @@ ADD_DEFINITIONS(-D__OPENWRT_MT7688__)
 # DEBUG INFORMATION
 #
 #----------------------------------------------------------------------------
-ADD_DEFINITIONS(-DTINY_DEBUG)
+#ADD_DEFINITIONS(-DTINY_DEBUG)
 
 #----------------------------------------------------------------------------
 #
