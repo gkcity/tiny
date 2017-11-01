@@ -25,6 +25,8 @@
     #include "esp32/tiny_time.h"
 #elif defined(ESP8266)
     #include "esp8266/tiny_time.h"
+#elif defined(__OPENWRT_MT7688__)
+    #include "openwrt_mt7688/tiny_time.h"
 #elif defined(__LINUX__)
     #include "linux/tiny_time.h"
 #elif defined(__WIN32__)

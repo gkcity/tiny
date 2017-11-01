@@ -19,7 +19,7 @@
 TINY_BEGIN_DECLS
 
 
-#if (defined __LINUX__) || (defined __ANDROID__)
+#if (defined __LINUX__) || (defined __ANDROID__) || (defined __OPENWRT_MT7688__)
 #include <semaphore.h>
 #endif
 
@@ -36,7 +36,7 @@ TINY_BEGIN_DECLS
 typedef HANDLE          tiny_sem_t;
 #endif /* _WIN32 */
 
-#if (defined __LINUX__) || (defined __ANDROID__)
+#if (defined __LINUX__) || (defined __ANDROID__) || (defined __OPENWRT_MT7688__)
 typedef sem_t           tiny_sem_t;
 #endif
 

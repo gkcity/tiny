@@ -104,7 +104,7 @@ TinyRet TinySemaphore_Construct(TinySemaphore *thiz)
         }
 #endif
 
-#if (defined __LINUX__) || (defined __ANDROID__)
+#if (defined __LINUX__) || (defined __ANDROID__) || (defined __OPENWRT_MT7688__)
         if (sem_init(&thiz->sem, 0, 0) != 0)
         {
             //LOG_E(TAG, "TinySemaphore_Initialize: sem_init %s", strerror(errno));
@@ -142,7 +142,7 @@ TinyRet TinySemaphore_Dispose(TinySemaphore *thiz)
     }
 #endif
 
-#if (defined __LINUX__) || (defined __ANDROID__)
+#if (defined __LINUX__) || (defined __ANDROID__) || (defined __OPENWRT_MT7688__)
     sem_destroy(&thiz->sem);
 #endif
 
@@ -191,7 +191,7 @@ bool TinySemaphore_Wait(TinySemaphore *thiz)
     }
 #endif
 
-#if (defined __LINUX__) || (defined __ANDROID__)
+#if (defined __LINUX__) || (defined __ANDROID__) || (defined __OPENWRT_MT7688__)
     if (sem_wait(&thiz->sem) == 0)
     {
         result = true;
@@ -222,7 +222,7 @@ bool TinySemaphore_Post(TinySemaphore *thiz)
     }
 #endif
 
-#if (defined __LINUX__) || (defined __ANDROID__)
+#if (defined __LINUX__) || (defined __ANDROID__) || (defined __OPENWRT_MT7688__)
     if (sem_post(&thiz->sem) == 0)
     {
         result = true;
