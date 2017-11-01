@@ -7,6 +7,11 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
+#----------------------------------------------------------------------------
+#
+# Toolchain Settings
+#
+#----------------------------------------------------------------------------
 SET(CMAKE_C_COMPILER /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc)
 SET(CMAKE_CXX_COMPILER /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-g++)
 SET(CMAKE_ASM_COMPILER /opt/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc)
