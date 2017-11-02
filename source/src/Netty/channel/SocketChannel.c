@@ -16,7 +16,6 @@
 #include <tiny_log.h>
 #include <tiny_socket.h>
 #include <tiny_snprintf.h>
-
 #include "SocketChannel.h"
 
 #define TAG     "SocketChannel"
@@ -49,7 +48,13 @@ TinyRet SocketChannel_Dispose(Channel *thiz)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
     LOG_D(TAG, "SocketChannel_Dispose: %s", thiz->id);
+
     TinyList_Dispose(&thiz->handlers);
+
+    if (thiz->buffer != NULL)
+    {
+        ChannelBuffer_Delete(thiz->buffer);
+    }
 
     return TINY_RET_OK;
 }
@@ -70,6 +75,11 @@ void SocketChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *t
     if (Channel_IsActive(thiz))
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
+
+        if (thiz->buffer != NULL)
+        {
+            Selector_Register(selector, thiz->fd, SELECTOR_OP_WRITE);
+        }
 
         if (thiz->_getTimeout != NULL)
         {
@@ -157,25 +167,28 @@ TinyRet SocketChannel_GetTimeout(Channel *thiz, ChannelTimer *timer, void *ctx)
 }
 
 TINY_LOR
-TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector)
+static TinyRet SocketChannel_OnRead(Channel *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-    RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
 
-    LOG_I(TAG, "SocketChannel_OnReadWrite");
+    LOG_I(TAG, "SocketChannel_OnRead");
 
-    if (Selector_IsReadable(selector, thiz->fd))
+    do
     {
-        char buf[CHANNEL_RECV_BUF_SIZE];
-        int count = 0;
-
-        memset(buf, 0, CHANNEL_RECV_BUF_SIZE);
-        count = (int) tiny_recv(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0);
-        if (count > 0)
+        ChannelBuffer *buffer = ChannelBuffer_New(thiz->inBufferSize);
+        if (buffer == NULL)
         {
-            SocketChannel_StartRead(thiz, DATA_RAW, buf, (uint32_t) ret);
+            LOG_I(TAG, "ChannelBuffer_New failed!");
+            ret = TINY_RET_E_NEW;
+            break;
+        }
+
+        buffer->available = (int) tiny_recv(thiz->fd, buffer, buffer->size, 0);
+        if (buffer->available > 0)
+        {
+            SocketChannel_StartRead(thiz, DATA_RAW, buffer->bytes, (uint32_t)buffer->available);
         }
         else
         {
@@ -184,13 +197,63 @@ TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector)
                 ret = TINY_RET_E_SOCKET_READ;
             }
         }
-    }
+
+        ChannelBuffer_Delete(buffer);
+    } while (false);
 
     return ret;
 }
 
 TINY_LOR
-TinyRet SocketChannel_Construct(Channel *thiz)
+static TinyRet SocketChannel_OnWrite(Channel *thiz)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    LOG_I(TAG, "SocketChannel_OnWrite");
+
+    // TODO: send thiz->buffer
+
+    return ret;
+}
+
+TINY_LOR
+TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
+
+    LOG_I(TAG, "SocketChannel_OnReadWrite");
+
+    do
+    {
+        if (Selector_IsReadable(selector, thiz->fd))
+        {
+            ret = SocketChannel_OnRead(thiz);
+            if (RET_FAILED(ret))
+            {
+                break;
+            }
+        }
+
+        if (Selector_IsWriteable(selector, thiz->fd))
+        {
+            ret = SocketChannel_OnWrite(thiz);
+            if (RET_FAILED(ret))
+            {
+                break;
+            }
+        }
+    } while (false);
+
+    return ret;
+}
+
+TINY_LOR
+TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -211,8 +274,10 @@ TinyRet SocketChannel_Construct(Channel *thiz)
         TinyList_SetDeleteListener(&thiz->handlers, _OnHandlerRemoved, NULL);
 
         thiz->fd = -1;
+        thiz->inBufferSize = inSize;
+        thiz->outBufferSize = outSize;
         thiz->_onRegister = SocketChannel_OnRegister;
-        thiz->_onReadWrite = SocketChannel_OnReadWrite;
+        thiz->_onAccess = SocketChannel_OnAccess;
         thiz->_onRemove = SocketChannel_Delete;
         thiz->_onActive = SocketChannel_OnActive;
         thiz->_onInactive = SocketChannel_OnInactive;
@@ -225,7 +290,13 @@ TinyRet SocketChannel_Construct(Channel *thiz)
 }
 
 TINY_LOR
-Channel * SocketChannel_New()
+Channel * SocketChannel_New(void)
+{
+    return SocketChannel_NewCustomBufferSize(512, 0);
+}
+
+TINY_LOR
+Channel * SocketChannel_NewCustomBufferSize(uint32_t inSize, uint32_t outSize)
 {
     Channel *thiz = NULL;
 
@@ -237,7 +308,7 @@ Channel * SocketChannel_New()
             break;
         }
 
-        if (RET_FAILED(SocketChannel_Construct(thiz)))
+        if (RET_FAILED(SocketChannel_Construct(thiz, inSize, outSize)))
         {
             SocketChannel_Delete(thiz);
             thiz = NULL;

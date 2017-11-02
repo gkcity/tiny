@@ -18,5 +18,7 @@
 
 void tiny_sleep(int ms)
 {
-    vTaskDelay(ms / portTICK_PERIOD_MS);
+    printf("tiny_sleep: %d\n", ms);
+
+    vTaskDelay(ms * 10 / portTICK_PERIOD_MS);
 }

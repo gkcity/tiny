@@ -263,9 +263,9 @@ static TinyRet PostSelect(Selector *selector, void *ctx)
         {
             LOG_I(TAG, "Channel_IsActive");
 
-            if (RET_FAILED(channel->_onReadWrite(channel, selector)))
+            if (RET_FAILED(channel->_onAccess(channel, selector)))
             {
-                LOG_I(TAG, "channel [%d] read or write failed", channel->fd);
+                LOG_I(TAG, "channel [%d] onAccess failed", channel->fd);
                 channel->_onInactive(channel);
                 Channel_Close(channel);
                 continue;

@@ -177,6 +177,7 @@ SET(TinyBuffer_Source
 SET(Netty_Header
         ${SOURCE_ROOT}/Netty/selector/Selector.h
         ${SOURCE_ROOT}/Netty/channel/Channel.h
+        ${SOURCE_ROOT}/Netty/channel/ChannelBuffer.h
         ${SOURCE_ROOT}/Netty/channel/ChannelAddress.h
         ${SOURCE_ROOT}/Netty/channel/ChannelHandler.h
         ${SOURCE_ROOT}/Netty/channel/ChannelTimer.h
@@ -203,6 +204,7 @@ SET(Netty_Header
 SET(Netty_Source
         ${SOURCE_ROOT}/Netty/selector/Selector.c
         ${SOURCE_ROOT}/Netty/channel/Channel.c
+        ${SOURCE_ROOT}/Netty/channel/ChannelBuffer.c
         ${SOURCE_ROOT}/Netty/channel/ChannelAddress.c
         ${SOURCE_ROOT}/Netty/channel/ChannelIdles.c
         ${SOURCE_ROOT}/Netty/channel/ChannelIdleStateHandler.c

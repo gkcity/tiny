@@ -70,15 +70,15 @@ static void MulticastChannel_OnRemove(Channel *thiz)
 }
 
 TINY_LOR
-static TinyRet MulticastChannel_OnReadWrite(Channel *thiz, Selector *selector)
+static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
 {
     TinyRet ret = TINY_RET_OK;
 
     LOG_D(TAG, "MulticastChannel_OnRead");
 
-    do {
-        char buf[CHANNEL_RECV_BUF_SIZE];
-        int received = 0;
+    do
+    {
+        ChannelBuffer *buffer = NULL;
         struct sockaddr_in from;
         socklen_t socklen = (socklen_t) sizeof(from);
 
@@ -87,18 +87,27 @@ static TinyRet MulticastChannel_OnReadWrite(Channel *thiz, Selector *selector)
             break;
         }
 
-        memset(buf, 0, CHANNEL_RECV_BUF_SIZE);
-
-        received = (int) tiny_recvfrom(thiz->fd, buf, CHANNEL_RECV_BUF_SIZE, 0, (struct sockaddr *)&from, &socklen);
-        if (received <= 0)
+        buffer = ChannelBuffer_New(thiz->inBufferSize);
+        if (buffer == NULL)
         {
-            Channel_Close(thiz);
-            ret = TINY_RET_E_INTERNAL;
+            LOG_I(TAG, "ChannelBuffer_New failed!");
+            ret = TINY_RET_E_NEW;
             break;
         }
 
-        ChannelAddress_Set(&thiz->remote, TYPE_UDP, from.sin_addr.s_addr, ntohs(from.sin_port));
-        SocketChannel_StartRead(thiz, DATA_RAW, buf, (uint32_t) received);
+        buffer->available = (int) tiny_recvfrom(thiz->fd, buffer->bytes, buffer->size, 0, (struct sockaddr *)&from, &socklen);
+        if (buffer->available > 0)
+        {
+            ChannelAddress_Set(&thiz->remote, TYPE_UDP, from.sin_addr.s_addr, ntohs(from.sin_port));
+            SocketChannel_StartRead(thiz, DATA_RAW, buffer->bytes, (uint32_t) buffer->available);
+        }
+        else
+        {
+            Channel_Close(thiz);
+            ret = TINY_RET_E_INTERNAL;
+        }
+
+        ChannelBuffer_Delete(buffer);
     } while (0);
 
     return ret;
@@ -117,7 +126,7 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
 
         thiz->_onRegister = MulticastChannel_OnRegister;
         thiz->_onRemove = MulticastChannel_OnRemove;
-        thiz->_onReadWrite = MulticastChannel_OnReadWrite;
+        thiz->_onAccess = MulticastChannel_OnAccess;
 
         thiz->_onActive = SocketChannel_OnActive;
         thiz->_onInactive = SocketChannel_OnInactive;

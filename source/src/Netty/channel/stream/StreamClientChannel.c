@@ -79,7 +79,7 @@ static void StreamClientChannel_OnRemove(Channel *thiz)
 }
 
 TINY_LOR
-static TinyRet StreamClientChannel_OnReadWrite(Channel *thiz, Selector *selector)
+static TinyRet StreamClientChannel_OnAccess(Channel *thiz, Selector *selector)
 {
     LOG_I(TAG, "StreamClientChannel_OnReadWrite");
 
@@ -112,7 +112,7 @@ static void StreamClientChannel_OnActive(Channel *thiz)
     }
 
     thiz->_onActive = SocketChannel_OnActive;
-    thiz->_onReadWrite = SocketChannel_OnReadWrite;
+    thiz->_onAccess = SocketChannel_OnAccess;
     thiz->_onRegister = SocketChannel_OnRegister;
     thiz->_getTimeout = SocketChannel_GetTimeout;
     thiz->_onActive(thiz);
@@ -130,7 +130,7 @@ TinyRet StreamClientChannel_Construct(Channel *thiz)
         thiz->_onRegister = StreamClientChannel_OnRegister;
         thiz->_onRemove = StreamClientChannel_OnRemove;
         thiz->_onActive = StreamClientChannel_OnActive;
-        thiz->_onReadWrite = StreamClientChannel_OnReadWrite;
+        thiz->_onAccess = StreamClientChannel_OnAccess;
 
         thiz->_getTimeout = StreamClientChannel_GetConnectingTimeout;
 

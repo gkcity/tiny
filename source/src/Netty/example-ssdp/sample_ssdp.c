@@ -9,6 +9,15 @@
 
 #define TAG "SsdpExample"
 
+void tiny_print_mem(const char *tag, const char *function)
+{
+}
+
+void tiny_sleep(int ms)
+{
+    printf("tiny_sleep: %d\n", ms);
+}
+
 static void SsdpInitializer(Channel *channel, void *ctx)
 {
     LOG_D(TAG, "SsdpInitializer: %s", channel->id);

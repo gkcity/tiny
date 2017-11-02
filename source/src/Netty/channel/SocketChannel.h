@@ -24,12 +24,13 @@
 TINY_BEGIN_DECLS
 
 
-#define CHANNEL_RECV_BUF_SIZE    (1024)
-
-
 TINY_API
 TINY_LOR
 Channel * SocketChannel_New(void);
+
+TINY_API
+TINY_LOR
+Channel * SocketChannel_NewCustomBufferSize(uint32_t inSize, uint32_t outSize);
 
 TINY_API
 TINY_LOR
@@ -37,7 +38,7 @@ void SocketChannel_Delete(Channel *thiz);
 
 TINY_API
 TINY_LOR
-TinyRet SocketChannel_Construct(Channel *thiz);
+TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize);
 
 TINY_API
 TINY_LOR
@@ -101,7 +102,7 @@ TinyRet SocketChannel_GetTimeout(Channel *thiz, ChannelTimer *timer, void *ctx);
 
 TINY_API
 TINY_LOR
-TinyRet SocketChannel_OnReadWrite(Channel *thiz, Selector *selector);
+TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector);
 
 TINY_API
 TINY_LOR

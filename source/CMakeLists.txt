@@ -47,10 +47,10 @@ ENDIF (WIN32)
 MESSAGE(STATUS "os_lib: ${OS_LIB}")
 
 #-------------------------------------------------------------------------------------
-# set output dir
+# output dir
 #-------------------------------------------------------------------------------------
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/output)
-SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/output)
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/target)
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/target)
 MESSAGE(STATUS "executable output:  ${EXECUTABLE_OUTPUT_PATH}")
 MESSAGE(STATUS "library output: ${LIBRARY_OUTPUT_PATH}")
 

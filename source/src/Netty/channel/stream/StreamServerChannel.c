@@ -85,7 +85,7 @@ static void StreamServerChannel_OnRemove(Channel *thiz)
 }
 
 TINY_LOR
-static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector)
+static TinyRet StreamServerChannel_OnAccess(Channel *thiz, Selector *selector)
 {
     StreamServerChannelContext *ctx = NULL;
 
@@ -141,7 +141,7 @@ static TinyRet StreamServerChannel_OnReadWrite(Channel *thiz, Selector *selector
         Channel *channel = (Channel *) TinyList_GetAt(&ctx->channels, i);
         if (Channel_IsActive(channel))
         {
-            if (RET_FAILED(channel->_onReadWrite(channel, selector)))
+            if (RET_FAILED(channel->_onAccess(channel, selector)))
             {
                 LOG_D(TAG, "close connection: %s:%d, FD:%d", channel->local.socket.ip, channel->local.socket.port, channel->fd);
                 channel->_onInactive(channel);
@@ -232,7 +232,7 @@ static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
         thiz->_onRegister = StreamServerChannel_OnRegister;
         thiz->_onRemove = StreamServerChannel_OnRemove;
         thiz->_onInactive = StreamServerChannel_OnInactive;
-        thiz->_onReadWrite = StreamServerChannel_OnReadWrite;
+        thiz->_onAccess = StreamServerChannel_OnAccess;
         thiz->_onEventTriggered = StreamServerChannel_OnEventTriggered;
         thiz->_close = StreamServerChannel_Close;
 

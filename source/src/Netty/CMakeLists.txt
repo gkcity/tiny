@@ -20,6 +20,7 @@ SET(Selector_Source
 #-----------------------
 SET(Channel_Header
         channel/Channel.h
+        channel/ChannelBuffer.h
         channel/ChannelAddress.h
         channel/ChannelHandler.h
         channel/ChannelIdles.h
@@ -37,6 +38,7 @@ SET(Channel_Header
 
 SET(Channel_Source
         channel/Channel.c
+        channel/ChannelBuffer.c
         channel/ChannelAddress.c
         channel/ChannelIdles.c
         channel/ChannelIdleStateHandler.c

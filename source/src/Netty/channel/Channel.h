@@ -21,6 +21,7 @@
 #include <tiny_socket.h>
 #include "ChannelAddress.h"
 #include "ChannelTimer.h"
+#include "ChannelBuffer.h"
 
 TINY_BEGIN_DECLS
 
@@ -37,12 +38,15 @@ typedef void (* ChannelHandleInactive)(Channel *thiz);
 typedef void (* ChannelHandleEventTriggered)(Channel *thiz, ChannelTimer *timer);
 typedef void (* ChannelHandleClose)(Channel *thiz);
 typedef TinyRet (* ChannelTimeoutGetter)(Channel *thiz, ChannelTimer *timer, void *ctx);
-typedef TinyRet (* ChannelHandleReadWrite)(Channel* channel, Selector* selector);
+typedef TinyRet (* ChannelHandleAccess)(Channel* channel, Selector* selector);
 
 struct _Channel
 {
     char                            id[CHANNEL_ID_LEN];
     int                             fd;
+    uint32_t                        inBufferSize;
+    uint32_t                        outBufferSize;
+    ChannelBuffer                 * buffer;
     ChannelType                     type;
     ChannelAddress                  local;
     ChannelAddress                  remote;
@@ -50,7 +54,7 @@ struct _Channel
     ChannelHandleRemove             _onRemove;
     ChannelHandleActive             _onActive;
     ChannelHandleInactive           _onInactive;
-    ChannelHandleReadWrite          _onReadWrite;
+    ChannelHandleAccess             _onAccess;
     ChannelHandleEventTriggered     _onEventTriggered;
     ChannelTimeoutGetter            _getTimeout;
     ChannelHandleClose              _close;

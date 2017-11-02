@@ -19,6 +19,15 @@
  */
 #define CHUNMI_COOKER "/instance/device?type=urn:miot-spec:device:cooker:00000A08:chunmi"
 
+void tiny_print_mem(const char *tag, const char *function)
+{
+}
+
+void tiny_sleep(int ms)
+{
+    printf("tiny_sleep: %d\n", ms);
+}
+
 int main(void)
 {
     tiny_socket_initialize();
