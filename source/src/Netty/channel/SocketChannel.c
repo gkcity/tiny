@@ -185,7 +185,7 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
             break;
         }
 
-        buffer->available = (int) tiny_recv(thiz->fd, buffer, buffer->size, 0);
+        buffer->available = (int) tiny_recv(thiz->fd, buffer->bytes, buffer->size, 0);
         if (buffer->available > 0)
         {
             SocketChannel_StartRead(thiz, DATA_RAW, buffer->bytes, (uint32_t)buffer->available);
@@ -204,19 +204,19 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
     return ret;
 }
 
-TINY_LOR
-static TinyRet SocketChannel_OnWrite(Channel *thiz)
-{
-    TinyRet ret = TINY_RET_OK;
-
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-
-    LOG_I(TAG, "SocketChannel_OnWrite");
-
-    // TODO: send thiz->buffer
-
-    return ret;
-}
+//TINY_LOR
+//static TinyRet SocketChannel_OnWrite(Channel *thiz)
+//{
+//    TinyRet ret = TINY_RET_OK;
+//
+//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+//
+//    LOG_I(TAG, "SocketChannel_OnWrite");
+//
+//    // TODO: send thiz->buffer
+//
+//    return ret;
+//}
 
 TINY_LOR
 TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
@@ -239,14 +239,14 @@ TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
             }
         }
 
-        if (Selector_IsWriteable(selector, thiz->fd))
-        {
-            ret = SocketChannel_OnWrite(thiz);
-            if (RET_FAILED(ret))
-            {
-                break;
-            }
-        }
+//        if (Selector_IsWriteable(selector, thiz->fd))
+//        {
+//            ret = SocketChannel_OnWrite(thiz);
+//            if (RET_FAILED(ret))
+//            {
+//                break;
+//            }
+//        }
     } while (false);
 
     return ret;

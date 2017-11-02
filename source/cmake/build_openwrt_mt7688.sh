@@ -8,4 +8,4 @@ mkdir $TARGET
 cd $TARGET
 cmake ../../ -DCMAKE_TOOLCHAIN_FILE=../openwrt_mt7688.cmake
 make
-ls -l -h ./output
+ls -l -h ../../target/

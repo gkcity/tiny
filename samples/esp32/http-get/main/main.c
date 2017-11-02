@@ -38,7 +38,7 @@ static void app(void *pvParameters)
 
         sample_http_get(pvParameters);
 
-        for(int countdown = 40; countdown >= 0; countdown--) {
+        for(int countdown = 30; countdown >= 0; countdown--) {
             ESP_LOGI(TAG, "%d... ", countdown);
             vTaskDelay(1000 / portTICK_PERIOD_MS);
         }
