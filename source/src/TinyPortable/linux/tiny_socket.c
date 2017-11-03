@@ -129,26 +129,26 @@ bool tiny_socket_has_error(int fd)
 
     do
     {
-        int error = 0;
-        socklen_t len = sizeof(error);
+        int v = 0;
+        socklen_t len = sizeof(v);
 
-        if (tiny_getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+        if (tiny_getsockopt(fd, SOL_SOCKET, SO_ERROR, &v, &len) < 0)
         {
             LOG_E(TAG, "tiny_socket_has_error -> tiny_getsockopt failed.");
             error = true;
             break;
         }
 
-        LOG_D(TAG, "socket error: %d", error);
+        LOG_D(TAG, "socket error: %d", v);
 
-        if (error == 0)
+        if (v == 0)
         {
             break;
         }
 
-        if (error == EAGAIN)
+        if (v == EAGAIN)
         {
-            LOG_I(TAG, "ignore error: %d (EAGAIN)", error);
+            LOG_I(TAG, "ignore error: %d (EAGAIN)", v);
             tiny_sleep(10 * 3);
             break;
         }

@@ -130,27 +130,27 @@ bool tiny_socket_has_error(int fd)
 #if 0
     do
     {
-        int error = 0;
-        socklen_t len = sizeof(error);
+        int v = 0;
+        socklen_t len = sizeof(v);
 
         // BUG!!! ESP8266 will be crashed
-        if (tiny_getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0)
+        if (tiny_getsockopt(fd, SOL_SOCKET, SO_ERROR, &v, &len) < 0)
         {
             LOG_E(TAG, "tiny_socket_has_error -> tiny_getsockopt failed.");
             error = true;
             break;
         }
 
-        if (error == 0)
+        if (v == 0)
         {
             break;
         }
 
-        LOG_E(TAG, "tiny_socket_has_error: %d", error);
+        LOG_E(TAG, "tiny_socket_has_error: %d", v);
 
-        if (error == EAGAIN)
+        if (v == EAGAIN)
         {
-            LOG_I(TAG, "ignore error: %d (EAGAIN)", error);
+            LOG_I(TAG, "ignore error: %d (EAGAIN)", v);
             tiny_sleep(10 * 3);
             break;
         }

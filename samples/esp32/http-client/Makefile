@@ -3,7 +3,7 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := http-request
+PROJECT_NAME := http-client
 
 include $(IDF_PATH)/make/project.mk
 
