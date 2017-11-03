@@ -37,6 +37,13 @@ static void app(void *pvParameters)
         ESP_LOGI(TAG, "Connected to AP");
 
         sample_http_server_run(pvParameters);
+
+        for(int countdown = 30; countdown >= 0; countdown--) {
+            ESP_LOGI(TAG, "%d... ", countdown);
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
+        }
+
+        ESP_LOGI(TAG, "Starting again!");
     }
 }
 

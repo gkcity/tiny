@@ -85,17 +85,20 @@ static void StreamServerChannel_OnRemove(Channel *thiz)
 }
 
 TINY_LOR
-static TinyRet StreamServerChannel_OnAccess(Channel *thiz, Selector *selector)
+static TinyRet StreamServerChannel_OnAccept(Channel *thiz, Selector *selector)
 {
-    StreamServerChannelContext *ctx = NULL;
+    TinyRet ret = TINY_RET_OK;
 
-    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-    RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
-
-    ctx = (StreamServerChannelContext *)thiz->context;
-
-    if (Selector_IsReadable(selector, thiz->fd))
+    do
     {
+        if (! Selector_IsReadable(selector, thiz->fd))
+        {
+            break;
+        }
+
+        LOG_I(TAG, "StreamServerChannel_OnAccept: %s", thiz->id);
+
+        StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->context;
         Channel *newChannel = NULL;
         int fd = 0;
         struct sockaddr_in addr;
@@ -103,28 +106,27 @@ static TinyRet StreamServerChannel_OnAccess(Channel *thiz, Selector *selector)
         char ip[TINY_IP_LEN];
         uint16_t port = 0;
 
-        LOG_D(TAG, "StreamServerChannel_OnRead FD: %d", thiz->fd);
-        LOG_D(TAG, "socklen_t: %d", len);
-
         memset(&addr, 0, sizeof(struct sockaddr_in));
 
         fd = tiny_accept(thiz->fd, (struct sockaddr *)&addr, &len);
         if (fd < 0)
         {
-            return TINY_RET_E_INTERNAL;
+            LOG_E(TAG, "tiny_accept: %d", fd);
+            ret = tiny_socket_has_error(thiz->fd) ? TINY_RET_E_SOCKET_ASCEPT : TINY_RET_OK;
+            break;
         }
 
         memset(ip, 0, TINY_IP_LEN);
         inet_ntop(AF_INET, &addr.sin_addr, ip, TINY_IP_LEN);
         port = ntohs(addr.sin_port);
 
-        LOG_D(TAG, "accept a new connection: %s:%d, FD: %d", ip, port, fd);
+        LOG_I(TAG, "Accept a new connection: %d#%s:%d", fd, ip, port);
 
-        newChannel = SocketChannel_New();
+        newChannel = SocketChannel_NewCustomBufferSize(thiz->inBufferSize, thiz->outBufferSize);
         if (newChannel == NULL)
         {
-            printf("SocketChannel_New NULL\n");
-            return TINY_RET_OK;
+            LOG_E(TAG, "SocketChannel_New NULL");
+            break;
         }
 
         newChannel->fd = fd;
@@ -132,23 +134,40 @@ static TinyRet StreamServerChannel_OnAccess(Channel *thiz, Selector *selector)
         SocketChannel_Initialize(newChannel, ctx->initializer, ctx->initializerContext);
 
         TinyList_AddTail(&ctx->channels, newChannel);
+    } while (false);
 
-        return TINY_RET_OK;
-    }
+    return ret;
+}
+
+TINY_LOR
+static void StreamServerChannel_OnConnectionAccess(Channel *thiz, Selector *selector)
+{
+    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->context;
 
     for (uint32_t i = 0; i < ctx->channels.size; ++i)
     {
         Channel *channel = (Channel *) TinyList_GetAt(&ctx->channels, i);
+
+        LOG_D(TAG, "Channel: [%s]", channel->id);
+
         if (Channel_IsActive(channel))
         {
+            LOG_D(TAG, "Channel: [%s] IsActive", channel->id, channel->fd);
+
             if (RET_FAILED(channel->_onAccess(channel, selector)))
             {
-                LOG_D(TAG, "close connection: %s:%d, FD:%d", channel->local.socket.ip, channel->local.socket.port, channel->fd);
+                LOG_D(TAG, "close connection: %d#%s#%d", channel->fd, channel->local.socket.ip, channel->local.socket.port);
                 channel->_onInactive(channel);
                 Channel_Close(channel);
             }
         }
     }
+}
+
+TINY_LOR
+static void StreamServerChannel_RemoveClosedConnection(Channel *thiz)
+{
+    StreamServerChannelContext *ctx = (StreamServerChannelContext *)thiz->context;
 
     for (uint32_t i = 0; i < ctx->channels.size; ++i)
     {
@@ -159,8 +178,26 @@ static TinyRet StreamServerChannel_OnAccess(Channel *thiz, Selector *selector)
             break;
         }
     }
+}
 
-    return TINY_RET_OK;
+TINY_LOR
+static TinyRet StreamServerChannel_OnAccess(Channel *thiz, Selector *selector)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
+
+    LOG_I(TAG, "StreamServerChannel_OnAccess: %s", thiz->id);
+
+    ret = StreamServerChannel_OnAccept(thiz, selector);
+    if (RET_SUCCEEDED(ret))
+    {
+        StreamServerChannel_OnConnectionAccess(thiz, selector);
+        StreamServerChannel_RemoveClosedConnection(thiz);
+    }
+
+    return ret;
 }
 
 TINY_LOR

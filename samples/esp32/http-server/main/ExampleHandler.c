@@ -48,16 +48,12 @@ ChannelHandler * ExampleHandler(void)
 
 static void ExampleHandler_Delete(ChannelHandler *thiz)
 {
-    printf("ExampleHandler_Delete\n");
-
     ExampleHandler_Dispose(thiz);
     free(thiz);
 }
 
 static TinyRet ExampleHandler_Construct(ChannelHandler *thiz)
 {
-    printf("ExampleHandler_Construct\n");
-
     memset(thiz, 0, sizeof(ChannelHandler));
 
     strncpy(thiz->name, ExampleHandler_Name, CHANNEL_HANDLER_NAME_LEN);

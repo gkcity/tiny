@@ -139,12 +139,12 @@ bool tiny_socket_has_error(int fd)
             break;
         }
 
+        LOG_D(TAG, "socket error: %d", error);
+
         if (error == 0)
         {
             break;
         }
-
-        LOG_E(TAG, "tiny_socket_has_error: %d", error);
 
         if (error == EAGAIN)
         {

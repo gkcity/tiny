@@ -173,14 +173,14 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_I(TAG, "SocketChannel_OnRead");
+    LOG_D(TAG, "SocketChannel_OnRead: %s", thiz->id);
 
     do
     {
         ChannelBuffer *buffer = ChannelBuffer_New(thiz->inBufferSize);
         if (buffer == NULL)
         {
-            LOG_I(TAG, "ChannelBuffer_New failed!");
+            LOG_E(TAG, "ChannelBuffer_New failed!");
             ret = TINY_RET_E_NEW;
             break;
         }
@@ -189,6 +189,10 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
         if (buffer->available > 0)
         {
             SocketChannel_StartRead(thiz, DATA_RAW, buffer->bytes, (uint32_t)buffer->available);
+        }
+        else if (buffer->available == 0)
+        {
+            ret = TINY_RET_E_SOCKET_READ;
         }
         else
         {
@@ -226,7 +230,7 @@ TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
 
-    LOG_I(TAG, "SocketChannel_OnReadWrite");
+    LOG_I(TAG, "SocketChannel_OnAccess: %s", thiz->id);
 
     do
     {
@@ -325,7 +329,7 @@ void SocketChannel_SetRemoteInfo(Channel *thiz, const char *ip, uint16_t port)
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(ip);
 
-    tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::%s::%d", thiz->fd, ip, port);
+    tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d#%s:%d", thiz->fd, ip, port);
 
     strncpy(thiz->remote.socket.ip, ip, TINY_IP_LEN);
     thiz->remote.socket.port = port;
@@ -441,7 +445,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
 
         thiz->local.socket.address = self_addr.sin_addr.s_addr;
         thiz->local.socket.port = (port > 0) ? port : tiny_socket_get_port(thiz->fd);;
-        tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d::127.0.0.1::%d", thiz->fd, thiz->local.socket.port);
+        tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d#127.0.0.1::%d", thiz->fd, thiz->local.socket.port);
 
         LOG_I(TAG, "SocketChannel_Bind OK. channel id: %s", thiz->id);
     } while (0);
