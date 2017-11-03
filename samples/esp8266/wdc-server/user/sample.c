@@ -10,12 +10,6 @@
 
 static WdcInfo * wdcInfo = NULL;
 
-ICACHE_FLASH_ATTR
-void tiny_print_mem_info(const char *tag, const char *function)
-{
-    printf("[%s/%s] stack = %d, free heap size: %d\n", tag, function,
-      uxTaskGetStackHighWaterMark(NULL), system_get_free_heap_size());
-}
 
 /******************************************************************************
  * FunctionName : wifi_event_handler_cb

@@ -14,6 +14,7 @@
 #define __WDC_INFO_H___
 
 #include <tiny_base.h>
+#include <tiny_typedef.h>
 
 TINY_BEGIN_DECLS
 
@@ -22,13 +23,11 @@ typedef struct _WdcInfo
 {
     char        ssid[32];
     char        password[32];
-    uint32      checksum;
+    uint32_t    checksum;
 } WdcInfo;
 
-ICACHE_FLASH_ATTR
 bool WdcInfo_Read(WdcInfo *thiz);
 
-ICACHE_FLASH_ATTR
 bool WdcInfo_Write(WdcInfo *thiz);
 
 

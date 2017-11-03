@@ -28,7 +28,7 @@ endif # } PDIR
 
 LDDIR = $(SDK_PATH)/ld
 
-CCFLAGS += -Os -DESP -DLWIP_SOCKET -DLWIP_TIMEVAL_PRIVATE=1 -DICACHE_FLASH
+CCFLAGS += -Os -DESP8266 -DLWIP_SOCKET -DLWIP_TIMEVAL_PRIVATE=1 -DICACHE_FLASH
 
 TARGET_LDFLAGS =		\
 	-nostdlib		\
@@ -126,10 +126,12 @@ DDEFINES +=				\
 #
 
 INCLUDES := $(INCLUDES) -I $(PDIR)include                   \
-    -I $(PDIR)../../../source/src/Netty                   \
-    -I $(PDIR)../../../source/src/TinyBase                \
-    -I $(PDIR)../../../source/src/TinyContainer           \
-    -I $(PDIR)../../../source/src/TinyPortable
+    -I $(PDIR)../../../source/src/Netty                     \
+    -I $(PDIR)../../../source/src/TinyBase                  \
+    -I $(PDIR)../../../source/src/TinyBuffer                \
+    -I $(PDIR)../../../source/src/TinyContainer             \
+    -I $(PDIR)../../../source/src/TinyPortable              \
+    -I $(PDIR)../../../source/src/TinyPorting
 
 sinclude $(SDK_PATH)/Makefile
 

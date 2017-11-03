@@ -17,13 +17,6 @@
 #define DEMO_WIFI_PASSWORD  "milink123"
 
 ICACHE_FLASH_ATTR
-void tiny_print_mem_info(const char *tag, const char *function)
-{
-    printf("[%s/%s] stack = %d, free heap size: %d\n", tag, function,
-      uxTaskGetStackHighWaterMark(NULL), system_get_free_heap_size());
-}
-
-ICACHE_FLASH_ATTR
 static void HttpServerInitializer(Channel *channel, void *ctx)
 {
     printf("HttpServerInitializer: %s\n", channel->id);
@@ -62,7 +55,7 @@ static TinyRet init_http_server(Channel *server, uint16_t port)
             break;
         }
 
-        ret = SocketChannel_Listen(server, ((StreamServerChannelContext *)server->ctx)->maxConnections);
+        ret = SocketChannel_Listen(server, ((StreamServerChannelContext *)server->context)->maxConnections);
         if (RET_FAILED(ret))
         {
             printf("SocketChannel_Listen failed: %d\n", TINY_RET_CODE(ret));

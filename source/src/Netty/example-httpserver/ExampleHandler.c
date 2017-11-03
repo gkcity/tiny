@@ -15,8 +15,8 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <codec-http/HttpMessage.h>
-#include <channel/SocketChannel.h>
 #include <codec-http/HttpMessageEncoder.h>
+#include <channel/SocketChannel.h>
 #include "ExampleHandler.h"
 
 #define TAG "ExampleHandler"

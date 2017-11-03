@@ -15,6 +15,7 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <codec-http/HttpMessage.h>
+#include <codec-http/HttpMessageEncoder.h>
 #include <channel/SocketChannel.h>
 #include "MyClientHandler.h"
 
@@ -85,27 +86,58 @@ static TinyRet MyClientHandler_Dispose(ChannelHandler *thiz)
     return TINY_RET_OK;
 }
 
+static void _Output (const uint8_t *data, uint32_t size, void *ctx)
+{
+    Channel *channel = (Channel *)ctx;
+    SocketChannel_StartWrite(channel, DATA_RAW, data, size);
+}
+
 static void _channelActive(ChannelHandler *thiz, Channel *channel)
 {
     HttpMessage request;
+    HttpMessageEncoder encoder;
+    TinyBuffer * buffer = NULL;
 
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(channel);
 
     LOG_D(TAG, "_channelActive");
 
-    if (RET_SUCCEEDED(HttpMessage_Construct(&request)))
+    do
     {
-        HttpMessage_SetRequest(&request, "GET", "http://10.0.1.9:8080/api/v1/devices");
-        HttpMessage_SetVersion(&request, 1, 1);
+        buffer = TinyBuffer_New(1024);
+        if (buffer == NULL)
+        {
+            LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
+            break;
+        }
 
-        HttpHeader_Set(&request.header, "App-Id", "9947163763053218");
-        HttpHeader_Set(&request.header, "Access-Token", "SJgbGdtgU3Ybg2kG-dOYWs1k9BBzlBITlDFso-Ib5E7by7jTtV3CUQ0jaS0Io4UsTUeGif1fDO9wwRG1LMxQEZJkEnc6nq0IPw4FrG735Ho");
+        if (RET_FAILED(HttpMessage_Construct(&request)))
+        {
+            LOG_E(TAG, "HttpMessage_Construct FAILED");
+            break;
+        }
 
-        SocketChannel_StartWrite(channel, DATA_RAW, HttpMessage_GetBytesWithoutContent(&request), HttpMessage_GetBytesSizeWithoutContent(&request));
+        HttpMessage_SetRequest(&request, "GET", "/homekit/instance/device?type=urn:homtkit-spec:device:lightbulb:00000000:arrizo-v1");
+        HttpHeader_Set(&request.header, "Accept", "*/*");
+        HttpHeader_SetHost(&request.header, "47.93.60.147", 8080);
 
-        HttpMessage_Dispose(&request);
+        if (RET_FAILED(HttpMessageEncoder_Construct(&encoder, &request)))
+        {
+            LOG_E(TAG, "HttpMessageEncoder_Construct FAILED");
+            break;
+        }
+
+        HttpMessageEncoder_Encode(&encoder, buffer, _Output, channel);
+    } while (false);
+
+    if (buffer != NULL)
+    {
+        TinyBuffer_Delete(buffer);
     }
+
+    HttpMessage_Dispose(&request);
+    HttpMessageEncoder_Dispose(&encoder);
 }
 
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)

@@ -13,11 +13,11 @@
  */
 
 #include <codec-http/HttpMessage.h>
+#include <codec-http/HttpMessageEncoder.h>
 #include <channel/SocketChannel.h>
 #include "ExampleHandler.h"
 
 #include <espressif/c_types.h>
-#include <lwip/lwip/sockets.h>
 
 ICACHE_FLASH_ATTR
 static TinyRet ExampleHandler_Construct(ChannelHandler *thiz);
@@ -96,39 +96,64 @@ static TinyRet ExampleHandler_Dispose(ChannelHandler *thiz)
 }
 
 ICACHE_FLASH_ATTR
+static void _Output (const uint8_t *data, uint32_t size, void *ctx)
+{
+    Channel *channel = (Channel *)ctx;
+    SocketChannel_StartWrite(channel, DATA_RAW, data, size);
+}
+
+#define BODY "{\"code\": 12345}"
+
+ICACHE_FLASH_ATTR
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
     HttpMessage *request = (HttpMessage *)data;
+    HttpMessage response;
+    HttpMessageEncoder encoder;
+    TinyBuffer * buffer = NULL;
 
     printf("_channelRead: %s %s\n", request->request_line.method, request->request_line.uri);
-    printf("write response to: %s\n", channel->id);
 
-#if 0
-
-    const char * resp = "HTTP/1.1 200 OK\r\nContent-Type: text/json\r\nContent-Length: 0\r\n\r\n";
-    lwip_send(channel->fd, resp, strlen(resp), 0);
-    Channel_Close(channel);
-
-#else
-    HttpMessage response;
-
-    if (RET_SUCCEEDED(HttpMessage_Construct(&response)))
+    do
     {
+        buffer = TinyBuffer_New(1024);
+        if (buffer == NULL)
+        {
+            printf("TinyBuffer_New FAILED: 1024\n");
+            break;
+        }
+
+        if (RET_FAILED(HttpMessage_Construct(&response)))
+        {
+            printf("HttpMessage_Construct FAILED\n");
+            break;
+        }
+
+        uint32_t length = strlen(BODY);
+
         HttpMessage_SetResponse(&response, 200, "OK");
         HttpMessage_SetVersion(&response, 1, 1);
-
         HttpHeader_Set(&response.header, "Content-Type", "text/json");
-        HttpHeader_SetInteger(&response.header, "Content-Length", 0);
+        HttpHeader_SetInteger(&response.header, "Content-Length", length);
 
-        SocketChannel_StartWrite(channel,
-             DATA_HTTP_MESSAGE,
-             HttpMessage_GetBytesWithoutContent(&response),
-             HttpMessage_GetBytesSizeWithoutContent(&response));
+        if (RET_FAILED(HttpMessageEncoder_Construct(&encoder, &response)))
+        {
+            printf("HttpMessageEncoder_Construct FAILED\n");
+            break;
+        }
 
-        Channel_Close(channel);
-        HttpMessage_Dispose(&response);
+        HttpMessageEncoder_Encode(&encoder, buffer, _Output, channel);
+
+        SocketChannel_StartWrite(channel, DATA_RAW, BODY, length);
+    } while (false);
+
+    if (buffer != NULL)
+    {
+        TinyBuffer_Delete(buffer);
     }
-#endif
+
+    HttpMessage_Dispose(&response);
+    HttpMessageEncoder_Dispose(&encoder);
 
     return true;
 }

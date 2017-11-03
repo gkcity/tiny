@@ -43,7 +43,7 @@ static TinyRet init_http_server(Channel *server, uint16_t port)
             break;
         }
 
-        ret = SocketChannel_Listen(server, ((StreamServerChannelContext *)server->ctx)->maxConnections);
+        ret = SocketChannel_Listen(server, ((StreamServerChannelContext *)server->context)->maxConnections);
         if (RET_FAILED(ret))
         {
             printf("SocketChannel_Listen failed: %d\n", TINY_RET_CODE(ret));

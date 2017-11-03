@@ -18,7 +18,6 @@
 TINY_BEGIN_DECLS
 
 
-ICACHE_FLASH_ATTR
 void hap_wdc_init(void);
 
 

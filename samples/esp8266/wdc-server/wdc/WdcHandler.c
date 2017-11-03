@@ -13,12 +13,14 @@
  */
 
 #include <tiny_malloc.h>
-#include <codec-http/HttpMessage.h>
+#include <TinyBuffer.h>
 #include <channel/SocketChannel.h>
+#include <codec-http/HttpMessage.h>
+#include <codec-http/HttpMessageEncoder.h>
 #include "wdc/WdcHandler.h"
 #include "wdc/WdcInfo.h"
 
-#define WEB_HTML "\
+#define SETTINGS_HTML "\
 <html>\
 <head>\
 <title>Wireless Device Configuration</title>\
@@ -123,51 +125,67 @@ static TinyRet WdcHandler_Dispose(ChannelHandler *thiz)
 }
 
 ICACHE_FLASH_ATTR
+static void _Output (const uint8_t *data, uint32_t size, void *ctx)
+{
+    Channel *channel = (Channel *)ctx;
+    SocketChannel_StartWrite(channel, DATA_RAW, data, size);
+}
+
+ICACHE_FLASH_ATTR
 static void sendResponse(ChannelHandler *thiz, Channel *channel, int code, const char *status, const char *type, const char *body)
 {
+    HttpMessageEncoder encoder;
+    TinyBuffer * buffer = NULL;
     HttpMessage response;
 
     printf("sendResponse: %d %s\n", code, status);
 
-    if (RET_SUCCEEDED(HttpMessage_Construct(&response)))
+    do
     {
-        const char *bytes = NULL;
-        uint32_t size = 0;
+        buffer = TinyBuffer_New(1024);
+        if (buffer == NULL)
+        {
+            printf("TinyBuffer_New FAILED: 1024\n");
+            break;
+        }
 
-        int length = (body == NULL) ? 0 : strlen(body);
+        if (RET_FAILED(HttpMessage_Construct(&response)))
+        {
+            printf("HttpMessage_Construct FAILED\n");
+            break;
+        }
 
-        printf("1\n");
+        uint32_t length = (uint32_t) ((body == NULL) ? 0 : strlen(body));
 
         HttpMessage_SetResponse(&response, code, status);
         HttpMessage_SetVersion(&response, 1, 1);
-
-        printf("2: %s\n", type);
-
         HttpHeader_Set(&response.header, "Content-Type", type);
-
-        printf("3: %d\n", length);
-
         HttpHeader_SetInteger(&response.header, "Content-Length", length);
 
-        printf("4\n");
+        if (RET_FAILED(HttpMessageEncoder_Construct(&encoder, &response)))
+        {
+            printf("HttpMessageEncoder_Construct FAILED\n");
+            break;
+        }
 
-        bytes = HttpMessage_GetBytesWithoutContent(&response);
-        size = HttpMessage_GetBytesSizeWithoutContent(&response);
+        HttpMessageEncoder_Encode(&encoder, buffer, _Output, channel);
 
-        printf("5\n");
+        if (body != NULL)
+        {
+            SocketChannel_StartWrite(channel, DATA_RAW, body, length);
+        }
 
-        SocketChannel_StartWrite(channel, DATA_RAW, bytes, size);
+    } while (false);
 
-        printf("6\n");
-
-		if (body != NULL)
-		{
-			SocketChannel_StartWrite(channel, DATA_RAW, body, length);
-		}
-
-        Channel_Close(channel);
-        HttpMessage_Dispose(&response);
+    if (buffer != NULL)
+    {
+        TinyBuffer_Delete(buffer);
     }
+
+    HttpMessage_Dispose(&response);
+    HttpMessageEncoder_Dispose(&encoder);
+
+    Channel_Close(channel);
 }
 
 ICACHE_FLASH_ATTR
@@ -184,16 +202,14 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     do
     {
         char path[5];
-        WdcInfo info;
         const char *start = NULL;
         const char *end = NULL;
 
         memset(path, 0, 5);
-        memset(&info, 0, sizeof(WdcInfo));
 
         if (strcmp("/wdc", request->request_line.uri) == 0)
         {
-            sendResponse(thiz, channel, 200, "OK", "text/html", WEB_HTML);
+            sendResponse(thiz, channel, 200, "OK", "text/html", SETTINGS_HTML);
             break;
         }
 
@@ -236,8 +252,6 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
             break;
         }
 
-        strncpy(info.ssid, start, end - start);
-
         start = end + 1;
         end = strstr(start, "password=");
         if (end != start)
@@ -253,15 +267,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
             break;
         }
 
-        strncpy(info.password, start, 32);
-
         sendResponse(thiz, channel, 200, "OK", "text/html", OK_HTML);
-
-        printf("receive ssid(%s) & password(%s), device restart... \n", info.ssid, info.password);
-
-        WdcInfo_Write(&info);
-
-        system_restart();
     } while (0);
 
     return true;
