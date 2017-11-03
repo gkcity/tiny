@@ -152,7 +152,7 @@ static void StreamServerChannel_OnConnectionAccess(Channel *thiz, Selector *sele
 
         if (Channel_IsActive(channel))
         {
-            LOG_D(TAG, "Channel: [%s] IsActive", channel->id, channel->fd);
+            LOG_D(TAG, "Channel: [%s] IsActive", channel->id);
 
             if (RET_FAILED(channel->_onAccess(channel, selector)))
             {

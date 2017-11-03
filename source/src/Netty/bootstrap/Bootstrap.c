@@ -257,11 +257,9 @@ static TinyRet PostSelect(Selector *selector, void *ctx)
     {
         Channel *channel = (Channel *) TinyList_GetAt(&thiz->channels, i);
 
-        LOG_D(TAG, "Channel: [%s]", channel->id);
-
         if (Channel_IsActive(channel))
         {
-            LOG_D(TAG, "Channel: [%s] IsActive", channel->id, channel->fd);
+            LOG_I(TAG, "Channel: [%s] IsActive", channel->id);
 
             if (RET_FAILED(channel->_onAccess(channel, selector)))
             {

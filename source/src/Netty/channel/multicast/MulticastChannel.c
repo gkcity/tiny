@@ -74,8 +74,6 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
 {
     TinyRet ret = TINY_RET_OK;
 
-    LOG_D(TAG, "MulticastChannel_OnRead");
-
     do
     {
         ChannelBuffer *buffer = NULL;
@@ -86,6 +84,8 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
         {
             break;
         }
+
+        LOG_I(TAG, "MulticastChannel_OnAccess");
 
         buffer = ChannelBuffer_New(thiz->inBufferSize);
         if (buffer == NULL)
@@ -103,8 +103,13 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
         }
         else
         {
-            Channel_Close(thiz);
-            ret = TINY_RET_E_INTERNAL;
+            LOG_I(TAG, "tiny_recvfrom: %d", buffer->available);
+
+            if (tiny_socket_has_error(thiz->fd))
+            {
+                ret = TINY_RET_E_SOCKET_READ;
+                Channel_Close(thiz);
+            }
         }
 
         ChannelBuffer_Delete(buffer);
