@@ -19,5 +19,4 @@
 
 void tiny_print_mem(const char *tag, const char *function)
 {
-    printf("[%s/%s] stack = %d, free heap size: %d\n", tag, function, uxTaskGetStackHighWaterMark(NULL), system_get_free_heap_size());
 }

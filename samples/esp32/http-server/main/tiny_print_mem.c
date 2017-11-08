@@ -13,11 +13,7 @@
  */
 
 #include <tiny_print_mem.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "esp_system.h"
 
 void tiny_print_mem(const char *tag, const char *function)
 {
-    printf("[%s/%s] stack = %d, free heap size: %d\n", tag, function, uxTaskGetStackHighWaterMark(NULL), system_get_free_heap_size());
 }

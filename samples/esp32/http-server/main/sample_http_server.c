@@ -6,12 +6,6 @@
 #include <codec-http/HttpMessageCodec.h>
 #include "ExampleHandler.h"
 
-void tiny_print_mem_info(const char *tag, const char *function)
-{
-    printf("[%s/%s] stack = %d, free heap size: %d\n", tag, function,
-      uxTaskGetStackHighWaterMark(NULL), system_get_free_heap_size());
-}
-
 static void HttpServerInitializer(Channel *channel, void *ctx)
 {
     SocketChannel_AddLast(channel, ChannelIdleStateHandler(0, 0, 3));

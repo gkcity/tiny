@@ -33,6 +33,7 @@ INCLUDE_DIRECTORIES("/opt/ESP_IDF/components/soc/esp32/include")
 INCLUDE_DIRECTORIES("/opt/ESP_IDF/components/soc/include")
 INCLUDE_DIRECTORIES("/opt/ESP_IDF/components/freertos/include")
 INCLUDE_DIRECTORIES("/opt/ESP_IDF/components/heap/include")
+INCLUDE_DIRECTORIES("/opt/ESP_IDF/components/vfs/include")
 
 #----------------------------------------------------------------------------
 #
