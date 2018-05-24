@@ -1,6 +1,9 @@
 
 # How to build
 
+## step 0 download toolchains & ESP_IDF
+http://esp-idf.readthedocs.io/en/latest/get-started/index.html#build-and-flash
+
 ## Step 1. Add tiny to ESP_IDF
 
 0. add -DESP32 to CFLAGS in $ESP_IDF/make/project.mk
@@ -49,4 +52,10 @@ COMPONENT_SRCDIRS := library
 
     ```
     make
+    ```
+
+## Step 5. falsh
+
+    ```
+    make flash
     ```
