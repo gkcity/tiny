@@ -163,19 +163,13 @@ static int test3(void)
             return 1;
         }
 
-        if (characteristics->data.array->type != JSON_OBJECT)
-        {
-            printf("characteristics values type invalid: %d\n", characteristics->data.array->type);
-            return 1;
-        }
-
         JsonObject *property = ((JsonValue *)TinyList_GetAt(&characteristics->data.array->values, 0))->data.object;
         JsonValue *jaid = JsonObject_GetValue(property, "aid");
         JsonValue *jiid = JsonObject_GetValue(property, "iid");
         JsonBoolean *ev = JsonObject_GetBoolean(property, "ev");
 
-        printf("aid: %d\n", jaid->data.number->value.intValue);
-        printf("iid: %d\n", jiid->data.number->value.intValue);
+        printf("aid: %ld\n", jaid->data.number->value.intValue);
+        printf("iid: %ld\n", jiid->data.number->value.intValue);
         printf("ev: %s\n", ev->value ? "true" : "false");
 
         JsonObject_Delete(object);

@@ -26,7 +26,7 @@ typedef enum _JsonNumberType
 
 typedef union _JsonNumberValue
 {
-    int     intValue;
+    long    intValue;
     float   floatValue;
 } JsonNumberValue;
 

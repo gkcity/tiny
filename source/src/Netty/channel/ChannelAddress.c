@@ -34,5 +34,8 @@ void ChannelAddress_Set(ChannelAddress *thiz, ChannelType type, uint32_t address
 
         case TYPE_RS485:
             break;
+
+        default:
+            break;
     }
 }

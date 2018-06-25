@@ -123,7 +123,7 @@ TinyRet HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
             key[i] = (char)tolower(name[i]);
         }
 
-        vLength = strlen(value);
+        vLength = (uint32_t) strlen(value);
         v = tiny_malloc(vLength + 1);
         if (v == NULL)
         {

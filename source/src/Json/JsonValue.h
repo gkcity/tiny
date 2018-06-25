@@ -17,7 +17,6 @@
 
 TINY_BEGIN_DECLS
 
-
 struct _JsonBoolean;
 typedef struct _JsonBoolean JsonBoolean;
 

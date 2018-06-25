@@ -116,7 +116,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
             break;
         }
 
-        uint32_t length = strlen(BODY);
+        uint32_t length = (uint32_t) strlen(BODY);
 
         HttpMessage_SetResponse(&response, 200, "OK");
         HttpMessage_SetVersion(&response, 1, 1);

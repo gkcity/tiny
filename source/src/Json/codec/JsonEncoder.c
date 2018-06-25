@@ -120,7 +120,7 @@ static void _EncodeNumber(JsonEncoder *thiz, JsonNumber *number)
     switch (number->type)
     {
         case JSON_NUMBER_INTEGER:
-            tiny_snprintf(string, 32, "%d", number->value.intValue);
+            tiny_snprintf(string, 32, "%ld", number->value.intValue);
             break;
 
         case JSON_NUMBER_FLOAT:

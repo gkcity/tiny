@@ -20,11 +20,11 @@
 #define TAG                 "HttpMessageEncoder"
 
 TINY_LOR
-static void _Append(HttpMessageEncoder *thiz, const uint8_t *data, uint32_t size)
+static void _Append(HttpMessageEncoder *thiz, const uint8_t *data, size_t size)
 {
     if (thiz->buffer == NULL)
     {
-        thiz->output(data, size, thiz->ctx);
+        thiz->output(data, (uint32_t)size, thiz->ctx);
     }
     else
     {
@@ -32,7 +32,7 @@ static void _Append(HttpMessageEncoder *thiz, const uint8_t *data, uint32_t size
 
         while (size > 0)
         {
-            uint32_t copied = TinyBuffer_Add(thiz->buffer, data, offset, size);
+            uint32_t copied = TinyBuffer_Add(thiz->buffer, data, offset, (uint32_t)size);
             offset += copied;
             size -= copied;
 

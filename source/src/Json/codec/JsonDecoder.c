@@ -73,7 +73,6 @@ TINY_LOR
 static JsonValue * JsonDecoder_DecodeValue(JsonDecoder *thiz)
 {
     JsonToken *token = JsonTokenizer_Head(&thiz->tokenizer);
-//    JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index);
     JsonValue *value = NULL;
 
     switch (token->type)
@@ -101,31 +100,26 @@ static JsonValue * JsonDecoder_DecodeValue(JsonDecoder *thiz)
         case JSON_TOKEN_NULL:
             value = JsonValue_NewNull();
             JsonTokenizer_Pop(&thiz->tokenizer);
-//            thiz->index++;
             break;
 
         case JSON_TOKEN_TRUE:
             value = JsonValue_NewBoolean(true);
             JsonTokenizer_Pop(&thiz->tokenizer);
-//            thiz->index++;
             break;
 
         case JSON_TOKEN_FALSE:
             value = JsonValue_NewBoolean(false);
             JsonTokenizer_Pop(&thiz->tokenizer);
-//            thiz->index++;
             break;
 
         case JSON_TOKEN_STRING:
             value = JsonValue_NewValue(JSON_STRING, JsonDecoder_DecodeString(thiz, token));
             JsonTokenizer_Pop(&thiz->tokenizer);
-//            thiz->index++;
             break;
 
         case JSON_TOKEN_NUMBER:
             value = JsonValue_NewValue(JSON_NUMBER, JsonDecoder_DecodeNumber(thiz, token));
             JsonTokenizer_Pop(&thiz->tokenizer);
-//            thiz->index++;
             break;
     }
 
@@ -141,7 +135,6 @@ static JsonArray * JsonDecoder_DecodeArray(JsonDecoder *thiz)
     {
         TokenAnalystResult result = TOKEN_ANALYSIS_OK;
         JsonToken *token = JsonTokenizer_Head(&thiz->tokenizer);
-//        JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index++);
         if (token == NULL)
         {
             LOG_D(TAG, "JsonArray start token not found!");
@@ -154,7 +147,7 @@ static JsonArray * JsonDecoder_DecodeArray(JsonDecoder *thiz)
             break;
         }
 
-        array = JsonArray_New(JSON_UNDEFINED);
+        array = JsonArray_New();
         if (array == NULL)
         {
             break;
@@ -168,8 +161,7 @@ static JsonArray * JsonDecoder_DecodeArray(JsonDecoder *thiz)
 
             // ]
             token = JsonTokenizer_Head(&thiz->tokenizer);
-//            token = TinyList_GetAt(&thiz->tokens, thiz->index);
-            if (token == NULL) 
+            if (token == NULL)
             {
                 result = TOKEN_ANALYSIS_E_ARRAY_END_NOT_FOUND;
                 break;
@@ -178,7 +170,6 @@ static JsonArray * JsonDecoder_DecodeArray(JsonDecoder *thiz)
             if (token->type == JSON_TOKEN_ARRAY_END)
             {
                 JsonTokenizer_Pop(&thiz->tokenizer);
-//                thiz->index++;
                 break;
             }
 
@@ -190,16 +181,10 @@ static JsonArray * JsonDecoder_DecodeArray(JsonDecoder *thiz)
                 break;
             }
 
-            if (array->values.size == 0) 
-            {
-                array->type = value->type;
-            }
-
             JsonArray_AddValue(array, value);
 
             // , or ]
             token = JsonTokenizer_Head(&thiz->tokenizer);
-//            token = TinyList_GetAt(&thiz->tokens, thiz->index);
             if (token == NULL)
             {
                 result = TOKEN_ANALYSIS_E_ARRAY_END_NOT_FOUND;
@@ -209,14 +194,12 @@ static JsonArray * JsonDecoder_DecodeArray(JsonDecoder *thiz)
             if (token->type == JSON_TOKEN_COMMA)
             {
                 JsonTokenizer_Pop(&thiz->tokenizer);
-//                thiz->index++;
                 continue;
             }
 
             if (token->type == JSON_TOKEN_ARRAY_END)
             {
                 JsonTokenizer_Pop(&thiz->tokenizer);
-//                thiz->index++;
                 break;
             }
 
@@ -315,8 +298,6 @@ static JsonObject * JsonDecoder_DecodeObject(JsonDecoder *thiz)
         TokenAnalystResult result = TOKEN_ANALYSIS_OK;
 
         JsonToken *token = JsonTokenizer_Head(&thiz->tokenizer);
-
-//        JsonToken *token = TinyList_GetAt(&thiz->tokens, thiz->index++);
         if (token == NULL)
         {
             LOG_D(TAG, "JsonObject start token not found!");
@@ -345,7 +326,6 @@ static JsonObject * JsonDecoder_DecodeObject(JsonDecoder *thiz)
 
             // }
             token = JsonTokenizer_Head(&thiz->tokenizer);
-//            token = TinyList_GetAt(&thiz->tokens, thiz->index);
             if (token == NULL)
             {
                 result = TOKEN_ANALYSIS_E_OBJECT_END_NOT_FOUND;
@@ -355,7 +335,6 @@ static JsonObject * JsonDecoder_DecodeObject(JsonDecoder *thiz)
             if (token->type == JSON_TOKEN_OBJECT_END) 
             {
                 JsonTokenizer_Pop(&thiz->tokenizer);
-//                thiz->index++;
                 break;
             }
 
@@ -377,11 +356,9 @@ static JsonObject * JsonDecoder_DecodeObject(JsonDecoder *thiz)
             memcpy(key, thiz->tokenizer.string + token->offset + 1, token->length - 2);
 
             JsonTokenizer_Pop(&thiz->tokenizer);
-//            thiz->index++;
 
             // :
             token = JsonTokenizer_Head(&thiz->tokenizer);
-//            token = TinyList_GetAt(&thiz->tokens, thiz->index);
             if (token == NULL)
             {
                 result = TOKEN_ANALYSIS_E_OBJECT_COLON_NOT_FOUND;
@@ -395,7 +372,6 @@ static JsonObject * JsonDecoder_DecodeObject(JsonDecoder *thiz)
                 break;
             }
 
-//            thiz->index++;
             JsonTokenizer_Pop(&thiz->tokenizer);
 
             // value
@@ -416,7 +392,6 @@ static JsonObject * JsonDecoder_DecodeObject(JsonDecoder *thiz)
 
             // , or }
             token = JsonTokenizer_Head(&thiz->tokenizer);
-//            token = TinyList_GetAt(&thiz->tokens, thiz->index);
             if (token == NULL)
             {
                 result = TOKEN_ANALYSIS_E_OBJECT_END_NOT_FOUND;
@@ -426,14 +401,12 @@ static JsonObject * JsonDecoder_DecodeObject(JsonDecoder *thiz)
             if (token->type == JSON_TOKEN_COMMA)
             {
                 JsonTokenizer_Pop(&thiz->tokenizer);
-//                thiz->index++;
                 continue;
             }
 
             if (token->type == JSON_TOKEN_OBJECT_END)
             {
                 JsonTokenizer_Pop(&thiz->tokenizer);
-//                thiz->index++;
                 break;
             }
 
