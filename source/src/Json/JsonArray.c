@@ -24,7 +24,7 @@ static void _OnJsonValueDelete (void * data, void *ctx)
 }
 
 TINY_LOR
-static TinyRet JsonArray_Construct(JsonArray *thiz, JsonValueType type)
+static TinyRet JsonArray_Construct(JsonArray *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -33,7 +33,6 @@ static TinyRet JsonArray_Construct(JsonArray *thiz, JsonValueType type)
     do 
     {
         memset(thiz, 0, sizeof(JsonArray));
-        thiz->type = type;
         thiz->string = NULL;
 
         ret = TinyList_Construct(&thiz->values);
@@ -63,7 +62,7 @@ static void JsonArray_Dispose(JsonArray *thiz)
 }
 
 TINY_LOR
-JsonArray * JsonArray_New(JsonValueType type)
+JsonArray * JsonArray_New(void)
 {
     JsonArray * thiz = NULL;
 
@@ -75,7 +74,7 @@ JsonArray * JsonArray_New(JsonValueType type)
             break;
         }
 
-        if (RET_FAILED(JsonArray_Construct(thiz, type)))
+        if (RET_FAILED(JsonArray_Construct(thiz)))
         {
             LOG_E(TAG, "JsonArray_Construct FAILED");
             JsonArray_Delete(thiz);
@@ -104,12 +103,6 @@ TinyRet JsonArray_AddString(JsonArray *thiz, const char *value)
 
     do
     {
-        if (thiz->type != JSON_STRING)
-        {
-            ret = TINY_RET_E_ARG_INVALID;
-            break;
-        }
-
         JsonValue * v = JsonValue_NewString(value);
         if (v == NULL)
         {
@@ -137,12 +130,6 @@ TinyRet JsonArray_AddInteger(JsonArray *thiz, int value)
 
     do
     {
-        if (thiz->type != JSON_NUMBER)
-        {
-            ret = TINY_RET_E_ARG_INVALID;
-            break;
-        }
-
         JsonValue * v = JsonValue_NewInteger(value);
         if (v == NULL)
         {
@@ -170,12 +157,6 @@ TinyRet JsonArray_AddFloat(JsonArray *thiz, float value)
 
     do
     {
-        if (thiz->type != JSON_NUMBER)
-        {
-            ret = TINY_RET_E_ARG_INVALID;
-            break;
-        }
-
         JsonValue * v = JsonValue_NewFloat(value);
         if (v == NULL)
         {
@@ -204,12 +185,6 @@ TinyRet JsonArray_AddObject(JsonArray *thiz, JsonObject *value)
 
     do
     {
-        if (thiz->type != JSON_OBJECT)
-        {
-            ret = TINY_RET_E_ARG_INVALID;
-            break;
-        }
-
         JsonValue * v = JsonValue_NewValue(JSON_OBJECT, value);
         if (v == NULL)
         {
@@ -238,12 +213,6 @@ TinyRet JsonArray_AddArray(JsonArray *thiz, JsonArray *value)
 
     do
     {
-        if (thiz->type != JSON_ARRAY)
-        {
-            ret = TINY_RET_E_ARG_INVALID;
-            break;
-        }
-
         JsonValue * v = JsonValue_NewValue(JSON_ARRAY, value);
         if (v == NULL)
         {
@@ -265,22 +234,24 @@ TinyRet JsonArray_AddArray(JsonArray *thiz, JsonArray *value)
 TINY_LOR
 TinyRet JsonArray_AddValue(JsonArray *thiz, JsonValue *value)
 {
-    TinyRet ret = TINY_RET_OK;
-
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(value, TINY_RET_E_ARG_NULL);
 
-    do
+    return TinyList_AddTail(&thiz->values, value);
+}
+
+TINY_LOR
+bool JsonArray_CheckValuesType(JsonArray *thiz, JsonValueType type)
+{
+    RETURN_VAL_IF_FAIL(thiz, false);
+
+    for (int i = 0; i < thiz->values.size; ++i)
     {
-        if (thiz->type != value->type)
-        {
-            LOG_E(TAG, "JsonArray_AddValue FAILED, type invalid: %d", value->type);
-            ret = TINY_RET_E_ARG_INVALID;
-            break;
+        JsonValue *v = (JsonValue *) TinyList_GetAt(&thiz->values, i);
+        if (v->type != JSON_OBJECT) {
+            return false;
         }
+    }
 
-        ret = TinyList_AddTail(&thiz->values, value);
-    } while (false);
-
-    return ret;
+    return true;
 }

@@ -28,8 +28,10 @@
 #       define TINY_EXPORT
 #       define TINY_LOCAL
 #   else
-#       define TINY_EXPORT __attribute__ ((visibility("default")))
-#       define TINY_LOCAL __attribute__ ((visibility("hidden")))
+/*#       define TINY_EXPORT __attribute__ ((visibility("default"))) */
+/*#       define TINY_LOCAL __attribute__ ((visibility("hidden"))) */
+#       define TINY_EXPORT
+#       define TINY_LOCAL
 #   endif /* __ANDROID__ */
 #endif /* _MSC_VER */
 

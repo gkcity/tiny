@@ -21,12 +21,12 @@
 TINY_BEGIN_DECLS
 
 
-typedef struct _JsonObject
+struct _JsonObject
 {
     TinyMap         data;
     char          * string;
     uint32_t        size;
-} JsonObject;
+};
 
 TINY_LOR
 TINY_API

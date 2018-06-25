@@ -76,7 +76,7 @@
 TINY_BEGIN_DECLS
 
 
-typedef int32_t TinyRet;
+typedef uint32_t TinyRet;
 
 #ifdef TINY_DEBUG
 TINY_API
@@ -88,62 +88,62 @@ const char * tiny_ret_to_str(TinyRet ret);
 #define RET_FAILED(r)                       (((TinyRet)(r)) < 0)
 
 /* Severity Value */
-#define SV_OK                               (0)
-#define SV_ERR                              (1)
+#define SV_OK                               ((uint32_t)0)
+#define SV_ERR                              ((uint32_t)1)
 
 /* Error Level */
-#define EL_NULL                             (0)
-#define EL_GENERAL                          (1)
-#define EL_SERIOUS                          (2)
-#define EL_FATAL                            (3)
+#define EL_NULL                             ((uint32_t)0)
+#define EL_GENERAL                          ((uint32_t)1)
+#define EL_SERIOUS                          ((uint32_t)2)
+#define EL_FATAL                            ((uint32_t)3)
 
 /* Code */
-#define CODE_OK                             0
-#define CODE_PENDING                        1
-#define CODE_INTERNAL                       2
-#define CODE_OUT_OF_MEMORY                  3
-#define CODE_ARG_NULL                       4
-#define CODE_ARG_INVALID                    5
-#define CODE_NOT_IMPLEMENTED                6
-#define CODE_NEW                            7
-#define CODE_CONSTRUCT                      8
-#define CODE_TIMEOUT                        9
-#define CODE_NOT_FOUND                      10
-#define CODE_STARTED                        11
-#define CODE_STOPPED                        12
-#define CODE_POSITION_INVALID               13
-#define CODE_SELECT                         14
-#define CODE_SOCKET_FD                      15
-#define CODE_SOCKET_BIND                    16
-#define CODE_SOCKET_SETSOCKOPT              17
-#define CODE_SOCKET_LISTEN                  18
-#define CODE_SOCKET_READ                    19
-#define CODE_SOCKET_WRITE                   20
-#define CODE_SOCKET_CONNECTING              21
-#define CODE_SOCKET_CONNECTED               22
-#define CODE_SOCKET_DISCONNECTED            23
-#define CODE_SOCKET_ASCEPT                  24
-#define CODE_UUID_INVALID                   25
-#define CODE_HTTP_MSG_INVALID               26
-#define CODE_HTTP_TYPE_INVALID              27
-#define CODE_STATUS                         28
-#define CODE_ITEM_EXIST                     29
-#define CODE_URL_INVALID                    30
-#define CODE_URL_GET_FAILED                 31
-#define CODE_XML_INVALID                    32
-#define CODE_INITIALIZED                    41
-#define CODE_NOT_INITIALIZED                42
-#define CODE_FULL                           43
-#define CODE_EMPTY                          44
+#define CODE_OK                             ((uint32_t)0)
+#define CODE_PENDING                        ((uint32_t)1)
+#define CODE_INTERNAL                       ((uint32_t)2)
+#define CODE_OUT_OF_MEMORY                  ((uint32_t)3)
+#define CODE_ARG_NULL                       ((uint32_t)4)
+#define CODE_ARG_INVALID                    ((uint32_t)5)
+#define CODE_NOT_IMPLEMENTED                ((uint32_t)6)
+#define CODE_NEW                            ((uint32_t)7)
+#define CODE_CONSTRUCT                      ((uint32_t)8)
+#define CODE_TIMEOUT                        ((uint32_t)9)
+#define CODE_NOT_FOUND                      ((uint32_t)10)
+#define CODE_STARTED                        ((uint32_t)11)
+#define CODE_STOPPED                        ((uint32_t)12)
+#define CODE_POSITION_INVALID               ((uint32_t)13)
+#define CODE_SELECT                         ((uint32_t)14)
+#define CODE_SOCKET_FD                      ((uint32_t)15)
+#define CODE_SOCKET_BIND                    ((uint32_t)16)
+#define CODE_SOCKET_SETSOCKOPT              ((uint32_t)17)
+#define CODE_SOCKET_LISTEN                  ((uint32_t)18)
+#define CODE_SOCKET_READ                    ((uint32_t)19)
+#define CODE_SOCKET_WRITE                   ((uint32_t)20)
+#define CODE_SOCKET_CONNECTING              ((uint32_t)21)
+#define CODE_SOCKET_CONNECTED               ((uint32_t)22)
+#define CODE_SOCKET_DISCONNECTED            ((uint32_t)23)
+#define CODE_SOCKET_ASCEPT                  ((uint32_t)24)
+#define CODE_UUID_INVALID                   ((uint32_t)25)
+#define CODE_HTTP_MSG_INVALID               ((uint32_t)26)
+#define CODE_HTTP_TYPE_INVALID              ((uint32_t)27)
+#define CODE_STATUS                         ((uint32_t)28)
+#define CODE_ITEM_EXIST                     ((uint32_t)29)
+#define CODE_URL_INVALID                    ((uint32_t)30)
+#define CODE_URL_GET_FAILED                 ((uint32_t)31)
+#define CODE_XML_INVALID                    ((uint32_t)32)
+#define CODE_INITIALIZED                    ((uint32_t)41)
+#define CODE_NOT_INITIALIZED                ((uint32_t)42)
+#define CODE_FULL                           ((uint32_t)43)
+#define CODE_EMPTY                          ((uint32_t)44)
 
 /* Return the error level */
 #define ERR_LEVEL(r)                        (((uint32_t)(r) & 0x7FFFFFFF) >> 29)
 
 /* Return the code */
-#define TINY_RET_CODE(r)                    ((r) & 0x1FFFFFFF)
+#define TINY_RET_CODE(r)                    ((uint32_t)((r) & 0x1FFFFFFF))
 
 /* Create an TinyRet value from component pieces */
-#define MAKE_RET(s, el, code)               (TinyRet)(((uint32_t)(s) << 31) | ((uint32_t)(el) << 29) | ((uint32_t)(code)))
+#define MAKE_RET(s, el, code)               ((uint32_t)(((uint32_t)(s) << 31) | ((uint32_t)(el) << 29) | ((uint32_t)(code))))
 
 /* return value */
 #define TINY_RET_OK                           MAKE_RET(SV_OK, EL_NULL, CODE_OK)

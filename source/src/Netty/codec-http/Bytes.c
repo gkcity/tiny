@@ -16,8 +16,6 @@
 TINY_LOR
 bool Bytes_GetLine(Bytes *thiz, Line *line)
 {
-//    printf("bytes: \n%s\n", thiz->value + thiz->offset);
-
     for (uint32_t i = thiz->offset; i < (thiz->length - 1); ++i)
     {
         if (thiz->value[i] == '\r' && thiz->value[i+1] == '\n')

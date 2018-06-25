@@ -20,16 +20,15 @@
 TINY_BEGIN_DECLS
 
 
-typedef struct _JsonArray
+struct _JsonArray
 {
-    JsonValueType   type;
     TinyList        values;
     char          * string;
-} JsonArray;
+};
 
 TINY_LOR
 TINY_API
-JsonArray * JsonArray_New(JsonValueType type);
+JsonArray * JsonArray_New(void);
 
 TINY_LOR
 TINY_API
@@ -58,6 +57,10 @@ TinyRet JsonArray_AddArray(JsonArray *thiz, JsonArray *value);
 TINY_LOR
 TINY_API
 TinyRet JsonArray_AddValue(JsonArray *thiz, JsonValue *value);
+
+TINY_LOR
+TINY_API
+bool JsonArray_CheckValuesType(JsonArray *thiz, JsonValueType type);
 
 
 TINY_END_DECLS
