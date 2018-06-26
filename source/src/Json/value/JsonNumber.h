@@ -37,7 +37,7 @@ typedef struct _JsonNumber
 } JsonNumber;
 
 TINY_LOR
-JsonNumber * JsonNumber_NewInteger(int value);
+JsonNumber * JsonNumber_NewInteger(long value);
 
 TINY_LOR
 JsonNumber * JsonNumber_NewFloat(float value);

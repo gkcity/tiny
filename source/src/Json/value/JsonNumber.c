@@ -17,7 +17,7 @@
 #define TAG     "JsonNumber"
 
 TINY_LOR
-JsonNumber * JsonNumber_NewInteger(int value)
+JsonNumber * JsonNumber_NewInteger(long value)
 {
     JsonNumber *thiz = NULL;
 

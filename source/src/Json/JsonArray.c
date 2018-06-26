@@ -24,7 +24,7 @@ static void _OnJsonValueDelete (void * data, void *ctx)
 }
 
 TINY_LOR
-static TinyRet JsonArray_Construct(JsonArray *thiz)
+TinyRet JsonArray_Construct(JsonArray *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -48,7 +48,7 @@ static TinyRet JsonArray_Construct(JsonArray *thiz)
 }
 
 TINY_LOR
-static void JsonArray_Dispose(JsonArray *thiz)
+void JsonArray_Dispose(JsonArray *thiz)
 {
     RETURN_IF_FAIL(thiz);
 
@@ -254,4 +254,41 @@ bool JsonArray_CheckValuesType(JsonArray *thiz, JsonValueType type)
     }
 
     return true;
+}
+
+TINY_LOR
+JsonArray * JsonArray_Copy(JsonArray *src)
+{
+    JsonArray * thiz = NULL;
+
+    do
+    {
+        if (src == NULL)
+        {
+            break;
+        }
+
+        thiz = JsonArray_New();
+        if (thiz == NULL)
+        {
+            break;
+        }
+
+        for (int i = 0; i < src->values.size; ++i)
+        {
+            JsonValue *v = (JsonValue *) TinyList_GetAt(&src->values, i);
+            JsonValue *newValue = JsonValue_Copy(v);
+            if (newValue == NULL)
+            {
+                LOG_D(TAG, "JsonValue_Copy failed");
+                JsonArray_Delete(thiz);
+                thiz = NULL;
+                break;
+            }
+
+            JsonArray_AddValue(thiz, newValue);
+        }
+    } while (false);
+
+    return thiz;
 }

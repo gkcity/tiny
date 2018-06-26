@@ -74,7 +74,7 @@ JsonValue * JsonValue_NewString(const char *value)
 }
 
 TINY_LOR
-JsonValue * JsonValue_NewInteger(int value)
+JsonValue * JsonValue_NewInteger(long value)
 {
     JsonValue * thiz = JsonValue_New();
     if (thiz != NULL)
@@ -179,6 +179,55 @@ JsonValue * JsonValue_NewValue(JsonValueType type, void *value)
                     thiz = NULL;
                     break;
             }
+        }
+    }
+
+    return thiz;
+}
+
+TINY_LOR
+JsonValue * JsonValue_Copy(JsonValue *other)
+{
+    JsonValue * thiz = NULL;
+
+    if (other != NULL)
+    {
+        switch (other->type)
+        {
+            case JSON_STRING:
+                thiz = JsonValue_NewString(other->data.string->value);
+                break;
+
+            case JSON_NUMBER:
+                if (other->data.number->type == JSON_NUMBER_INTEGER)
+                {
+                    thiz = JsonValue_NewInteger(other->data.number->value.intValue);
+                }
+                else
+                {
+                    thiz = JsonValue_NewFloat(other->data.number->value.floatValue);
+                }
+                break;
+
+            case JSON_BOOLEAN:
+                thiz = JsonValue_NewBoolean(other->data.boolean->value);
+                break;
+
+            case JSON_NULL:
+                thiz = JsonValue_NewNull();
+                break;
+
+//            case JSON_OBJECT:
+//                break;
+//
+//            case JSON_ARRAY:
+//                break;
+//
+//            case JSON_UNDEFINED:
+//                break;
+
+            default:
+                break;
         }
     }
 

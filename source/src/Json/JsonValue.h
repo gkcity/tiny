@@ -68,7 +68,7 @@ JsonValue * JsonValue_NewString(const char *value);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewInteger(int value);
+JsonValue * JsonValue_NewInteger(long value);
 
 TINY_LOR
 TINY_API
@@ -83,7 +83,12 @@ TINY_API
 JsonValue * JsonValue_NewNull(void);
 
 TINY_LOR
+TINY_API
 JsonValue * JsonValue_NewValue(JsonValueType type, void *value);
+
+TINY_LOR
+TINY_API
+JsonValue * JsonValue_Copy(JsonValue *other);
 
 TINY_LOR
 TINY_API
