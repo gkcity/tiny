@@ -65,39 +65,39 @@ TinyRet TinyList_Dispose(TinyList *thiz)
     return TINY_RET_OK;
 }
 
-//TINY_LOR
-//TinyList * TinyList_New(void)
-//{
-//    TinyList *thiz = NULL;
-//
-//    do
-//    {
-//        thiz = (TinyList *)tiny_malloc(sizeof(TinyList));
-//        if (thiz == NULL)
-//        {
-//            break;
-//        }
-//
-//        if (RET_FAILED(TinyList_Construct(thiz)))
-//        {
-//            TinyList_Delete(thiz);
-//            thiz = NULL;
-//            break;
-//        }
-//
-//    } while (false);
-//
-//    return thiz;
-//}
-//
-//TINY_LOR
-//void TinyList_Delete(TinyList *thiz)
-//{
-//    RETURN_IF_FAIL(thiz);
-//
-//    TinyList_Dispose(thiz);
-//    tiny_free(thiz);
-//}
+TINY_LOR
+TinyList * TinyList_New(void)
+{
+    TinyList *thiz = NULL;
+
+    do
+    {
+        thiz = (TinyList *)tiny_malloc(sizeof(TinyList));
+        if (thiz == NULL)
+        {
+            break;
+        }
+
+        if (RET_FAILED(TinyList_Construct(thiz)))
+        {
+            TinyList_Delete(thiz);
+            thiz = NULL;
+            break;
+        }
+
+    } while (false);
+
+    return thiz;
+}
+
+TINY_LOR
+void TinyList_Delete(TinyList *thiz)
+{
+    RETURN_IF_FAIL(thiz);
+
+    TinyList_Dispose(thiz);
+    tiny_free(thiz);
+}
 
 //TINY_LOR
 //TinyRet TinyList_AddRef(TinyList *thiz)

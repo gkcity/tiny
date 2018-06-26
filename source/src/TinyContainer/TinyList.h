@@ -45,13 +45,13 @@ TINY_API
 TINY_LOR
 TinyRet TinyList_Dispose(TinyList *thiz);
 
-//TINY_API
-//TINY_LOR
-//TinyList * TinyList_New(void);
-//
-//TINY_API
-//TINY_LOR
-//void TinyList_Delete(TinyList *thiz);
+TINY_API
+TINY_LOR
+TinyList * TinyList_New(void);
+
+TINY_API
+TINY_LOR
+void TinyList_Delete(TinyList *thiz);
 
 //TINY_API
 //TINY_LOR
