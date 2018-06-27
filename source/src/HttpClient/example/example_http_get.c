@@ -2,22 +2,22 @@
 #include <tiny_socket.h>
 #include "../HttpClient.h"
 
-#define URI "/homekit/instance/device?type=urn:homtkit-spec:device:lightbulb:00000000:arrizo-v1"
+#define FAN    "/dd/instance/urn:homekit-spec:device:fan:00000000:geekcity-ds:1"
 
 /**
  * NO ACTION
  */
-#define ZHIMI_FAN "/instance/device?type=urn:miot-spec:device:fan:00000A04:zhimi"
+#define ZHIMI_FAN "/dd/instance/urn:miot-spec:device:fan:00000A04:zhimi"
 
 /**
  * Contains Action without arguments
  */
-#define ROCK_SWEEPER "/instance/device?type=urn:miot-spec:device:sweeper:00000A0A:rock"
+#define ROCK_SWEEPER "/dd/instance/urn:miot-spec:device:sweeper:00000A0A:rock"
 
 /**
  * Contains Action with arguments
  */
-#define CHUNMI_COOKER "/instance/device?type=urn:miot-spec:device:cooker:00000A08:chunmi"
+#define CHUNMI_COOKER "/instance/urn:miot-spec:device:cooker:00000A08:chunmi"
 
 void tiny_print_mem(const char *tag, const char *function)
 {
@@ -36,7 +36,7 @@ int main(void)
     {
         HttpClient *client = HttpClient_New();
 
-        HttpExchange *exchange = HttpExchange_New("47.93.60.147", 8080, "GET", CHUNMI_COOKER, 5, NULL, 0);
+        HttpExchange *exchange = HttpExchange_New("39.106.171.204", 80, "GET", FAN, 5, NULL, 0);
 
         if (RET_SUCCEEDED(HttpClient_Send(client, exchange)))
         {

@@ -178,9 +178,9 @@ TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
         channel->_onRemove(channel);
 
         return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
-#endif
-
+#else
         return TINY_RET_E_NOT_IMPLEMENTED;
+#endif
     }
 
     return TINY_RET_OK;

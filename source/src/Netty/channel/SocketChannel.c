@@ -445,7 +445,7 @@ TinyRet SocketChannel_Bind(Channel *thiz, uint16_t port, bool reuse)
 
         thiz->local.socket.address = self_addr.sin_addr.s_addr;
         thiz->local.socket.port = (port > 0) ? port : tiny_socket_get_port(thiz->fd);;
-        tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d#127.0.0.1::%d", thiz->fd, thiz->local.socket.port);
+        tiny_snprintf(thiz->id, CHANNEL_ID_LEN, "%d#127.0.0.1:%d", thiz->fd, thiz->local.socket.port);
 
         LOG_I(TAG, "SocketChannel_Bind OK. channel id: %s", thiz->id);
     } while (0);
