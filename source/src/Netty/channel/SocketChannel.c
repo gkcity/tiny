@@ -531,7 +531,6 @@ void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, const void *da
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
-    RETURN_IF_FAIL(len);
 
     thiz->currentReader = 0;
     SocketChannel_NextRead(thiz, type, data, len);
@@ -542,7 +541,6 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
-    RETURN_IF_FAIL(len);
 
     LOG_I(TAG, "SocketChannel_NextRead");
 
@@ -558,7 +556,7 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
 
         if (handler->inType != type)
         {
-            LOG_E(TAG, "ChannelDataType not matched: %d != %d", type, handler->inType);
+            LOG_E(TAG, "ChannelDataType not matched: %d, but expect is %d", type, handler->inType);
             break;
         }
 
@@ -582,7 +580,6 @@ void SocketChannel_StartWrite(Channel *thiz, ChannelDataType type, const void *d
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
-    RETURN_IF_FAIL(len);
 
     thiz->currentWriter = thiz->handlers.size - 1;
     SocketChannel_NextWrite(thiz, type, data, len);
@@ -593,7 +590,6 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
-    RETURN_IF_FAIL(len);
 
     while (true)
     {
