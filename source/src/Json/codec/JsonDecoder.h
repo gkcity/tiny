@@ -14,6 +14,8 @@
 #define __JSON_DECODER_COMPACT_H__
 
 #include <tiny_base.h>
+#include <tiny_api.h>
+#include <tiny_lor.h>
 #include "JsonTokenizer.h"
 #include "JsonObject.h"
 
@@ -32,12 +34,15 @@ typedef enum _JsonDecoderMode
 } JsonDecoderMode;
 
 TINY_LOR
+TINY_API
 TinyRet JsonDecoder_Construct(JsonDecoder *thiz);
 
 TINY_LOR
+TINY_API
 void JsonDecoder_Dispose(JsonDecoder *thiz);
 
 TINY_LOR
+TINY_API
 JsonObject * JsonDecoder_Parse(JsonDecoder *thiz, const char *string, JsonDecoderMode mode);
 
 

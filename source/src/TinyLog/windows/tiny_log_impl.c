@@ -54,40 +54,6 @@ static char get_priority(int prio)
 }
 
 TINY_LOR
-static void change_screen_color(int prio)
-{
-    const char *color = LOG_COLOR_NONE;
-
-    switch (prio)
-    {
-    case TINY_LOG_VERBOSE:
-        color = LOG_COLOR_DARY_GRAY;
-        break;
-
-    case TINY_LOG_DEBUG:
-        color = LOG_COLOR_GREEN;
-        break;
-
-    case TINY_LOG_INFO:
-        color = LOG_COLOR_LIGHT_GRAY;
-        break;
-
-    case TINY_LOG_WARN:
-        color = LOG_COLOR_YELLOW;
-        break;
-
-    case TINY_LOG_ERROR:
-        color = LOG_COLOR_RED;
-        break;
-
-    default:
-        break;
-    }
-
-    printf("%s", color);
-}
-
-TINY_LOR
 int __tiny_log_write(int prio, const char *tag, const char *text)
 {
     char log[LOG_HEAD + LOG_BUF_SIZE];

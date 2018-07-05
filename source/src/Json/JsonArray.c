@@ -245,7 +245,7 @@ bool JsonArray_CheckValuesType(JsonArray *thiz, JsonValueType type)
 {
     RETURN_VAL_IF_FAIL(thiz, false);
 
-    for (int i = 0; i < thiz->values.size; ++i)
+    for (uint32_t i = 0; i < thiz->values.size; ++i)
     {
         JsonValue *v = (JsonValue *) TinyList_GetAt(&thiz->values, i);
         if (v->type != JSON_OBJECT) {
@@ -274,7 +274,7 @@ JsonArray * JsonArray_Copy(JsonArray *src)
             break;
         }
 
-        for (int i = 0; i < src->values.size; ++i)
+        for (uint32_t i = 0; i < src->values.size; ++i)
         {
             JsonValue *v = (JsonValue *) TinyList_GetAt(&src->values, i);
             JsonValue *newValue = JsonValue_Copy(v);

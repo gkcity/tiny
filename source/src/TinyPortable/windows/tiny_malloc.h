@@ -24,18 +24,20 @@ TINY_BEGIN_DECLS
 
 
 TINY_LOR
+TINY_API
 void * tiny_malloc(uint32_t size);
 
 TINY_LOR
+TINY_API
 void * tiny_calloc(uint32_t n, size_t size);
 
 TINY_LOR
+TINY_API
 void * tiny_realloc(void *p, uint32_t size);
 
 TINY_LOR
+TINY_API
 void tiny_free(void *p);
-
-#define LOG_MEM(T,F)
 
 
 TINY_END_DECLS

@@ -18,11 +18,13 @@
 #include <stdint.h>
 #include <tiny_typedef.h>
 #include <tiny_lor.h>
+#include <tiny_api.h>
 
 TINY_BEGIN_DECLS
 
 
 TINY_LOR
+TINY_API
 void tiny_random_create(uint8_t *value, uint8_t length);
 
 

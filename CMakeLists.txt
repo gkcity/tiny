@@ -323,6 +323,8 @@ SOURCE_GROUP(StringArray\\headers FILES ${StringArray_Header})
 SOURCE_GROUP(StringArray\\sources FILES ${StringArray_Source})
 SOURCE_GROUP(TinyThread\\headers FILES ${TinyThread_Header})
 SOURCE_GROUP(TinyThread\\sources FILES ${TinyThread_Source})
+SOURCE_GROUP(TinyRandom\\headers FILES ${TinyRandom_Header})
+SOURCE_GROUP(TinyRandom\\sources FILES ${TinyRandom_Source})
 
 IF (TINY_THREAD_ENABLED EQUAL 1)
     MESSAGE(STATUS "TinyThread enabled")

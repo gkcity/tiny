@@ -15,7 +15,6 @@
 #include <channel/SocketChannel.h>
 #include <tiny_log.h>
 #include <tiny_malloc.h>
-#include <tiny_print_mem.h>
 #include "HttpMessageCodec.h"
 #include "HttpMessage.h"
 
@@ -24,7 +23,7 @@
 TINY_LOR
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
-    LOG_MEM(TAG, "_channelRead");
+    LOG_D(TAG, "_channelRead");
 
     do
     {

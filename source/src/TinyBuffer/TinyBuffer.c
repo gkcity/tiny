@@ -28,7 +28,7 @@ TinyBuffer * TinyBuffer_New(uint32_t size)
         if (thiz == NULL)
         {
             LOG_D(TAG, "tiny_malloc FAILED!");
-            LOG_MEM(TAG, "TinyBuffer_New");
+            //LOG_MEM(TAG, "TinyBuffer_New");
             break;
         }
 

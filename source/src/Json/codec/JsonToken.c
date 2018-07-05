@@ -12,7 +12,6 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include <tiny_print_mem.h>
 #include "JsonToken.h"
 
 #define TAG     "JsonToken"
@@ -23,7 +22,6 @@ JsonToken * JsonToken_New(JsonTokenType type, uint32_t offset, uint32_t length)
     JsonToken *thiz = tiny_malloc(sizeof(JsonToken));
     if (thiz == NULL)
     {
-        LOG_MEM("JsonToken", "JsonToken_New");
         LOG_E(TAG, "tiny_malloc failed!");
         return NULL;
     }
