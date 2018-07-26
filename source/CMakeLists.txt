@@ -30,6 +30,7 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/TinyWorker)
 # Netty
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/Netty)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/HttpClient)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/TcpClient)
 
 #--------------------------------------------------------------------------------------
 #

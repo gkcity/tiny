@@ -17,10 +17,13 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyRandom)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyBuffer)
-INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Netty)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Json)
-INCLUDE_DIRECTORIES(${SOURCE_ROOT}/HttpClient)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/StringArray)
+
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Netty)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/HttpClient)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TcpClient)
+
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyUmm)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyMd5)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyThread)
@@ -272,6 +275,22 @@ SET(HttpClient_Source
         )
 
 #---------------------------
+# TcpClient
+#---------------------------
+
+SET(TcpClient_Header
+        ${SOURCE_ROOT}/TcpClient/TcpClient.h
+        ${SOURCE_ROOT}/TcpClient/TcpClientHandler.h
+        ${SOURCE_ROOT}/TcpClient/TcpExchange.h
+        )
+
+SET(TcpClient_Source
+        ${SOURCE_ROOT}/TcpClient/TcpClient.c
+        ${SOURCE_ROOT}/TcpClient/TcpClientHandler.c
+        ${SOURCE_ROOT}/TcpClient/TcpExchange.c
+        )
+
+#---------------------------
 # StringArray
 #---------------------------
 
@@ -319,6 +338,8 @@ SOURCE_GROUP(Json\\headers FILES ${Json_Header})
 SOURCE_GROUP(Json\\sources FILES ${Json_Source})
 SOURCE_GROUP(HttpClient\\headers FILES ${HttpClient_Header})
 SOURCE_GROUP(HttpClient\\sources FILES ${HttpClient_Source})
+SOURCE_GROUP(TcpClient\\headers FILES ${TcpClient_Header})
+SOURCE_GROUP(TcpClient\\sources FILES ${TcpClient_Source})
 SOURCE_GROUP(StringArray\\headers FILES ${StringArray_Header})
 SOURCE_GROUP(StringArray\\sources FILES ${StringArray_Source})
 SOURCE_GROUP(TinyThread\\headers FILES ${TinyThread_Header})
@@ -352,6 +373,8 @@ IF (TINY_THREAD_ENABLED EQUAL 1)
             ${Json_Source}
             ${HttpClient_Header}
             ${HttpClient_Source}
+            ${TcpClient_Header}
+            ${TcpClient_Source}
             ${TinyThread_Header}
             ${TinyThread_Source}
             )
@@ -381,6 +404,8 @@ ELSE ()
             ${Json_Source}
             ${HttpClient_Header}
             ${HttpClient_Source}
+            ${TcpClient_Header}
+            ${TcpClient_Source}
             )
 ENDIF ()
 

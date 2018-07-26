@@ -165,13 +165,14 @@ int tiny_socket_reuse_port(int fd)
     int ret = 0;
     int reuseport = 1;
 
+#if defined (SO_REUSEPORT)
     ret = tiny_setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&reuseport, sizeof(reuseport));
     if (ret < 0)
     {
         LOG_E(TAG, "tiny_setsockopt failed: %d", ret);
     }
-
     LOG_D(TAG, "tiny_socket_reuse_port, reuseport = %d", reuseport);
+#endif
 
     return ret;
 }
