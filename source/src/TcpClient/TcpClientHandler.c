@@ -138,8 +138,8 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     exchange->content = tiny_malloc(len + 1);
     if (exchange->content != NULL)
     {
-        memset(exchange->content, 0, exchange->length + 1);
-        memcpy(exchange->content, data, exchange->length);
+        memset(exchange->content, 0, len + 1);
+        memcpy(exchange->content, data, len);
         exchange->length = len;
     }
     else

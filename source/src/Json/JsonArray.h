@@ -32,6 +32,10 @@ JsonArray * JsonArray_New(void);
 
 TINY_LOR
 TINY_API
+JsonArray * JsonArray_NewFrom(JsonArray *src);
+
+TINY_LOR
+TINY_API
 void JsonArray_Delete(JsonArray *thiz);
 
 TINY_LOR
@@ -72,7 +76,11 @@ bool JsonArray_CheckValuesType(JsonArray *thiz, JsonValueType type);
 
 TINY_LOR
 TINY_API
-JsonArray * JsonArray_Copy(JsonArray *src);
+TinyRet JsonArray_Copy(JsonArray *dst, JsonArray *src);
+
+TINY_LOR
+TINY_API
+TinyRet JsonArray_Clean(JsonArray *thiz);
 
 
 TINY_END_DECLS

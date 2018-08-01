@@ -94,6 +94,36 @@ void JsonArray_Delete(JsonArray *thiz)
 }
 
 TINY_LOR
+JsonArray * JsonArray_NewFrom(JsonArray *src)
+{
+    JsonArray * thiz = NULL;
+
+    do
+    {
+        if (src == NULL)
+        {
+            break;
+        }
+
+        thiz = JsonArray_New();
+        if (thiz == NULL)
+        {
+            break;
+        }
+
+        if (RET_FAILED(JsonArray_Copy(thiz, src)))
+        {
+            LOG_D(TAG, "JsonArray_Copy failed");
+            JsonArray_Delete(thiz);
+            thiz = NULL;
+            break;
+        }
+    } while (false);
+
+    return thiz;
+}
+
+TINY_LOR
 TinyRet JsonArray_AddString(JsonArray *thiz, const char *value)
 {
     TinyRet ret = TINY_RET_OK;
@@ -257,22 +287,16 @@ bool JsonArray_CheckValuesType(JsonArray *thiz, JsonValueType type)
 }
 
 TINY_LOR
-JsonArray * JsonArray_Copy(JsonArray *src)
+TinyRet JsonArray_Copy(JsonArray *dst, JsonArray *src)
 {
-    JsonArray * thiz = NULL;
+    TinyRet ret = TINY_RET_OK;
 
-    do
+    RETURN_VAL_IF_FAIL(dst, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(src, TINY_RET_E_ARG_NULL);
+
+    if (dst != src)
     {
-        if (src == NULL)
-        {
-            break;
-        }
-
-        thiz = JsonArray_New();
-        if (thiz == NULL)
-        {
-            break;
-        }
+        JsonArray_Clean(dst);
 
         for (uint32_t i = 0; i < src->values.size; ++i)
         {
@@ -281,14 +305,31 @@ JsonArray * JsonArray_Copy(JsonArray *src)
             if (newValue == NULL)
             {
                 LOG_D(TAG, "JsonValue_Copy failed");
-                JsonArray_Delete(thiz);
-                thiz = NULL;
+                ret = TINY_RET_E_NEW;
                 break;
             }
 
-            JsonArray_AddValue(thiz, newValue);
+            ret = JsonArray_AddValue(dst, newValue);
+            if (RET_FAILED(ret))
+            {
+                break;
+            }
         }
-    } while (false);
+    }
 
-    return thiz;
+    return ret;
+}
+
+TINY_LOR
+TinyRet JsonArray_Clean(JsonArray *thiz)
+{
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    if (thiz->string != NULL)
+    {
+        tiny_free(thiz->string);
+        thiz->string = NULL;
+    }
+
+    return TinyList_RemoveAll(&thiz->values);
 }
