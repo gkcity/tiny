@@ -15,39 +15,39 @@
 #include "tiny_str_equal.h"
 #include <ctype.h>
 
-//TINY_LOR
-//bool str_equal(const char *dst, const char *src, bool ignore_case)
-//{
-//    bool ret = true;
-//
-//    do
-//    {
-//        if (dst == NULL || src == NULL)
-//        {
-//            ret = false;
-//            break;
-//        }
-//
-//        if (!ignore_case)
-//        {
-//            ret = STR_EQUAL(dst, src);
-//            break;
-//        }
-//
-//        while (*dst)
-//        {
-//            if (tolower(*dst++) != tolower(*src++))
-//            {
-//                ret = false;
-//                break;
-//            }
-//        }
-//
-//        if (*dst != *src)
-//        {
-//            ret = false;
-//        }
-//    } while (0);
-//
-//    return ret;
-//}
+TINY_LOR
+bool str_equal(const char *dst, const char *src, bool ignore_case)
+{
+    bool ret = true;
+
+    do
+    {
+        if (dst == NULL || src == NULL)
+        {
+            ret = false;
+            break;
+        }
+
+        if (!ignore_case)
+        {
+            ret = STR_EQUAL(dst, src);
+            break;
+        }
+
+        while (*dst)
+        {
+            if (tolower(*dst++) != tolower(*src++))
+            {
+                ret = false;
+                break;
+            }
+        }
+
+        if (*dst != *src)
+        {
+            ret = false;
+        }
+    } while (0);
+
+    return ret;
+}

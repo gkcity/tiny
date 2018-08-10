@@ -22,9 +22,9 @@
 TINY_BEGIN_DECLS
 
 
-//TINY_API
-//TINY_LOR
-//bool str_equal(const char *a, const char *b, bool ignore_case);
+TINY_API
+TINY_LOR
+bool str_equal(const char *a, const char *b, bool ignore_case);
 
 
 TINY_END_DECLS

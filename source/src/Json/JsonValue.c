@@ -227,6 +227,7 @@ JsonValue * JsonValue_Copy(JsonValue *other)
 //                break;
 
             default:
+                LOG_D(TAG, "JsonValue_Copy failed, type(%d) not supported", other->type);
                 break;
         }
     }
@@ -275,7 +276,8 @@ void JsonValue_Delete(JsonValue *thiz)
             break;
 
         case JSON_UNDEFINED:
-        case JSON_NULL:break;
+        case JSON_NULL:
+            break;
     }
 
     tiny_free(thiz);
