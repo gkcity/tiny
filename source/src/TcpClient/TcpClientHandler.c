@@ -102,11 +102,13 @@ static TinyRet TcpClientHandler_Dispose(ChannelHandler *thiz)
     return TINY_RET_OK;
 }
 
+#if 0
 static void _Output (const uint8_t *data, uint32_t size, void *ctx)
 {
     Channel *channel = (Channel *)ctx;
     SocketChannel_StartWrite(channel, DATA_RAW, data, size);
 }
+#endif
 
 TINY_LOR
 static void _channelActive(ChannelHandler *thiz, Channel *channel)

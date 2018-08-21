@@ -412,15 +412,19 @@ ENDIF ()
 #----------------------------------------------------------------------------
 # static library
 #----------------------------------------------------------------------------
+IF (EXPORT_STATIC_LIBRARY EQUAL 1)
 ADD_LIBRARY(tiny_static STATIC ${SRC})
 SET_TARGET_PROPERTIES(tiny_static PROPERTIES OUTPUT_NAME "tiny_static")
 SET_TARGET_PROPERTIES(tiny_static PROPERTIES LINKER_LANGUAGE C)
+ENDIF ()
 
 #----------------------------------------------------------------------------
 # shared library
 #----------------------------------------------------------------------------
+IF (EXPORT_SHARED_LIBRARY EQUAL 1)
 MESSAGE(STATUS "link library: ${DEPENDENCE_LIB}")
 ADD_LIBRARY(tiny SHARED ${SRC})
 SET_TARGET_PROPERTIES(tiny PROPERTIES OUTPUT_NAME "tiny")
 SET_TARGET_PROPERTIES(tiny PROPERTIES LINKER_LANGUAGE C)
 TARGET_LINK_LIBRARIES(tiny ${DEPENDENCE_LIB})
+ENDIF ()
