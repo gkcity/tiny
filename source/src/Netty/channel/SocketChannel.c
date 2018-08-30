@@ -527,10 +527,80 @@ void SocketChannel_AddLast(Channel *thiz, ChannelHandler *handler)
 }
 
 TINY_LOR
+ChannelHandler * SocketChannel_GetHandler(Channel *thiz, const char *name)
+{
+    RETURN_VAL_IF_FAIL(thiz, NULL);
+    RETURN_VAL_IF_FAIL(name, NULL);
+
+    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
+    {
+        ChannelHandler *h = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
+        if (STR_EQUAL(h->name, name))
+        {
+            return h;
+        }
+    }
+
+    return NULL;
+}
+
+TINY_LOR
+TinyRet SocketChannel_RemoveHandler(Channel *thiz, const char *name)
+{
+    int position = -1;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(name, TINY_RET_E_ARG_NULL);
+
+    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
+    {
+        ChannelHandler *h = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
+        if (STR_EQUAL(h->name, name))
+        {
+            h->invalid = true;
+            position = i;
+            break;
+        }
+    }
+
+    if (position < 0)
+    {
+        return TINY_RET_E_NOT_FOUND;
+    }
+
+    return TINY_RET_OK;
+}
+
+TINY_LOR
+static void _RemoveHandlerIfNecessary(Channel *thiz)
+{
+    int position = -1;
+
+    RETURN_IF_FAIL(thiz);
+
+    for (uint32_t i = 0; i < thiz->handlers.size; ++i)
+    {
+        ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
+        if (handler->invalid)
+        {
+            position = i;
+            break;
+        }
+    }
+
+    if (position >= 0)
+    {
+        TinyList_RemoveAt(&thiz->handlers, position);
+    }
+}
+
+TINY_LOR
 void SocketChannel_StartRead(Channel *thiz, ChannelDataType type, const void *data, uint32_t len)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
+
+    _RemoveHandlerIfNecessary(thiz);
 
     thiz->currentReader = 0;
     SocketChannel_NextRead(thiz, type, data, len);
@@ -546,7 +616,7 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
 
     while (true)
     {
-        ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentReader);
+        ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentReader++);
         if (handler == NULL)
         {
             break;
@@ -554,13 +624,16 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
 
         LOG_D(TAG, "ChannelHandler: %s", handler->name);
 
+        if (handler->invalid)
+        {
+            continue;
+        }
+
         if (handler->inType != type)
         {
             LOG_E(TAG, "ChannelDataType not matched: %d, but expect is %d", type, handler->inType);
             break;
         }
-
-        thiz->currentReader++;
 
         if (handler->channelRead == NULL)
         {
@@ -593,8 +666,8 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
 
     while (true)
     {
-        ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter);
-        if (handler == NULL)
+        ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter--);
+        if (handler == NULL || type == DATA_RAW)
         {
             for (int i = 0; i < 10; ++i)
             {
@@ -620,13 +693,10 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
             break;
         }
 
-        //    if (handler->inType != type)
-        //    {
-        //        LOG_E(TAG, "ChannelDataType not matched: %d != %d", type, handler->inType);
-        //        return ret;
-        //    }
-
-        thiz->currentWriter--;
+        if (handler->invalid)
+        {
+            continue;
+        }
 
         if (handler->channelWrite == NULL)
         {
@@ -634,9 +704,9 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
             continue;
         }
 
-        LOG_D(TAG, "%s.channelWrite", handler->name);
+        LOG_D(TAG, "%s.channelWrite, outType: %d", handler->name, handler->outType);
 
-        if (handler->channelWrite(handler, thiz, handler->inType, data, len))
+        if (handler->channelWrite(handler, thiz, handler->outType, data, len))
         {
             break;
         }

@@ -62,6 +62,14 @@ void SocketChannel_AddLast(Channel *thiz, ChannelHandler *handler);
 
 TINY_API
 TINY_LOR
+ChannelHandler * SocketChannel_GetHandler(Channel *thiz, const char *name);
+
+TINY_API
+TINY_LOR
+TinyRet SocketChannel_RemoveHandler(Channel *thiz, const char *name);
+
+TINY_API
+TINY_LOR
 TinyRet SocketChannel_Open(Channel *thiz, ChannelType type);
 
 TINY_API

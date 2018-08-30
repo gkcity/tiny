@@ -17,6 +17,7 @@
 #include <tiny_malloc.h>
 #include "HttpMessageCodec.h"
 #include "HttpMessage.h"
+#include "HttpMessageEncoder.h"
 
 #define TAG     "HttpMessageCodec"
 
@@ -24,6 +25,8 @@ TINY_LOR
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
     LOG_D(TAG, "_channelRead");
+
+//    printf("%s\n", (const char *)data);
 
     do
     {
@@ -61,10 +64,63 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 
         if (HttpMessage_IsContentFull((HttpMessage *) thiz->context))
         {
-            SocketChannel_NextRead(channel, DATA_HTTP_MESSAGE, thiz->context, len);
+            SocketChannel_NextRead(channel, DATA_HTTP_MESSAGE, (HttpMessage *) thiz->context, len);
             HttpMessage_Delete((HttpMessage *) thiz->context);
             thiz->context = NULL;
         }
+    } while (0);
+
+    return true;
+}
+
+static void _Output (const uint8_t *data, uint32_t size, void *ctx)
+{
+    LOG_E(TAG, "_Output (%d): %s", size, (const char *)data);
+
+    Channel *channel = (Channel *)ctx;
+    SocketChannel_StartWrite(channel, DATA_RAW, data, size);
+}
+
+static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
+{
+    HttpMessage *message = (HttpMessage *) data;
+
+    LOG_D(TAG, "_ChannelWrite");
+
+    do
+    {
+        HttpMessageEncoder encoder;
+        TinyBuffer *buffer = NULL;
+
+        if (message == NULL)
+        {
+            LOG_E(TAG, "_ChannelWrite message is null");
+        }
+
+        if (type != thiz->outType)
+        {
+            LOG_E(TAG, "_ChannelWrite outType error: %d", type);
+            break;
+        }
+
+        if (RET_FAILED(HttpMessageEncoder_Construct(&encoder, message)))
+        {
+            LOG_E(TAG, "HttpMessageEncoder_Construct FAILED");
+            break;
+        }
+
+        buffer = TinyBuffer_New(HttpMessageCodec_BUFFER_SIZE);
+        if (buffer == NULL)
+        {
+            LOG_E(TAG, "TinyBuffer_New FAILED");
+            HttpMessageEncoder_Dispose(&encoder);
+            break;
+        }
+
+        HttpMessageEncoder_Encode(&encoder, buffer, _Output, channel);
+
+        TinyBuffer_Delete(buffer);
+        HttpMessageEncoder_Dispose(&encoder);
     } while (0);
 
     return true;
@@ -77,8 +133,7 @@ static TinyRet HttpMessageCodec_Dispose(ChannelHandler *thiz)
 
     if (thiz->context != NULL)
     {
-        HttpMessage *p = (HttpMessage *) thiz->context;
-        HttpMessage_Delete(p);
+        HttpMessage_Delete((HttpMessage *) thiz->context);
         thiz->context = NULL;
     }
 
@@ -100,11 +155,13 @@ static TinyRet HttpMessageCodec_Construct(ChannelHandler *thiz)
     memset(thiz, 0, sizeof(ChannelHandler));
 
     strncpy(thiz->name, HttpMessageCodec_Name, CHANNEL_HANDLER_NAME_LEN);
+
+    thiz->invalid = false;
     thiz->onRemove = HttpMessageCodec_Delete;
     thiz->inType = DATA_RAW;
     thiz->outType = DATA_HTTP_MESSAGE;
     thiz->channelRead = _channelRead;
-    thiz->channelWrite = NULL;
+    thiz->channelWrite = _ChannelWrite;
     thiz->context = NULL;
 
     return TINY_RET_OK;

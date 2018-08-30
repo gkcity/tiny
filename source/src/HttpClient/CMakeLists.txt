@@ -6,7 +6,6 @@
 
 SET(HttpClient_Header
         HttpClient.h
-        HttpClientHandler.h
         HttpExchange.h
         )
 

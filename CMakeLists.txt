@@ -200,6 +200,11 @@ SET(Netty_Header
         ${SOURCE_ROOT}/Netty/codec-http/HttpHeader.h
         ${SOURCE_ROOT}/Netty/codec-http/HttpContent.h
         ${SOURCE_ROOT}/Netty/codec-http/Bytes.h
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrame.h
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameFactory.h
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameCodec.h
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameEncoder.h
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameDecoder.h
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.h
         ${SOURCE_ROOT}/Netty/bootstrap/LoopbackChannelHandler.h
         )
@@ -224,6 +229,11 @@ SET(Netty_Source
         ${SOURCE_ROOT}/Netty/codec-http/HttpHeader.c
         ${SOURCE_ROOT}/Netty/codec-http/HttpMessage.c
         ${SOURCE_ROOT}/Netty/codec-http/Bytes.c
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrame.c
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameFactory.c
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameCodec.c
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameEncoder.c
+        ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameDecoder.c
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.c
         ${SOURCE_ROOT}/Netty/bootstrap/LoopbackChannelHandler.c
         )

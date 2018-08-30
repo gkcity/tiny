@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2013-2015
  *
- * @author wenzhenwei@xiaomi.com
+ * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
  * @file   StreamClientChannel.c

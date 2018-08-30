@@ -30,6 +30,7 @@ typedef enum _ChannelDataType
     DATA_RAW = 0,
     DATA_HTTP_MESSAGE = 1,
     DATA_MDNS_MESSAGE = 2,
+    DATA_WEBSOCKET_FRAME = 3,
     DATA_USER_DEFINED = 100,
 } ChannelDataType;
 
@@ -46,6 +47,7 @@ typedef void (*ChannelEvent)(ChannelHandler *thiz, Channel *channel, ChannelTime
 
 struct _ChannelHandler
 {
+    bool                        invalid;
     char                        name[CHANNEL_HANDLER_NAME_LEN];
     ChannelHandlerRemoved       onRemove;
     ChannelDataType             inType;

@@ -84,6 +84,26 @@ SET(Codec_http_Source
     )
 
 #-----------------------
+# codec-websocket
+#-----------------------
+SET(Codec_websocket_Header
+        codec-websocket/WebSocketFrame.h
+        codec-websocket/WebSocketFrameFactory.h
+        codec-websocket/WebSocketFrameCodec.h
+        codec-websocket/WebSocketFrameEncoder.h
+        codec-websocket/WebSocketFrameDecoder.h
+        )
+
+SET(Codec_websocket_Source
+        codec-websocket/WebSocketFrame.c
+        codec-websocket/WebSocketFrameFactory.c
+        codec-websocket/WebSocketFrameCodec.c
+        codec-websocket/WebSocketFrameEncoder.c
+        codec-websocket/WebSocketFrameDecoder.c
+        )
+
+
+#-----------------------
 # bootstrap
 #-----------------------
 SET(Bootstrap_Header
@@ -106,6 +126,8 @@ SET(SRC
         ${Channel_Source}
         ${Codec_http_Header}
         ${Codec_http_Source}
+        ${Codec_websocket_Header}
+        ${Codec_websocket_Source}
         ${Bootstrap_Header}
         ${Bootstrap_Source}
     )
