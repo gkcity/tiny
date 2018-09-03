@@ -622,12 +622,13 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
             break;
         }
 
-        LOG_D(TAG, "ChannelHandler: %s", handler->name);
-
         if (handler->invalid)
         {
+            LOG_D(TAG, "ChannelHandler: %s is invalid, skip it", handler->name);
             continue;
         }
+
+        LOG_D(TAG, "ChannelHandler: %s", handler->name);
 
         if (handler->inType != type)
         {
@@ -664,6 +665,8 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
 
+    LOG_I(TAG, "SocketChannel_NextWrite");
+
     while (true)
     {
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter--);
@@ -695,6 +698,7 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
 
         if (handler->invalid)
         {
+            LOG_D(TAG, "ChannelHandler: %s is invalid, skip it", handler->name);
             continue;
         }
 

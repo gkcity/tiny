@@ -14,6 +14,7 @@
 
 #include <tiny_log.h>
 #include <tiny_malloc.h>
+#include <tiny_inet.h>
 #include "WebSocketFrameEncoder.h"
 
 #define TAG "WebSocketFrameEncoder"
@@ -61,18 +62,15 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(TinyBuffer *buffer)
         }
         else if (header->PayLoadLen == 0x7E)
         {
-//            WebSocketFrameMaxHeader2 *h = (WebSocketFrameMaxHeader2 *) buffer->bytes;
-//            frame->length = h->payloadLength;
-
-            uint32_t b0 = p[0];
-            uint32_t b1 = p[1];
-            frame->length = (b1 << 8) + b0;
+            WebSocketFrameMaxHeader2 *h = (WebSocketFrameMaxHeader2 *) buffer->bytes;
+            frame->length = ntohs(h->payloadLength);
             p += 2;
+            unparsed -= 2;
         }
         else
         {
 //            WebSocketFrameMaxHeader3 *h = (WebSocketFrameMaxHeader3 *) buffer->bytes;
-//            frame->length = h->payloadLength;
+//            frame->length = ntohl(h->payloadLength);
 
             uint64_t b0 = p[0];
             uint64_t b1 = p[1];
@@ -91,7 +89,9 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(TinyBuffer *buffer)
                             + (b5 << 40)
                             + (b6 << 48)
                             + (b7 << 56);
+
             p += 8;
+            unparsed -= 8;
         }
 
         if (header->MASK == 1)
@@ -132,7 +132,7 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(TinyBuffer *buffer)
             break;
         }
 
-        frame->data = tiny_malloc(frame->length);
+        frame->data = tiny_malloc((uint32_t)frame->length);
         if (frame->data == NULL)
         {
             LOG_E(TAG, "tiny_malloc failed: %ld", frame->length);

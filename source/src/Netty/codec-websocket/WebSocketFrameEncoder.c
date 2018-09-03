@@ -13,6 +13,7 @@
  */
 
 #include <tiny_log.h>
+#include <tiny_inet.h>
 #include "WebSocketFrameEncoder.h"
 
 #define TAG     "WebSocketFrameEncoder"
@@ -25,13 +26,13 @@ void WebSocketFrameEncoder_Encode(WebSocketFrame *frame, WebSocketFrameOutput ou
         WebSocketFrameMaxHeader1 header;
         uint32_t length = sizeof(WebSocketFrameMaxHeader1);
 
-        header.header.FIN = (uint16_t) frame->final;
+        header.header.FIN = (uint8_t) frame->final;
         header.header.RSV1 = 0;
         header.header.RSV2 = 0;
         header.header.RSV3 = 0;
         header.header.Opcode = frame->opcode;
-        header.header.MASK = (uint16_t) frame->mask;
-        header.header.PayLoadLen = (uint16_t) frame->length;
+        header.header.MASK = (uint8_t) frame->mask;
+        header.header.PayLoadLen = (uint8_t) frame->length;
 
         if (frame->mask)
         {
@@ -51,14 +52,14 @@ void WebSocketFrameEncoder_Encode(WebSocketFrame *frame, WebSocketFrameOutput ou
         WebSocketFrameMaxHeader2 header;
         uint32_t length = sizeof(WebSocketFrameMaxHeader2);
 
-        header.header.FIN = (uint16_t) frame->final;
+        header.header.FIN = (uint8_t) frame->final;
         header.header.RSV1 = 0;
         header.header.RSV2 = 0;
         header.header.RSV3 = 0;
         header.header.Opcode = frame->opcode;
-        header.header.MASK = (uint16_t) frame->mask;
+        header.header.MASK = (uint8_t) frame->mask;
         header.header.PayLoadLen = 0x7E;
-        header.payloadLength = (uint16_t) frame->length;
+        header.payloadLength = htons((uint16_t) frame->length);
 
         if (frame->mask)
         {
@@ -78,12 +79,12 @@ void WebSocketFrameEncoder_Encode(WebSocketFrame *frame, WebSocketFrameOutput ou
         WebSocketFrameMaxHeader3 header;
         uint32_t length = sizeof(WebSocketFrameMaxHeader3);
 
-        header.header.FIN = (uint16_t) frame->final;
+        header.header.FIN = (uint8_t) frame->final;
         header.header.RSV1 = 0;
         header.header.RSV2 = 0;
         header.header.RSV3 = 0;
         header.header.Opcode = frame->opcode;
-        header.header.MASK = (uint16_t) frame->mask;
+        header.header.MASK = (uint8_t) frame->mask;
         header.header.PayLoadLen = 0x7F;
         header.payloadLength = frame->length;
 

@@ -30,7 +30,8 @@ static bool _ChannelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     TinyBuffer * buffer = (TinyBuffer *) thiz->context;
     WebSocketFrame * frame = NULL;
 
-    LOG_D(TAG, "_ChannelRead");
+    LOG_D(TAG, "_ChannelRead: %d", len);
+    LOG_BINARY(TAG, data, len, true);
 
     /**
      *
@@ -64,6 +65,9 @@ static bool _ChannelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
         }
 
         SocketChannel_NextRead(channel, DATA_WEBSOCKET_FRAME, frame, 1);
+
+        // TODO: adjust buffer size
+        buffer->used = 0;
     } while (false);
 
     if (frame != NULL)
@@ -76,6 +80,8 @@ static bool _ChannelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 
 static void _Output (const uint8_t *data, uint64_t size, void *ctx)
 {
+    LOG_BINARY(TAG, data, size, true);
+
     Channel *channel = (Channel *)ctx;
     SocketChannel_StartWrite(channel, DATA_RAW, data, (uint32_t)size);
 }
