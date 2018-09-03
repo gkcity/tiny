@@ -13,12 +13,18 @@
  */
 
 #include <tiny_malloc.h>
+#include <tiny_log.h>
 #include "WebSocketFrameFactory.h"
+
+#define TAG     "WebSocketFrameFactory"
 
 TINY_LOR
 WebSocketFrame * WebSocketFrameFactory_NewTextFrame(bool final, const char *text)
 {
     WebSocketFrame * thiz = WebSocketFrame_New();
+
+    LOG_D(TAG, "WebSocketFrameFactory_NewTextFrame: %s", text);
+
     if (thiz != NULL)
     {
         thiz->final = final;

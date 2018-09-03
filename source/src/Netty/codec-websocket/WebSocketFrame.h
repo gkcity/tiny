@@ -20,15 +20,36 @@
 TINY_BEGIN_DECLS
 
 
+/**
+ * 0                   1                   2                   3
+ * 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ * +-+-+-+-+-------+-+-------------+-------------------------------+
+ * |F|R|R|R| opcode|M| Payload len |    Extended payload length    |
+ * |I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |
+ * |N|V|V|V|       |S|             |   (if payload len==126/127)   |
+ * | |1|2|3|       |K|             |                               |
+ * +-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
+ * |     Extended payload length continued, if payload len == 127  |
+ * + - - - - - - - - - - - - - - - +-------------------------------+
+ * |                               |Masking-key, if MASK set to 1  |
+ * +-------------------------------+-------------------------------+
+ * | Masking-key (continued)       |          Payload Data         |
+ * +-------------------------------- - - - - - - - - - - - - - - - +
+ * :                     Payload Data continued ...                :
+ * + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+ * |                     Payload Data continued ...                |
+ * +---------------------------------------------------------------+
+ */
+
 typedef struct _WebSocketFrameHeader
 {
-    uint16_t        FIN:1;
-    uint16_t        RSV1:1;
-    uint16_t        RSV2:1;
-    uint16_t        RSV3:1;
-    uint16_t        Opcode:4;
-    uint16_t        MASK:1;
-    uint16_t        PayLoadLen:7;
+    uint8_t        Opcode:4;
+    uint8_t        RSV3:1;
+    uint8_t        RSV2:1;
+    uint8_t        RSV1:1;
+    uint8_t        FIN:1;
+    uint8_t        PayLoadLen:7;
+    uint8_t        MASK:1;
 } WebSocketFrameHeader;
 
 typedef struct _WebSocketFrameMaxHeader1

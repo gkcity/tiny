@@ -101,8 +101,17 @@ void WebSocketFrameEncoder_Encode(WebSocketFrame *frame, WebSocketFrameOutput ou
         }
     };
 
-    if (frame->length != 0)
+    if (frame->length > 0)
     {
+        if (frame->mask)
+        {
+            for (uint32_t i = 0; i < frame->length; ++i)
+            {
+                uint32_t j = i % 4;
+                frame->data[i] = frame->data[i] ^ frame->maskingKey[j];
+            }
+        }
+
         output(frame->data, frame->length, ctx);
     }
 }

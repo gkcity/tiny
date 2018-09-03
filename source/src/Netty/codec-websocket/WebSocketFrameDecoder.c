@@ -13,6 +13,7 @@
  */
 
 #include <tiny_log.h>
+#include <tiny_malloc.h>
 #include "WebSocketFrameEncoder.h"
 
 #define TAG "WebSocketFrameEncoder"
@@ -49,6 +50,8 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(TinyBuffer *buffer)
 
         p = buffer->bytes + sizeof(WebSocketFrameHeader);
         unparsed = buffer->used - sizeof(WebSocketFrameHeader);
+
+        LOG_E(TAG, "unparsed: %ld", unparsed);
 
         // 111 1111 = 7F = 2^8 -1 = 127
         if (header->PayLoadLen < 0x7E)
@@ -97,6 +100,7 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(TinyBuffer *buffer)
             {
                 LOG_E(TAG, "invalid frame");
                 WebSocketFrame_Delete(frame);
+                frame = NULL;
                 break;
             }
 
@@ -109,10 +113,31 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(TinyBuffer *buffer)
             p += 4;
         }
 
+        LOG_E(TAG, "FIN: %d", frame->final);
+        LOG_E(TAG, "OPCODE: %d", frame->opcode);
+        LOG_E(TAG, "MASK: %d", frame->mask);
+        LOG_E(TAG, "length: %ld", frame->length);
+        LOG_E(TAG, "unparsed: %ld", unparsed);
+
         if (frame->length != unparsed)
         {
             LOG_E(TAG, "invalid frame, length: %ld, unparsed: %ld", frame->length, unparsed);
             WebSocketFrame_Delete(frame);
+            frame = NULL;
+            break;
+        }
+
+        if (frame->length == 0)
+        {
+            break;
+        }
+
+        frame->data = tiny_malloc(frame->length);
+        if (frame->data == NULL)
+        {
+            LOG_E(TAG, "tiny_malloc failed: %ld", frame->length);
+            WebSocketFrame_Delete(frame);
+            frame = NULL;
             break;
         }
 
