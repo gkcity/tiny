@@ -13,12 +13,13 @@
  */
 
 #include <tiny_malloc.h>
-#include <channel/SocketChannel.h>
 #include <tiny_log.h>
-#include <codec/JsonDecoder.h>
 #include <tiny_print_binary.h>
-#include "WebSocketFrameCodec.h"
+#include <channel/SocketChannel.h>
+#include <buffer/ByteBuffer.h>
+#include <codec/JsonDecoder.h>
 #include "WebSocketFrame.h"
+#include "WebSocketFrameCodec.h"
 #include "WebSocketFrameEncoder.h"
 #include "WebSocketFrameDecoder.h"
 
@@ -27,11 +28,11 @@
 TINY_LOR
 static bool _ChannelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
-    TinyBuffer * buffer = (TinyBuffer *) thiz->context;
+    ByteBuffer * buffer = (ByteBuffer *) thiz->context;
     WebSocketFrame * frame = NULL;
 
     LOG_D(TAG, "_ChannelRead: %d", len);
-    LOG_BINARY(TAG, data, len, true);
+//    LOG_BINARY(TAG, data, len, true);
 
     /**
      *
@@ -49,25 +50,24 @@ static bool _ChannelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 
     do
     {
-        uint32_t copied = TinyBuffer_Add(buffer, data, 0, len);
-        if (copied == 0)
+        if (! ByteBuffer_Put(buffer, (uint8_t *)data, len))
         {
             LOG_E(TAG, "buffer is full");
-            TinyBuffer_Clear(buffer);
+            ByteBuffer_Clear(buffer);
             break;
         }
 
-        frame = WebSocketFrameDecoder_Decode(buffer);
-        if (frame == NULL)
+        while (ByteBuffer_Available(buffer))
         {
-            LOG_E(TAG, "WebSocketFrameDecoder_Decode FAILED");
-            break;
+            frame = WebSocketFrameDecoder_Decode(buffer);
+            if (frame == NULL)
+            {
+                LOG_E(TAG, "WebSocketFrameDecoder_Decode FAILED");
+                break;
+            }
+
+            SocketChannel_NextRead(channel, DATA_WEBSOCKET_FRAME, frame, 1);
         }
-
-        SocketChannel_NextRead(channel, DATA_WEBSOCKET_FRAME, frame, 1);
-
-        // TODO: adjust buffer size
-        buffer->used = 0;
     } while (false);
 
     if (frame != NULL)
@@ -119,7 +119,7 @@ static TinyRet WebSocketFrameCodec_Dispose(ChannelHandler *thiz)
 
     if (thiz->context != NULL)
     {
-        TinyBuffer_Delete(thiz->context);
+        ByteBuffer_Delete(thiz->context);
         thiz->context = NULL;
     }
 
@@ -138,26 +138,33 @@ static void WebSocketFrameCodec_Delete(ChannelHandler *thiz)
 TINY_LOR
 static TinyRet WebSocketFrameCodec_Construct(ChannelHandler *thiz)
 {
+    TinyRet ret = TINY_RET_OK;
+
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    memset(thiz, 0, sizeof(ChannelHandler));
-
-    strncpy(thiz->name, WebSocketFrameCodec_Name, CHANNEL_HANDLER_NAME_LEN);
-
-    thiz->invalid = false;
-    thiz->onRemove = WebSocketFrameCodec_Delete;
-    thiz->inType = DATA_RAW;
-    thiz->outType = DATA_WEBSOCKET_FRAME;
-    thiz->channelRead = _ChannelRead;
-    thiz->channelWrite = _ChannelWrite;
-    thiz->context = TinyBuffer_New(WebSocketFrameCodec_RECV_BUFFER_SIZE);
-    if (thiz->context == NULL)
+    do
     {
-        LOG_E(TAG, "TinyBuffer_New FAILED");
-        return TINY_RET_E_NEW;
-    }
+        memset(thiz, 0, sizeof(ChannelHandler));
 
-    return TINY_RET_OK;
+        strncpy(thiz->name, WebSocketFrameCodec_Name, CHANNEL_HANDLER_NAME_LEN);
+
+        thiz->invalid = false;
+        thiz->onRemove = WebSocketFrameCodec_Delete;
+        thiz->inType = DATA_RAW;
+        thiz->outType = DATA_WEBSOCKET_FRAME;
+        thiz->channelRead = _ChannelRead;
+        thiz->channelWrite = _ChannelWrite;
+
+        thiz->context = ByteBuffer_New(WebSocketFrameCodec_RECV_BUFFER_SIZE);
+        if (thiz->context == NULL)
+        {
+            LOG_E(TAG, "TinyBuffer_New FAILED");
+            ret = TINY_RET_E_NEW;
+            break;
+        }
+    } while (false);
+
+    return ret;
 }
 
 TINY_LOR
@@ -175,6 +182,7 @@ ChannelHandler * WebSocketFrameCodec(void)
 
         if (RET_FAILED(WebSocketFrameCodec_Construct(thiz)))
         {
+            LOG_E(TAG, "WebSocketFrameCodec_Construct FAILED");
             WebSocketFrameCodec_Delete(thiz);
             thiz = NULL;
             break;

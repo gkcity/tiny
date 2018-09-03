@@ -17,7 +17,6 @@
 
 #include <tiny_base.h>
 #include <tiny_api.h>
-#include <TinyBuffer.h>
 #include "WebSocketFrame.h"
 
 TINY_BEGIN_DECLS

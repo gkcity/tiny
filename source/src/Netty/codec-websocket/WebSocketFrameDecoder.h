@@ -17,7 +17,7 @@
 
 #include <tiny_base.h>
 #include <tiny_api.h>
-#include <TinyBuffer.h>
+#include <buffer/ByteBuffer.h>
 #include "WebSocketFrame.h"
 
 TINY_BEGIN_DECLS
@@ -25,7 +25,7 @@ TINY_BEGIN_DECLS
 
 TINY_API
 TINY_LOR
-WebSocketFrame * WebSocketFrameDecoder_Decode(TinyBuffer *buffer);
+WebSocketFrame * WebSocketFrameDecoder_Decode(ByteBuffer *buffer);
 
 
 
