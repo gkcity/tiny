@@ -1,15 +1,15 @@
 #-----------------------------------------------------------------------------
 #
-# TinyBuffer
+# ByteBuffer
 #
 #-----------------------------------------------------------------------------
 
 SET(Header
-        TinyBuffer.h
+        ByteBuffer.h
     )
 
 SET(Source
-        TinyBuffer.c
+        ByteBuffer.c
     )
 
 SET(SRC
@@ -20,6 +20,6 @@ SET(SRC
 #----------------------------------------------------------------------------
 # static library
 #----------------------------------------------------------------------------
-ADD_LIBRARY(tiny_buffer_static STATIC ${SRC})
-SET_TARGET_PROPERTIES(tiny_buffer_static PROPERTIES OUTPUT_NAME "tiny_buffer_static")
-SET_TARGET_PROPERTIES(tiny_buffer_static PROPERTIES LINKER_LANGUAGE C)
+ADD_LIBRARY(byte_buffer_static STATIC ${SRC})
+SET_TARGET_PROPERTIES(byte_buffer_static PROPERTIES OUTPUT_NAME "byte_buffer_static")
+SET_TARGET_PROPERTIES(byte_buffer_static PROPERTIES LINKER_LANGUAGE C)

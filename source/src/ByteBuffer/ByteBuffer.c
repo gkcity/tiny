@@ -117,7 +117,7 @@ bool ByteBuffer_Put(ByteBuffer *thiz, uint8_t *data, uint32_t length)
     {
         if (thiz->available > 0)
         {
-            memcpy(thiz->bytes, thiz->bytes + thiz->offset, thiz->available);
+            memcpy(thiz->bytes, thiz->bytes + thiz->offset, (size_t) thiz->available);
         }
 
         thiz->offset = 0;
@@ -127,6 +127,33 @@ bool ByteBuffer_Put(ByteBuffer *thiz, uint8_t *data, uint32_t length)
     thiz->available += length;
 
     return true;
+}
+
+TINY_LOR
+uint32_t ByteBuffer_Add(ByteBuffer *thiz, const uint8_t *data, uint32_t offset, uint32_t length)
+{
+    uint32_t unused = thiz->size - thiz->available;
+    uint32_t copied = unused > length ? length : unused;
+
+    if (unused == 0)
+    {
+        return 0;
+    }
+
+    if (thiz->offset != 0)
+    {
+        if (thiz->available > 0)
+        {
+            memcpy(thiz->bytes, thiz->bytes + thiz->offset, (size_t) thiz->available);
+        }
+
+        thiz->offset = 0;
+    }
+
+    memcpy(thiz->bytes + thiz->available, data + offset, copied);
+    thiz->available += copied;
+
+    return copied;
 }
 
 TINY_LOR
@@ -197,4 +224,10 @@ bool ByteBuffer_Pick(ByteBuffer *thiz, uint32_t skipped, uint8_t bytes[], uint32
     }
 
     return true;
+}
+
+TINY_LOR
+bool ByteBuffer_IsFull(ByteBuffer *thiz)
+{
+    return thiz->available == thiz->size;
 }

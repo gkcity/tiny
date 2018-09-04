@@ -17,7 +17,7 @@
 
 #include <tiny_base.h>
 #include <tiny_api.h>
-#include <TinyBuffer.h>
+#include "../../ByteBuffer/ByteBuffer.h"
 #include "HttpHeader.h"
 #include "HttpContent.h"
 #include "HttpMessage.h"
@@ -31,7 +31,7 @@ typedef void (*HttpMessageOutput) (const uint8_t *data, uint32_t size, void *ctx
 typedef struct _HttpMessageEncoder
 {
     HttpMessage         * message;
-    TinyBuffer          * buffer;
+    ByteBuffer          * buffer;
     HttpMessageOutput     output;
     void                * ctx;
     uint32_t              size;
@@ -48,7 +48,7 @@ void HttpMessageEncoder_Dispose(HttpMessageEncoder *thiz);
 
 TINY_API
 TINY_LOR
-void HttpMessageEncoder_Encode(HttpMessageEncoder *thiz, TinyBuffer *buffer, HttpMessageOutput output, void *ctx);
+void HttpMessageEncoder_Encode(HttpMessageEncoder *thiz, ByteBuffer *buffer, HttpMessageOutput output, void *ctx);
 
 
 

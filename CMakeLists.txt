@@ -16,7 +16,7 @@ INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyContainer)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyLog)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyStringUtil)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyRandom)
-INCLUDE_DIRECTORIES(${SOURCE_ROOT}/TinyBuffer)
+INCLUDE_DIRECTORIES(${SOURCE_ROOT}/ByteBuffer)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/Json)
 INCLUDE_DIRECTORIES(${SOURCE_ROOT}/StringArray)
 
@@ -162,15 +162,15 @@ SET(TinyRandom_Source
         )
 
 #---------------------------
-# TinyBuffer
+# ByteBuffer
 #---------------------------
 
-SET(TinyBuffer_Header
-        ${SOURCE_ROOT}/TinyBuffer/TinyBuffer.h
+SET(ByteBuffer_Header
+        ${SOURCE_ROOT}/ByteBuffer/ByteBuffer.h
         )
 
-SET(TinyBuffer_Source
-        ${SOURCE_ROOT}/TinyBuffer/TinyBuffer.c
+SET(ByteBuffer_Source
+        ${SOURCE_ROOT}/ByteBuffer/ByteBuffer.c
         )
 
 #-----------------------
@@ -179,9 +179,7 @@ SET(TinyBuffer_Source
 
 SET(Netty_Header
         ${SOURCE_ROOT}/Netty/selector/Selector.h
-        ${SOURCE_ROOT}/Netty/buffer/ByteBuffer.h
         ${SOURCE_ROOT}/Netty/channel/Channel.h
-        ${SOURCE_ROOT}/Netty/channel/ChannelBuffer.h
         ${SOURCE_ROOT}/Netty/channel/ChannelAddress.h
         ${SOURCE_ROOT}/Netty/channel/ChannelHandler.h
         ${SOURCE_ROOT}/Netty/channel/ChannelTimer.h
@@ -212,9 +210,7 @@ SET(Netty_Header
 
 SET(Netty_Source
         ${SOURCE_ROOT}/Netty/selector/Selector.c
-        ${SOURCE_ROOT}/Netty/buffer/ByteBuffer.c
         ${SOURCE_ROOT}/Netty/channel/Channel.c
-        ${SOURCE_ROOT}/Netty/channel/ChannelBuffer.c
         ${SOURCE_ROOT}/Netty/channel/ChannelAddress.c
         ${SOURCE_ROOT}/Netty/channel/ChannelIdles.c
         ${SOURCE_ROOT}/Netty/channel/ChannelIdleStateHandler.c
@@ -342,8 +338,8 @@ SOURCE_GROUP(TinyLog\\headers FILES ${TinyLog_Header})
 SOURCE_GROUP(TinyLog\\sources FILES ${TinyLog_Source})
 SOURCE_GROUP(TinyStringUtil\\headers FILES ${TinyStringUtil_Header})
 SOURCE_GROUP(TinyStringUtil\\sources FILES ${TinyStringUtil_Source})
-SOURCE_GROUP(TinyBuffer\\headers FILES ${TinyBuffer_Header})
-SOURCE_GROUP(TinyBuffer\\sources FILES ${TinyBuffer_Source})
+SOURCE_GROUP(ByteBuffer\\headers FILES ${ByteBuffer_Header})
+SOURCE_GROUP(ByteBuffer\\sources FILES ${ByteBuffer_Source})
 SOURCE_GROUP(Netty\\headers FILES ${Netty_Header})
 SOURCE_GROUP(Netty\\sources FILES ${Netty_Source})
 SOURCE_GROUP(Json\\headers FILES ${Json_Header})
@@ -375,8 +371,8 @@ IF (TINY_THREAD_ENABLED EQUAL 1)
             ${TinyStringUtil_Source}
             ${TinyRandom_Header}
             ${TinyRandom_Source}
-            ${TinyBuffer_Header}
-            ${TinyBuffer_Source}
+            ${ByteBuffer_Header}
+            ${ByteBuffer_Source}
             ${StringArray_Header}
             ${StringArray_Source}
             ${Netty_Header}
@@ -406,8 +402,8 @@ ELSE ()
             ${TinyStringUtil_Source}
             ${TinyRandom_Header}
             ${TinyRandom_Source}
-            ${TinyBuffer_Header}
-            ${TinyBuffer_Source}
+            ${ByteBuffer_Header}
+            ${ByteBuffer_Source}
             ${StringArray_Header}
             ${StringArray_Source}
             ${Netty_Header}

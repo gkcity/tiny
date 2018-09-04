@@ -19,9 +19,9 @@
 #include <TinyList.h>
 #include <selector/Selector.h>
 #include <tiny_socket.h>
+#include "../../ByteBuffer/ByteBuffer.h"
 #include "ChannelAddress.h"
 #include "ChannelTimer.h"
-#include "ChannelBuffer.h"
 
 TINY_BEGIN_DECLS
 
@@ -44,9 +44,10 @@ struct _Channel
 {
     char                            id[CHANNEL_ID_LEN];
     int                             fd;
+    ByteBuffer                    * recvBuffer;
+    TinyList                        sendBuffers;
     uint32_t                        inBufferSize;
-    uint32_t                        outBufferSize;
-    ChannelBuffer                 * buffer;
+//    uint32_t                        outBufferSize;
     ChannelType                     type;
     ChannelAddress                  local;
     ChannelAddress                  remote;

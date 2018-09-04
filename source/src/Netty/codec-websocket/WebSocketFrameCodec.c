@@ -16,7 +16,7 @@
 #include <tiny_log.h>
 #include <tiny_print_binary.h>
 #include <channel/SocketChannel.h>
-#include <buffer/ByteBuffer.h>
+#include "../../ByteBuffer/ByteBuffer.h"
 #include <codec/JsonDecoder.h>
 #include "WebSocketFrame.h"
 #include "WebSocketFrameCodec.h"

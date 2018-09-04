@@ -122,7 +122,8 @@ static TinyRet StreamServerChannel_OnAccept(Channel *thiz, Selector *selector)
 
         LOG_I(TAG, "Accept a new connection: %d#%s:%d", fd, ip, port);
 
-        newChannel = SocketChannel_NewCustomBufferSize(thiz->inBufferSize, thiz->outBufferSize);
+//        newChannel = SocketChannel_NewCustomBufferSize(thiz->inBufferSize, thiz->outBufferSize);
+        newChannel = SocketChannel_NewCustomBufferSize(thiz->inBufferSize, 0);
         if (newChannel == NULL)
         {
             LOG_E(TAG, "SocketChannel_New NULL");
@@ -316,6 +317,6 @@ void StreamServerChannel_Initialize(Channel *thiz, ChannelInitializer initialize
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(initializer);
 
-    ((StreamServerChannelContext *)thiz->context) ->initializer = initializer ;
+    ((StreamServerChannelContext *)thiz->context) ->initializer = initializer;
     ((StreamServerChannelContext *)thiz->context) ->initializerContext = ctx;
 }

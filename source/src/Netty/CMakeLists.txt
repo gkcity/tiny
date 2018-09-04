@@ -16,22 +16,10 @@ SET(Selector_Source
     )
 
 #-----------------------
-# buffer
-#-----------------------
-SET(Buffer_Header
-        buffer/ByteBuffer.h
-        )
-
-SET(Buffer_Source
-        buffer/ByteBuffer.c
-        )
-
-#-----------------------
 # channel
 #-----------------------
 SET(Channel_Header
         channel/Channel.h
-        channel/ChannelBuffer.h
         channel/ChannelAddress.h
         channel/ChannelHandler.h
         channel/ChannelIdles.h
@@ -49,7 +37,6 @@ SET(Channel_Header
 
 SET(Channel_Source
         channel/Channel.c
-        channel/ChannelBuffer.c
         channel/ChannelAddress.c
         channel/ChannelIdles.c
         channel/ChannelIdleStateHandler.c
@@ -133,8 +120,6 @@ SET(Bootstrap_Source
 SET(SRC
         ${Selector_Header}
         ${Selector_Source}
-        ${Buffer_Header}
-        ${Buffer_Source}
         ${Channel_Header}
         ${Channel_Source}
         ${Codec_http_Header}

@@ -28,6 +28,12 @@ static void _OnHandlerRemoved(void * data, void *ctx)
 }
 
 TINY_LOR
+static void _OnBufferRemoved(void * data, void *ctx)
+{
+    ByteBuffer_Delete((ByteBuffer *)data);
+}
+
+TINY_LOR
 static uint16_t _socket_get_port(int fd)
 {
     uint16_t port = 0;
@@ -50,10 +56,11 @@ TinyRet SocketChannel_Dispose(Channel *thiz)
     LOG_D(TAG, "SocketChannel_Dispose: %s", thiz->id);
 
     TinyList_Dispose(&thiz->handlers);
+    TinyList_Dispose(&thiz->sendBuffers);
 
-    if (thiz->buffer != NULL)
+    if (thiz->recvBuffer != NULL)
     {
-        ChannelBuffer_Delete(thiz->buffer);
+        ByteBuffer_Delete(thiz->recvBuffer);
     }
 
     return TINY_RET_OK;
@@ -76,7 +83,7 @@ void SocketChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *t
     {
         Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
 
-        if (thiz->buffer != NULL)
+        if (thiz->sendBuffers.size > 0)
         {
             Selector_Register(selector, thiz->fd, SELECTOR_OP_WRITE);
         }
@@ -173,14 +180,14 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "SocketChannel_OnRead: %s", thiz->id);
+    LOG_I(TAG, "SocketChannel_OnRead: %s", thiz->id);
 
     do
     {
-        ChannelBuffer *buffer = ChannelBuffer_New(thiz->inBufferSize);
+        ByteBuffer *buffer = ByteBuffer_New(thiz->inBufferSize);
         if (buffer == NULL)
         {
-            LOG_E(TAG, "ChannelBuffer_New failed!");
+            LOG_E(TAG, "ByteBuffer_New failed!");
             ret = TINY_RET_E_NEW;
             break;
         }
@@ -202,25 +209,45 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
             }
         }
 
-        ChannelBuffer_Delete(buffer);
+        ByteBuffer_Delete(buffer);
     } while (false);
 
     return ret;
 }
 
-//TINY_LOR
-//static TinyRet SocketChannel_OnWrite(Channel *thiz)
-//{
-//    TinyRet ret = TINY_RET_OK;
-//
-//    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
-//
-//    LOG_I(TAG, "SocketChannel_OnWrite");
-//
-//    // TODO: send thiz->buffer
-//
-//    return ret;
-//}
+TINY_LOR
+static TinyRet SocketChannel_OnWrite(Channel *thiz)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+
+    LOG_I(TAG, "SocketChannel_OnWrite: %s", thiz->id);
+
+    for (uint32_t i = 0; i < thiz->sendBuffers.size; ++i)
+    {
+        ByteBuffer *buffer = (ByteBuffer *)TinyList_GetAt(&thiz->sendBuffers, i);
+        int sent = (int) tiny_send(thiz->fd, buffer->bytes + buffer->offset, (uint32_t) buffer->available, 0);
+        if (sent != buffer->available)
+        {
+            LOG_E(TAG, "tiny_send failed, data length: %d, sent:%d", buffer->available, sent);
+            if (sent == -1)
+            {
+                if (tiny_socket_has_error(thiz->fd))
+                {
+                    Channel_Close(thiz);
+                    break;
+                }
+            }
+        }
+
+        LOG_I(TAG, "tiny_send: %d", sent);
+    }
+
+    TinyList_RemoveAll(&thiz->sendBuffers);
+
+    return ret;
+}
 
 TINY_LOR
 TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
@@ -243,14 +270,14 @@ TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
             }
         }
 
-//        if (Selector_IsWriteable(selector, thiz->fd))
-//        {
-//            ret = SocketChannel_OnWrite(thiz);
-//            if (RET_FAILED(ret))
-//            {
-//                break;
-//            }
-//        }
+        if (Selector_IsWriteable(selector, thiz->fd))
+        {
+            ret = SocketChannel_OnWrite(thiz);
+            if (RET_FAILED(ret))
+            {
+                break;
+            }
+        }
     } while (false);
 
     return ret;
@@ -279,7 +306,7 @@ TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize
 
         thiz->fd = -1;
         thiz->inBufferSize = inSize;
-        thiz->outBufferSize = outSize;
+//        thiz->outBufferSize = outSize;
         thiz->_onRegister = SocketChannel_OnRegister;
         thiz->_onAccess = SocketChannel_OnAccess;
         thiz->_onRemove = SocketChannel_Delete;
@@ -288,6 +315,14 @@ TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize
         thiz->_onEventTriggered = SocketChannel_OnEventTriggered;
         thiz->_getTimeout = SocketChannel_GetTimeout;
         thiz->_close = SocketChannel_Close;
+
+
+        ret = TinyList_Construct(&thiz->sendBuffers);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
+        TinyList_SetDeleteListener(&thiz->sendBuffers, _OnBufferRemoved, NULL);
     } while (0);
 
     return ret;
@@ -672,25 +707,25 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter--);
         if (handler == NULL || type == DATA_RAW)
         {
-            for (int i = 0; i < 10; ++i)
+            ByteBuffer *buffer = ByteBuffer_New(len);
+            if (buffer == NULL)
             {
-                int sent = (int) tiny_send(thiz->fd, data, len, 0);
-                if (sent == len)
-                {
-                    break;
-                }
+                LOG_E(TAG, "ChannelBuffer_New FAILED: %d", len);
+                break;
+            }
 
-                // Found a bug on esp8266 !!!
-                LOG_E(TAG, "tiny_send: %d, sent:%d", len, sent);
+            if (RET_FAILED(ByteBuffer_Put(buffer, (uint8_t *) data, len)))
+            {
+                LOG_E(TAG, "ChannelBuffer_Put FAILED");
+                ByteBuffer_Delete(buffer);
+                break;
+            }
 
-                if (sent == -1)
-                {
-                    if (tiny_socket_has_error(thiz->fd))
-                    {
-                        Channel_Close(thiz);
-                        break;
-                    }
-                }
+            if (RET_FAILED(TinyList_AddTail(&thiz->sendBuffers, buffer)))
+            {
+                LOG_E(TAG, "TinyList_AddTail FAILED");
+                ByteBuffer_Delete(buffer);
+                break;
             }
 
             break;

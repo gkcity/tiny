@@ -15,7 +15,7 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <TinyMapItem.h>
-#include <TinyBuffer.h>
+#include <ByteBuffer.h>
 #include <channel/SocketChannel.h>
 #include "TcpClientHandler.h"
 

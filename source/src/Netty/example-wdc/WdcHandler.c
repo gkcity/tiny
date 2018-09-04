@@ -14,7 +14,7 @@
 
 #include <tiny_malloc.h>
 #include <tiny_log.h>
-#include <TinyBuffer.h>
+#include <ByteBuffer.h>
 #include <channel/SocketChannel.h>
 #include <codec-http/HttpMessage.h>
 #include <codec-http/HttpMessageEncoder.h>
@@ -126,14 +126,14 @@ TINY_LOR
 static void sendResponse(ChannelHandler *thiz, Channel *channel, int code, const char *status, const char *type, const char *body)
 {
     HttpMessageEncoder encoder;
-    TinyBuffer * buffer = NULL;
+    ByteBuffer * buffer = NULL;
     HttpMessage response;
 
     printf("sendResponse: %d %s\n", code, status);
 
     do
     {
-        buffer = TinyBuffer_New(1024);
+        buffer = ByteBuffer_New(1024);
         if (buffer == NULL)
         {
             LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
@@ -170,7 +170,7 @@ static void sendResponse(ChannelHandler *thiz, Channel *channel, int code, const
 
     if (buffer != NULL)
     {
-        TinyBuffer_Delete(buffer);
+        ByteBuffer_Delete(buffer);
     }
 
     HttpMessage_Dispose(&response);

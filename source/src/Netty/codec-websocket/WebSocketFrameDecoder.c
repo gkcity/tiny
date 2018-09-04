@@ -15,7 +15,7 @@
 #include <tiny_log.h>
 #include <tiny_malloc.h>
 #include <tiny_inet.h>
-#include <buffer/ByteBuffer.h>
+#include "../../ByteBuffer/ByteBuffer.h"
 #include "WebSocketFrameEncoder.h"
 
 #define TAG "WebSocketFrameEncoder"

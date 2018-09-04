@@ -15,7 +15,7 @@
 
 #include <tiny_base.h>
 #include <TinyList.h>
-#include <TinyBuffer.h>
+#include <ByteBuffer.h>
 #include "JsonObject.h"
 
 TINY_BEGIN_DECLS
@@ -28,7 +28,7 @@ typedef struct _JsonEncoder
 {
     JsonOutput            output;
     void                * ctx;
-    TinyBuffer          * buffer;
+    ByteBuffer          * buffer;
     JsonObject          * object;
     bool                  pretty;
     uint32_t              size;
@@ -45,7 +45,7 @@ void JsonEncoder_Dispose(JsonEncoder *thiz);
 
 TINY_API
 TINY_LOR
-void JsonEncoder_EncodeObject(JsonEncoder *thiz, TinyBuffer *buffer, JsonOutput output, void *ctx);
+void JsonEncoder_EncodeObject(JsonEncoder *thiz, ByteBuffer *buffer, JsonOutput output, void *ctx);
 
 
 TINY_END_DECLS

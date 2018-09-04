@@ -96,7 +96,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
 {
     HttpMessage request;
     HttpMessageEncoder encoder;
-    TinyBuffer * buffer = NULL;
+    ByteBuffer * buffer = NULL;
 
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(channel);
@@ -105,7 +105,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
 
     do
     {
-        buffer = TinyBuffer_New(1024);
+        buffer = ByteBuffer_New(1024);
         if (buffer == NULL)
         {
             LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
@@ -118,9 +118,9 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
             break;
         }
 
-        HttpMessage_SetRequest(&request, "GET", "/homekit/instance/device?type=urn:homtkit-spec:device:lightbulb:00000000:arrizo-v1");
+        HttpMessage_SetRequest(&request, "GET", "/dd/instance/urn:miot-spec-v2:device:switch:0000A003:geekcity-plc:1");
         HttpHeader_Set(&request.header, "Accept", "*/*");
-        HttpHeader_SetHost(&request.header, "47.93.60.147", 8080);
+        HttpHeader_SetHost(&request.header, "39.106.171.204", 80);
 
         if (RET_FAILED(HttpMessageEncoder_Construct(&encoder, &request)))
         {
@@ -133,7 +133,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
 
     if (buffer != NULL)
     {
-        TinyBuffer_Delete(buffer);
+        ByteBuffer_Delete(buffer);
     }
 
     HttpMessage_Dispose(&request);

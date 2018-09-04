@@ -26,7 +26,7 @@ typedef struct _ByteBuffer
 {
     uint32_t          size;
     uint32_t          offset;
-    uint32_t          available;
+    int               available;
     uint8_t         * bytes;
 } ByteBuffer;
 
@@ -61,11 +61,19 @@ bool ByteBuffer_Put(ByteBuffer *thiz, uint8_t *data, uint32_t length);
 
 TINY_API
 TINY_LOR
+uint32_t ByteBuffer_Add(ByteBuffer *thiz, const uint8_t *data, uint32_t offset, uint32_t size);
+
+TINY_API
+TINY_LOR
 bool ByteBuffer_Get(ByteBuffer *thiz, uint32_t skipped, uint8_t bytes[], uint32_t length);
 
 TINY_API
 TINY_LOR
 bool ByteBuffer_Pick(ByteBuffer *thiz, uint32_t skipped, uint8_t bytes[], uint32_t length);
+
+TINY_API
+TINY_LOR
+bool ByteBuffer_IsFull(ByteBuffer *thiz);
 
 
 TINY_END_DECLS

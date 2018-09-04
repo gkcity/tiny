@@ -15,7 +15,6 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <TinyMapItem.h>
-#include <TinyBuffer.h>
 #include <channel/SocketChannel.h>
 #include <codec-http/HttpMessage.h>
 #include <codec-http/HttpMessageEncoder.h>
@@ -115,7 +114,7 @@ TINY_LOR
 static void _channelActive(ChannelHandler *thiz, Channel *channel)
 {
     HttpExchange *exchange = (HttpExchange *)thiz->context;
-    TinyBuffer * buffer = NULL;
+    ByteBuffer * buffer = NULL;
     HttpMessage request;
     HttpMessageEncoder encoder;
 
@@ -126,7 +125,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
 
     do
     {
-        buffer = TinyBuffer_New(HTTP_BUFFER_SIZE);
+        buffer = ByteBuffer_New(HTTP_BUFFER_SIZE);
         if (buffer == NULL)
         {
             LOG_E(TAG, "TinyBuffer_New FAILED: %d", HTTP_BUFFER_SIZE);
@@ -166,7 +165,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
 
     if (buffer != NULL)
     {
-        TinyBuffer_Delete(buffer);
+        ByteBuffer_Delete(buffer);
     }
 
     HttpMessage_Dispose(&request);

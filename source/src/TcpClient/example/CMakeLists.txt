@@ -8,8 +8,8 @@ SET_TARGET_PROPERTIES(example_tcp_client PROPERTIES LINKER_LANGUAGE C)
 TARGET_LINK_LIBRARIES(example_tcp_client
         tcp_client_static
         netty_static
+        byte_buffer_static
         json_static
-        tiny_buffer_static
         tiny_string_util_static
         tiny_container_static
         tiny_log_static

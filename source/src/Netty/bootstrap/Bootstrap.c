@@ -65,13 +65,16 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
 
     do
     {
+        memset(thiz, 0, sizeof(Bootstrap));
+
+        thiz->loopTimeout = EVENT_LOOP_DEFAULT_TIMEOUT;
+
         ret = Selector_Construct(&thiz->selector);
         if (RET_FAILED(ret))
         {
             LOG_E(TAG, "Selector_Construct FAILED");
             break;
         }
-
         thiz->selector.onPreSelect = PreSelect;
         thiz->selector.onPostSelect = PostSelect;
         thiz->selector.onSelectTimeout = OnSelectTimeout;
@@ -241,7 +244,22 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
         channel->_onRegister(channel, selector, &thiz->timer);
     }
 
-    thiz->selector.us = (thiz->timer.valid) ? thiz->timer.timeout : 0;
+    if (thiz->timer.valid)
+    {
+        if (thiz->loopTimeout < thiz->timer.timeout)
+        {
+            thiz->timer.valid = false;
+            thiz->selector.us = thiz->loopTimeout;
+        }
+        else
+        {
+            thiz->selector.us = thiz->timer.timeout;
+        }
+    }
+    else
+    {
+        thiz->selector.us = thiz->loopTimeout;
+    }
 
     return TINY_RET_OK;
 }
@@ -279,12 +297,15 @@ static TinyRet OnSelectTimeout(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_I(TAG, "OnSelectTimeout");
+    LOG_I(TAG, "OnSelectTimeout: %s", thiz->timer.valid ? "TIMER": "EVENT LOOP TIMEOUT");
 
-    for (uint32_t i = 0; i < thiz->channels.size; ++i)
+    if (thiz->timer.valid)
     {
-        Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
-        channel->_onEventTriggered(channel, &thiz->timer);
+        for (uint32_t i = 0; i < thiz->channels.size; ++i)
+        {
+            Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
+            channel->_onEventTriggered(channel, &thiz->timer);
+        }
     }
 
     return TINY_RET_OK;

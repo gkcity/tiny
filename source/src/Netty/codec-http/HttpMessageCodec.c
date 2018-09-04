@@ -90,7 +90,7 @@ static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
     do
     {
         HttpMessageEncoder encoder;
-        TinyBuffer *buffer = NULL;
+        ByteBuffer *buffer = NULL;
 
         if (message == NULL)
         {
@@ -109,7 +109,8 @@ static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
             break;
         }
 
-        buffer = TinyBuffer_New(HttpMessageCodec_BUFFER_SIZE);
+
+        buffer = ByteBuffer_New(HttpMessageCodec_BUFFER_SIZE);
         if (buffer == NULL)
         {
             LOG_E(TAG, "TinyBuffer_New FAILED");
@@ -119,7 +120,7 @@ static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
 
         HttpMessageEncoder_Encode(&encoder, buffer, _Output, channel);
 
-        TinyBuffer_Delete(buffer);
+        ByteBuffer_Delete(buffer);
         HttpMessageEncoder_Dispose(&encoder);
     } while (0);
 

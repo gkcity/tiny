@@ -76,7 +76,7 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
 
     do
     {
-        ChannelBuffer *buffer = NULL;
+        ByteBuffer *buffer = NULL;
         struct sockaddr_in from;
         socklen_t socklen = (socklen_t) sizeof(from);
 
@@ -87,7 +87,7 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
 
         LOG_I(TAG, "MulticastChannel_OnAccess");
 
-        buffer = ChannelBuffer_New(thiz->inBufferSize);
+        buffer = ByteBuffer_New(thiz->inBufferSize);
         if (buffer == NULL)
         {
             LOG_I(TAG, "ChannelBuffer_New failed!");
@@ -112,7 +112,7 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
             }
         }
 
-        ChannelBuffer_Delete(buffer);
+        ByteBuffer_Delete(buffer);
     } while (0);
 
     return ret;

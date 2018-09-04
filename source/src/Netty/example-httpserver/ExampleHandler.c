@@ -97,13 +97,13 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     HttpMessage *request = (HttpMessage *)data;
     HttpMessage response;
     HttpMessageEncoder encoder;
-    TinyBuffer * buffer = NULL;
+    ByteBuffer * buffer = NULL;
 
     LOG_D(TAG, "_channelRead: %s %s", request->request_line.method, request->request_line.uri);
 
     do
     {
-        buffer = TinyBuffer_New(1024);
+        buffer = ByteBuffer_New(1024);
         if (buffer == NULL)
         {
             LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
@@ -136,7 +136,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 
     if (buffer != NULL)
     {
-        TinyBuffer_Delete(buffer);
+        ByteBuffer_Delete(buffer);
     }
 
     HttpMessage_Dispose(&response);

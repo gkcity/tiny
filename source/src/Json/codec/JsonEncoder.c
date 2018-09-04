@@ -181,22 +181,22 @@ static void _Append(JsonEncoder *thiz, const char *string)
 
         while (length > 0)
         {
-            uint32_t size = TinyBuffer_Add(thiz->buffer, (uint8_t *)string, offset, length);
+            uint32_t size = ByteBuffer_Add(thiz->buffer, (uint8_t *)string, offset, length);
             offset += size;
             length -= size;
 
-            if (TinyBuffer_IsFull(thiz->buffer))
+            if (ByteBuffer_IsFull(thiz->buffer))
             {
-                thiz->out += thiz->buffer->used;
+                thiz->out += thiz->buffer->available;
                 thiz->output((const char *)thiz->buffer->bytes, thiz->ctx);
 
-                TinyBuffer_Clear(thiz->buffer);
+                ByteBuffer_Clear(thiz->buffer);
             }
             else
             {
-                if (thiz->size == thiz->out + thiz->buffer->used)
+                if (thiz->size == thiz->out + thiz->buffer->available)
                 {
-                    thiz->out += thiz->buffer->used;
+                    thiz->out += thiz->buffer->available;
                     thiz->output((const char *)thiz->buffer->bytes, thiz->ctx);
                 }
             }
@@ -238,7 +238,7 @@ void JsonEncoder_Dispose(JsonEncoder *thiz)
 }
 
 TINY_LOR
-void JsonEncoder_EncodeObject(JsonEncoder *thiz, TinyBuffer *buffer, JsonOutput output, void *ctx)
+void JsonEncoder_EncodeObject(JsonEncoder *thiz, ByteBuffer *buffer, JsonOutput output, void *ctx)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(output);
@@ -249,7 +249,7 @@ void JsonEncoder_EncodeObject(JsonEncoder *thiz, TinyBuffer *buffer, JsonOutput 
 
     if (thiz->buffer != NULL) 
     {
-        TinyBuffer_Clear(thiz->buffer);
+        ByteBuffer_Clear(thiz->buffer);
     }
 
     _EncodeObject(thiz, thiz->object, thiz->pretty, 0);

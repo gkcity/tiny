@@ -47,7 +47,7 @@ int main()
 
 //    ret = StreamClientChannel_Connect(client, "127.0.0.1", 9000, 3000);
 //    ret = StreamClientChannel_Connect(client, "58.83.160.23", 80, 3000);
-    ret = StreamClientChannel_Connect(client, "47.93.60.147", 8080, 3000);
+    ret = StreamClientChannel_Connect(client, "39.106.171.204", 80, 3000);
     if (RET_FAILED(ret))
     {
         printf("StreamClientChannel_Connect failed: %d\n", TINY_RET_CODE(ret));

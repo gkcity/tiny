@@ -32,22 +32,22 @@ static void _Append(HttpMessageEncoder *thiz, const uint8_t *data, size_t size)
 
         while (size > 0)
         {
-            uint32_t copied = TinyBuffer_Add(thiz->buffer, data, offset, (uint32_t)size);
+            uint32_t copied = ByteBuffer_Add(thiz->buffer, data, offset, (uint32_t)size);
             offset += copied;
             size -= copied;
 
-            if (TinyBuffer_IsFull(thiz->buffer))
+            if (ByteBuffer_IsFull(thiz->buffer))
             {
-                thiz->out += thiz->buffer->used;
+                thiz->out += thiz->buffer->available;
                 thiz->output(thiz->buffer->bytes, thiz->buffer->size, thiz->ctx);
-                TinyBuffer_Clear(thiz->buffer);
+                ByteBuffer_Clear(thiz->buffer);
             }
             else
             {
-                if (thiz->size == thiz->out + thiz->buffer->used)
+                if (thiz->size == thiz->out + thiz->buffer->available)
                 {
-                    thiz->out += thiz->buffer->used;
-                    thiz->output(thiz->buffer->bytes, thiz->buffer->used, thiz->ctx);
+                    thiz->out += thiz->buffer->available;
+                    thiz->output(thiz->buffer->bytes, (uint32_t) thiz->buffer->available, thiz->ctx);
                 }
             }
         }
@@ -159,7 +159,7 @@ void HttpMessageEncoder_Dispose(HttpMessageEncoder *thiz)
 }
 
 TINY_LOR
-void HttpMessageEncoder_Encode(HttpMessageEncoder *thiz, TinyBuffer *buffer, HttpMessageOutput output, void *ctx)
+void HttpMessageEncoder_Encode(HttpMessageEncoder *thiz, ByteBuffer *buffer, HttpMessageOutput output, void *ctx)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(output);
@@ -170,7 +170,7 @@ void HttpMessageEncoder_Encode(HttpMessageEncoder *thiz, TinyBuffer *buffer, Htt
     
     if (thiz->buffer != NULL)
     {
-        TinyBuffer_Clear(thiz->buffer);
+        ByteBuffer_Clear(thiz->buffer);
     }
 
     _Encode(thiz, thiz->message);

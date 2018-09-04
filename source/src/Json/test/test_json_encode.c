@@ -10,6 +10,7 @@
 #include <JsonObject.h>
 #include <JsonArray.h>
 #include <codec/JsonEncoder.h>
+#include "../../ByteBuffer/ByteBuffer.h"
 
 #define TAG			"test"
 
@@ -236,7 +237,7 @@ static int test6(void)
     JsonObject_Encode(root, false);
     printf("json encode (%d) ->\n%s\n", root->size, root->string);
 
-    TinyBuffer *buffer = TinyBuffer_New(20);
+    ByteBuffer *buffer = ByteBuffer_New(20);
     RETURN_VAL_IF_FAIL(buffer != NULL, -1);
 
     JsonEncoder encoder;
