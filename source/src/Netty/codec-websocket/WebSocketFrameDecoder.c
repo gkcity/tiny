@@ -4,7 +4,7 @@
  * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
- * @file   WebSocketFrameEncoder.c
+ * @file   WebSocketFrameDecoder.c
  *
  * @remark
  *		set tabstop=4
