@@ -99,6 +99,25 @@ TINY_LOR
 void WebSocketFrame_Delete(WebSocketFrame *thiz);
 
 
+/**
+ * 7.4.1.  Defined Status Codes
+ */
+#define WS_CLOSE_NORMAL                 1000
+#define WS_CLOSE_GOING_AWAY             1001
+#define WS_CLOSE_PROTOCOL_ERROR         1002
+#define WS_CLOSE_UNSUPPORTED            1003
+#define WS_CLOSE_NO_STATUS              1005
+#define WS_CLOSE_ABNORMAL               1006
+#define WS_UNSUPPORTED_DATA             1007
+#define WS_POLICY_VIOLATION             1008
+#define WS_CLOSE_TOO_LARGE              1009
+#define WS_MISSING_EXTENTSION           1010
+#define WS_INTERNAL_ERROR               1011
+#define WS_SERVICE_RESTART              1012
+#define WS_TRY_AGAIN_LATER              1013
+#define WS_TLS HANDSHAKE                1015
+
+
 TINY_END_DECLS
 
 #endif /* __WEB_SOCKET_FRAME_H__ */
