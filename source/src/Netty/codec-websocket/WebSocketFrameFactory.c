@@ -30,7 +30,7 @@ WebSocketFrame * WebSocketFrameFactory_NewTextFrame(bool final, const char *text
         thiz->final = final;
         thiz->opcode = OPCODE_TEXT_FRAME;
         thiz->length = (uint32_t) strlen(text);
-        thiz->data = tiny_malloc(thiz->length + 1);
+        thiz->data = tiny_malloc((uint32_t)(thiz->length + 1));
         if (thiz->data != NULL)
         {
             memset(thiz->data, 0, thiz->length + 1);
@@ -47,7 +47,7 @@ WebSocketFrame * WebSocketFrameFactory_NewTextFrame(bool final, const char *text
 }
 
 TINY_LOR
-WebSocketFrame * WebSocketFrameFactory_NewBinaryFrame(bool final, const char *binary, uint32_t length)
+WebSocketFrame * WebSocketFrameFactory_NewBinaryFrame(bool final, const uint8_t *binary, uint32_t length)
 {
     WebSocketFrame * thiz = WebSocketFrame_New();
     if (thiz != NULL)
@@ -55,7 +55,7 @@ WebSocketFrame * WebSocketFrameFactory_NewBinaryFrame(bool final, const char *bi
         thiz->final = final;
         thiz->opcode = OPCODE_BINARY_FRAME;
         thiz->length = length;
-        thiz->data = tiny_malloc(thiz->length);
+        thiz->data = tiny_malloc((uint32_t)thiz->length);
         if (thiz->data != NULL)
         {
             memcpy(thiz->data, binary, thiz->length);

@@ -27,7 +27,7 @@ WebSocketFrame * WebSocketFrameFactory_NewTextFrame(bool final, const char *text
 
 TINY_API
 TINY_LOR
-WebSocketFrame * WebSocketFrameFactory_NewBinaryFrame(bool final, const char *binary, uint32_t length);
+WebSocketFrame * WebSocketFrameFactory_NewBinaryFrame(bool final, const uint8_t *binary, uint32_t length);
 
 TINY_API
 TINY_LOR
