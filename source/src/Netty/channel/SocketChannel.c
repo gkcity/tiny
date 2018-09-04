@@ -710,13 +710,13 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
             ByteBuffer *buffer = ByteBuffer_New(len);
             if (buffer == NULL)
             {
-                LOG_E(TAG, "ChannelBuffer_New FAILED: %d", len);
+                LOG_E(TAG, "ByteBuffer_New FAILED: %d", len);
                 break;
             }
 
             if (RET_FAILED(ByteBuffer_Put(buffer, (uint8_t *) data, len)))
             {
-                LOG_E(TAG, "ChannelBuffer_Put FAILED");
+                LOG_E(TAG, "ByteBuffer_Put FAILED");
                 ByteBuffer_Delete(buffer);
                 break;
             }

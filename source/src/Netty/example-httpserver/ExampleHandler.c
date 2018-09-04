@@ -106,7 +106,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
         buffer = ByteBuffer_New(1024);
         if (buffer == NULL)
         {
-            LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
+            LOG_E(TAG, "ByteBuffer_New FAILED: 1024");
             break;
         }
 

@@ -136,7 +136,7 @@ static void sendResponse(ChannelHandler *thiz, Channel *channel, int code, const
         buffer = ByteBuffer_New(1024);
         if (buffer == NULL)
         {
-            LOG_E(TAG, "TinyBuffer_New FAILED: 1024");
+            LOG_E(TAG, "ByteBuffer_New FAILED: 1024");
             break;
         }
 

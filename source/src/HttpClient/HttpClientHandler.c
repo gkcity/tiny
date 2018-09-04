@@ -128,7 +128,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
         buffer = ByteBuffer_New(HTTP_BUFFER_SIZE);
         if (buffer == NULL)
         {
-            LOG_E(TAG, "TinyBuffer_New FAILED: %d", HTTP_BUFFER_SIZE);
+            LOG_E(TAG, "ByteBuffer_New FAILED: %d", HTTP_BUFFER_SIZE);
             break;
         }
 

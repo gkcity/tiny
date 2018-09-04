@@ -158,7 +158,7 @@ static TinyRet WebSocketFrameCodec_Construct(ChannelHandler *thiz)
         thiz->context = ByteBuffer_New(WebSocketFrameCodec_RECV_BUFFER_SIZE);
         if (thiz->context == NULL)
         {
-            LOG_E(TAG, "TinyBuffer_New FAILED");
+            LOG_E(TAG, "ByteBuffer_New FAILED");
             ret = TINY_RET_E_NEW;
             break;
         }

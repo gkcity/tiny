@@ -90,7 +90,7 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
         buffer = ByteBuffer_New(thiz->inBufferSize);
         if (buffer == NULL)
         {
-            LOG_I(TAG, "ChannelBuffer_New failed!");
+            LOG_I(TAG, "ByteBuffer_New failed!");
             ret = TINY_RET_E_NEW;
             break;
         }
