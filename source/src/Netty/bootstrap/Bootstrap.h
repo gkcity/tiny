@@ -24,7 +24,7 @@
 TINY_BEGIN_DECLS
 
 
-#define EVENT_LOOP_DEFAULT_TIMEOUT  (1000 * 1000 * 1)
+#define EVENT_LOOP_DEFAULT_TIMEOUT  (1000 * 1000 * 5)
 
 typedef struct _Bootstrap
 {

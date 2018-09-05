@@ -44,22 +44,27 @@ static void MulticastChannel_Delete(Channel *thiz)
     tiny_free(thiz);
 }
 
-TINY_LOR
-static void MulticastChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer)
-{
-    if (Channel_IsActive(thiz))
-    {
-        Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
-
-        if (thiz->_getTimeout != NULL)
-        {
-            if (RET_SUCCEEDED(thiz->_getTimeout(thiz, timer, NULL)))
-            {
-                timer->fd = thiz->fd;
-            }
-        }
-    }
-}
+//TINY_LOR
+//static void MulticastChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer)
+//{
+//    if (Channel_IsActive(thiz))
+//    {
+//        Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
+//
+//        if (thiz->sendBuffers.size > 0)
+//        {
+//            Selector_Register(selector, thiz->fd, SELECTOR_OP_WRITE);
+//        }
+//
+//        if (thiz->_getTimeout != NULL)
+//        {
+//            if (RET_SUCCEEDED(thiz->_getTimeout(thiz, timer, NULL)))
+//            {
+//                timer->fd = thiz->fd;
+//            }
+//        }
+//    }
+//}
 
 TINY_LOR
 static void MulticastChannel_OnRemove(Channel *thiz)
@@ -129,7 +134,7 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
     {
         strncpy(thiz->id, "MulticastChannel", CHANNEL_ID_LEN);
 
-        thiz->_onRegister = MulticastChannel_OnRegister;
+//        thiz->_onRegister = MulticastChannel_OnRegister;
         thiz->_onRemove = MulticastChannel_OnRemove;
         thiz->_onAccess = MulticastChannel_OnAccess;
 

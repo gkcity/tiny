@@ -707,6 +707,8 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter--);
         if (handler == NULL || type == DATA_RAW)
         {
+            LOG_D(TAG, "add buffer(%d) to sendBuffers", len);
+
             ByteBuffer *buffer = ByteBuffer_New(len);
             if (buffer == NULL)
             {

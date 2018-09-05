@@ -63,15 +63,7 @@ static void StreamServerChannel_OnRegister(Channel *thiz, Selector *selector, Ch
         for (uint32_t i = 0; i < ctx->channels.size; ++i)
         {
             Channel *child = (Channel *) TinyList_GetAt(&ctx->channels, i);
-            Selector_Register(selector, child->fd, SELECTOR_OP_READ);
-
-            if (child->_getTimeout != NULL)
-            {
-                if (RET_SUCCEEDED(child->_getTimeout(child, timer, NULL)))
-                {
-                    timer->fd = child->fd;
-                }
-            }
+            SocketChannel_OnRegister(child, selector, timer);
         }
     }
 }

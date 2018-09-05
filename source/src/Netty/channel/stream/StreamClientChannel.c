@@ -127,11 +127,10 @@ TinyRet StreamClientChannel_Construct(Channel *thiz)
 
     do
     {
-        thiz->_onRegister = StreamClientChannel_OnRegister;
-        thiz->_onRemove = StreamClientChannel_OnRemove;
         thiz->_onActive = StreamClientChannel_OnActive;
         thiz->_onAccess = StreamClientChannel_OnAccess;
-
+        thiz->_onRegister = StreamClientChannel_OnRegister;
+        thiz->_onRemove = StreamClientChannel_OnRemove;
         thiz->_getTimeout = StreamClientChannel_GetConnectingTimeout;
 
         thiz->context = StreamClientChannelContext_New();
