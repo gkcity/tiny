@@ -2,7 +2,7 @@
 #include <tiny_socket.h>
 #include "../HttpClient.h"
 
-#define FAN    "/dd/instance/urn:homekit-spec:device:fan:00000000:geekcity-ds:1"
+#define FAN    "urn:miot-spec-v2:device:switch:0000A003:geekcity-plc:1"
 
 /**
  * NO ACTION

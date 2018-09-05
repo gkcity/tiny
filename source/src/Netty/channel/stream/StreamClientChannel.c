@@ -81,7 +81,7 @@ static void StreamClientChannel_OnRemove(Channel *thiz)
 TINY_LOR
 static TinyRet StreamClientChannel_OnAccess(Channel *thiz, Selector *selector)
 {
-    LOG_I(TAG, "StreamClientChannel_OnReadWrite");
+    LOG_I(TAG, "StreamClientChannel_OnAccess");
 
     // [1] socket is writeable if connection established.
     // [2] socket is readable and writeable if connection occur error.
