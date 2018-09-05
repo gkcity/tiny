@@ -261,21 +261,27 @@ TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
 
     do
     {
-        if (Selector_IsReadable(selector, thiz->fd))
+        if (Channel_IsActive(thiz))
         {
-            ret = SocketChannel_OnRead(thiz);
-            if (RET_FAILED(ret))
+            if (Selector_IsReadable(selector, thiz->fd))
             {
-                break;
+                ret = SocketChannel_OnRead(thiz);
+                if (RET_FAILED(ret))
+                {
+                    break;
+                }
             }
         }
 
-        if (Selector_IsWriteable(selector, thiz->fd))
+        if (Channel_IsActive(thiz))
         {
-            ret = SocketChannel_OnWrite(thiz);
-            if (RET_FAILED(ret))
+            if (Selector_IsWriteable(selector, thiz->fd))
             {
-                break;
+                ret = SocketChannel_OnWrite(thiz);
+                if (RET_FAILED(ret))
+                {
+                    break;
+                }
             }
         }
     } while (false);

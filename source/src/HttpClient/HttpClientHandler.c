@@ -205,6 +205,8 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
         }
     }
 
+    // TODO: 这里需要考虑接数据可能没有接收完
+
     Channel_Close(channel);
 
     return true;
