@@ -722,7 +722,7 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
                 break;
             }
 
-            if (RET_FAILED(ByteBuffer_Put(buffer, (uint8_t *) data, len)))
+            if (! ByteBuffer_Put(buffer, (uint8_t *) data, len))
             {
                 LOG_E(TAG, "ByteBuffer_Put FAILED");
                 ByteBuffer_Delete(buffer);
@@ -748,6 +748,12 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         if (handler->channelWrite == NULL)
         {
             LOG_D(TAG, "%s.channelWrite NOT IMPLEMENTED", handler->name);
+            continue;
+        }
+
+        if (handler->outType != type)
+        {
+            LOG_E(TAG, "ChannelDataType not matched: %d, but expect is %d", type, handler->outType);
             continue;
         }
 

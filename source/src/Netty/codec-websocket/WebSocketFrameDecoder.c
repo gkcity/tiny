@@ -15,7 +15,7 @@
 #include <tiny_log.h>
 #include <tiny_malloc.h>
 #include <tiny_inet.h>
-#include "../../ByteBuffer/ByteBuffer.h"
+#include <ByteBuffer.h>
 #include "WebSocketFrameEncoder.h"
 
 #define TAG "WebSocketFrameEncoder"
@@ -94,7 +94,7 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(ByteBuffer *buffer)
         LOG_E(TAG, "FIN: %d", frame->final);
         LOG_E(TAG, "OPCODE: %d", frame->opcode);
         LOG_E(TAG, "MASK: %d", frame->mask);
-        LOG_E(TAG, "length: %ld", frame->length);
+        LOG_E(TAG, "length: %d", (uint32_t) frame->length);
 
         if (frame->length == 0)
         {
@@ -105,7 +105,7 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(ByteBuffer *buffer)
         frame->data = tiny_malloc((uint32_t)frame->length);
         if (frame->data == NULL)
         {
-            LOG_E(TAG, "tiny_malloc failed: %ld", frame->length);
+            LOG_E(TAG, "tiny_malloc failed: %d", (uint32_t)frame->length);
             WebSocketFrame_Delete(frame);
             frame = NULL;
             break;
@@ -113,7 +113,7 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(ByteBuffer *buffer)
 
         if (! ByteBuffer_Pick(buffer, headerSize + extendedPayloadLength + maskingKeyLength, frame->data, (uint32_t) frame->length))
         {
-            LOG_E(TAG, "pick data failed: %ld", frame->length);
+            LOG_E(TAG, "pick data failed: %d", (uint32_t)frame->length);
             WebSocketFrame_Delete(frame);
             frame = NULL;
             break;

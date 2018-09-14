@@ -89,6 +89,8 @@ TinyRet ByteBuffer_Dispose(ByteBuffer *thiz)
     }
 
     memset(thiz, 0, sizeof(ByteBuffer));
+
+    return TINY_RET_OK;
 }
 
 TINY_LOR

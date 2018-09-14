@@ -121,7 +121,10 @@ const char * TinyThread_GetName(TinyThread *thiz)
 
 bool TinyThread_Start(TinyThread *thiz)
 {
+#ifdef _WIN32
+#else
     int ret = 0;
+#endif
 
     RETURN_VAL_IF_FAIL(thiz, false);
 
@@ -152,6 +155,7 @@ bool TinyThread_Start(TinyThread *thiz)
         (LPTHREAD_START_ROUTINE)thread_run,
         (void*)thiz);
 
+    (void)ret;
     thiz->thread_handler = (int)thiz->thread_id;
 #endif
 

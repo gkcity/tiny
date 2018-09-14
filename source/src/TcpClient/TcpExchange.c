@@ -40,7 +40,7 @@ static TinyRet TcpExchange_Construct(TcpExchange *thiz,
 
         if (length == 0)
         {
-            TINY_RET_E_ARG_INVALID;
+            ret = TINY_RET_E_ARG_INVALID;
             break;
         }
 

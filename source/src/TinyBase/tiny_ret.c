@@ -64,6 +64,7 @@ static const ValueDetail code_details[] =
     ENTRY(CODE_NOT_INITIALIZED, "not initialized"),
 };
 
+#if 0
 TINY_LOR
 static const ValueDetail error_levels[] =
 {
@@ -72,6 +73,7 @@ static const ValueDetail error_levels[] =
     ENTRY(EL_SERIOUS, "Serious error"),
     ENTRY(EL_FATAL, "Fatal error"),
 };
+#endif
 
 TINY_LOR
 const char * tiny_ret_to_str(TinyRet ret)

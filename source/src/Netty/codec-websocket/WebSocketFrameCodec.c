@@ -15,8 +15,8 @@
 #include <tiny_malloc.h>
 #include <tiny_log.h>
 #include <tiny_print_binary.h>
+#include <ByteBuffer.h>
 #include <channel/SocketChannel.h>
-#include "../../ByteBuffer/ByteBuffer.h"
 #include <codec/JsonDecoder.h>
 #include "WebSocketFrame.h"
 #include "WebSocketFrameCodec.h"
@@ -78,6 +78,7 @@ static bool _ChannelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     return true;
 }
 
+TINY_LOR
 static void _Output (const uint8_t *data, uint64_t size, void *ctx)
 {
     LOG_BINARY(TAG, data, size, true);
