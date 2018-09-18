@@ -114,6 +114,19 @@ SET(Bootstrap_Source
         bootstrap/LoopbackChannelHandler.c
     )
 
+#-----------------------
+# handler
+#-----------------------
+SET(Handler_Header
+        handler/HttpRequestHandlers.h
+        handler/HttpRequestHandlerContext.h
+        )
+
+SET(Handler_Source
+        handler/HttpRequestHandlers.c
+        handler/HttpRequestHandlerContext.c
+        )
+
 #----------------------------------------------------------------------------
 # source
 #----------------------------------------------------------------------------
@@ -128,6 +141,8 @@ SET(SRC
         ${Codec_websocket_Source}
         ${Bootstrap_Header}
         ${Bootstrap_Source}
+        ${Handler_Header}
+        ${Handler_Source}
     )
 
 #----------------------------------------------------------------------------

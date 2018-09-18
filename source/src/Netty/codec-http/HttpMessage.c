@@ -238,6 +238,41 @@ void HttpMessage_SetVersion(HttpMessage *thiz, int major, int minor)
 }
 
 TINY_LOR
+TinyRet HttpMessage_SetContent(HttpMessage *thiz, const char *type, uint32_t length, const uint8_t *content)
+{
+    TinyRet ret = TINY_RET_OK;
+
+    do
+    {
+        ret = HttpHeader_Set(&thiz->header, "Content-Type", type);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
+
+        ret = HttpHeader_SetInteger(&thiz->header, "Content-Length", length);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
+
+        ret = HttpContent_SetSize(&thiz->content, length);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
+
+        ret = HttpContent_PutBytes(&thiz->content, length, content);
+        if (RET_FAILED(ret))
+        {
+            break;
+        }
+    } while (false);
+
+    return ret;
+}
+
+TINY_LOR
 bool HttpMessage_IsContentFull(HttpMessage *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, false);

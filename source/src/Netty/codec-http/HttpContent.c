@@ -79,6 +79,28 @@ TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size)
     return ret;
 }
 
+TINY_LOR
+TinyRet HttpContent_PutBytes(HttpContent *thiz, uint32_t length, const uint8_t *bytes)
+{
+    uint32_t unused_size = 0;
+    uint32_t length_will_be_read = length;
+
+    RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
+    RETURN_VAL_IF_FAIL(bytes, TINY_RET_E_ARG_NULL);
+
+    unused_size= thiz->buf_size - thiz->data_size;
+
+    if (unused_size < length_will_be_read)
+    {
+        LOG_E(TAG, "HttpContent_PutBytes failed: content size < data size");
+        return TINY_RET_E_ARG_INVALID;
+    }
+
+    memcpy(thiz->buf + thiz->data_size, bytes, length_will_be_read);
+    thiz->data_size += length_will_be_read;
+
+    return TINY_RET_OK;
+}
 
 TINY_LOR
 uint32_t HttpContent_LoadBytes(HttpContent *thiz, Bytes *bytes)

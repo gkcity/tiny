@@ -181,6 +181,10 @@ void HttpMessage_SetVersion(HttpMessage *thiz, int major, int minor);
 
 TINY_API
 TINY_LOR
+TinyRet HttpMessage_SetContent(HttpMessage *thiz, const char *type, uint32_t length, const uint8_t *content);
+
+TINY_API
+TINY_LOR
 bool HttpMessage_IsContentFull(HttpMessage *thiz);
 
 TINY_API

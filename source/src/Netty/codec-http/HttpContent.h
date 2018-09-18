@@ -45,6 +45,10 @@ TinyRet HttpContent_SetSize(HttpContent *thiz, uint32_t size);
 
 TINY_API
 TINY_LOR
+TinyRet HttpContent_PutBytes(HttpContent *thiz, uint32_t length, const uint8_t *bytes);
+
+TINY_API
+TINY_LOR
 uint32_t HttpContent_LoadBytes(HttpContent *thiz, Bytes *bytes);
 
 #define HttpContent_IsFull(thiz)    ((thiz)->buf_size == (thiz)->data_size)
