@@ -16,7 +16,7 @@
 #define __TINY_INLINE_LINUX_H__
 
 
-#define TINY_INLINE     __always_inline
+#define TINY_INLINE     inline
 
 
 
