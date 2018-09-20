@@ -31,6 +31,8 @@
     #include "linux/tiny_time.h"
 #elif defined(__WIN32__)
     #include "windows/tiny_time.h"
+#elif defined(__MACOS__)
+    #include "macos/tiny_time.h"
 #else
     error "tiny_time not implemented!!!"
 #endif

@@ -14,14 +14,10 @@
 #define __JSON_BOOLEAN_H__
 
 #include <tiny_base.h>
+#include "JsonDefinitions.h"
 
 TINY_BEGIN_DECLS
 
-
-typedef struct _JsonBoolean
-{
-    bool        value;
-} JsonBoolean;
 
 TINY_LOR
 JsonBoolean * JsonBoolean_New(bool value);

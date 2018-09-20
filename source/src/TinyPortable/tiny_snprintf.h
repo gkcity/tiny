@@ -28,6 +28,8 @@
     #include "linux/tiny_snprintf.h"
 #elif defined(__WIN32__)
     #include "windows/tiny_snprintf.h"
+#elif defined(__MACOS__)
+    #include "macos/tiny_snprintf.h"
 #else
     error "tiny_snprintf not implemented!!!"
 #endif

@@ -14,15 +14,10 @@
 #define __JSON_STRING_H__
 
 #include <tiny_base.h>
+#include "JsonDefinitions.h"
 
 TINY_BEGIN_DECLS
 
-
-typedef struct _JsonString
-{
-    char        * value;
-    uint32_t      length;
-} JsonString;
 
 TINY_LOR
 JsonString * JsonString_New(const char *value);

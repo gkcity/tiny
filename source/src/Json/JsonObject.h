@@ -15,18 +15,10 @@
 
 #include <tiny_base.h>
 #include <tiny_lor.h>
-#include <TinyMap.h>
-#include "JsonValue.h"
+#include "JsonDefinitions.h"
 
 TINY_BEGIN_DECLS
 
-
-struct _JsonObject
-{
-    TinyMap         data;
-    char          * string;
-    uint32_t        size;
-};
 
 TINY_LOR
 TINY_API

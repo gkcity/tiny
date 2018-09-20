@@ -25,6 +25,8 @@
     #include "linux/tiny_malloc.c"
 #elif defined(__WIN32__)
     #include "windows/tiny_malloc.c"
+#elif defined(__MACOS__)
+    #include "macos/tiny_malloc.c"
 #else
     error "tiny_malloc not implemented!!!"
 #endif

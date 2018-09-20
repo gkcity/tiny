@@ -14,27 +14,10 @@
 #define __JSON_NUMBER_H__
 
 #include <tiny_base.h>
+#include "JsonDefinitions.h"
 
 TINY_BEGIN_DECLS
 
-
-typedef enum _JsonNumberType
-{
-    JSON_NUMBER_INTEGER  = 0,
-    JSON_NUMBER_FLOAT    = 1,
-} JsonNumberType;
-
-typedef union _JsonNumberValue
-{
-    long    intValue;
-    float   floatValue;
-} JsonNumberValue;
-
-typedef struct _JsonNumber
-{
-    JsonNumberType      type;
-    JsonNumberValue     value;
-} JsonNumber;
 
 TINY_LOR
 JsonNumber * JsonNumber_NewInteger(long value);

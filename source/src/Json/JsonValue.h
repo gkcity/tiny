@@ -14,49 +14,11 @@
 #define __JSON_VALUE_H__
 
 #include <tiny_base.h>
+#include "JsonDefinitions.h"
 
 TINY_BEGIN_DECLS
 
-struct _JsonBoolean;
-typedef struct _JsonBoolean JsonBoolean;
 
-struct _JsonString;
-typedef struct _JsonString JsonString;
-
-struct _JsonNumber;
-typedef struct _JsonNumber JsonNumber;
-
-struct _JsonObject;
-typedef struct _JsonObject JsonObject;
-
-struct _JsonArray;
-typedef struct _JsonArray JsonArray;
-
-typedef enum _JsonValueType
-{
-    JSON_UNDEFINED      = 0,
-    JSON_STRING         = 1,
-    JSON_NUMBER         = 2,
-    JSON_OBJECT         = 3,
-    JSON_ARRAY          = 4,
-    JSON_BOOLEAN        = 5,
-    JSON_NULL           = 6,
-} JsonValueType;
-
-typedef union _JsonValueData
-{
-    JsonString    * string;
-    JsonNumber    * number;
-    JsonObject    * object;
-    JsonArray     * array;
-    JsonBoolean   * boolean;
-} JsonValueData;
-
-typedef struct _JsonValue
-{
-    JsonValueType   type;
-    JsonValueData   data;
-} JsonValue;
 
 TINY_LOR
 TINY_API

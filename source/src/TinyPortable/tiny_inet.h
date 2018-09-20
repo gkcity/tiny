@@ -28,6 +28,8 @@
     #include "linux/tiny_inet.h"
 #elif defined(__WIN32__)
     #include "windows/tiny_inet.h"
+#elif defined(__MACOS__)
+    #include "macos/tiny_inet.h"
 #else
     error "tiny_inet not implemented!!!"
 #endif

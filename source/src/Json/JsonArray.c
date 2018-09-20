@@ -14,6 +14,7 @@
 #include <tiny_log.h>
 #include <codec/JsonEncoder.h>
 #include "JsonArray.h"
+#include "JsonValue.h"
 
 #define TAG     "JsonArray"
 

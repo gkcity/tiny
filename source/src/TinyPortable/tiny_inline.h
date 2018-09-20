@@ -28,6 +28,8 @@
     #include "linux/tiny_inline.h"
 #elif defined(__WIN32__)
     #include "windows/tiny_inline.h"
+#elif defined(__MACOS__)
+    #include "macos/tiny_inline.h"
 #else
     error "tiny_inline not implemented!!!"
 #endif

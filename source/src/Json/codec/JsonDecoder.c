@@ -16,6 +16,7 @@
 #include "value/JsonNumber.h"
 #include "value/JsonString.h"
 #include "JsonArray.h"
+#include "JsonValue.h"
 
 #define TAG     "JsonDecoder"
 

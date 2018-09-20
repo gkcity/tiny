@@ -28,6 +28,8 @@
     #include "linux/tiny_socket.h"
 #elif defined(__WIN32__)
     #include "windows/tiny_socket.h"
+#elif defined(__MACOS__)
+    #include "macos/tiny_socket.h"
 #else
     error "tiny_socket not implemented!!!"
 #endif

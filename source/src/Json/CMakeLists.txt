@@ -8,6 +8,7 @@ SET(Json_Header
         JsonValue.h
         JsonArray.h
         JsonObject.h
+        JsonDefinitions.h
         codec/JsonToken.h
         codec/JsonTokenizer.h
         codec/JsonDecoder.h

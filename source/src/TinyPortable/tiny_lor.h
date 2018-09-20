@@ -32,6 +32,8 @@
     #include "linux/tiny_lor.h"
 #elif defined(__WIN32__)
     #include "windows/tiny_lor.h"
+#elif defined(__MACOS__)
+    #include "macos/tiny_lor.h"
 #else
     error "tiny_lor not implemented!!!"
 #endif

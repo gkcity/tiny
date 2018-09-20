@@ -16,12 +16,17 @@
 #include <tiny_snprintf.h>
 #include <tiny_time.h>
 
+#ifdef _WIN32
+#else
+#include <errno.h>
+#endif
 
 #define TAG     "TinySemaphore"
 
 #ifdef _WIN32
-//#else
-bool ctx_gen_ipc_name(const char *name, char *full_name, uint32_t len)
+#else
+
+bool gen_ipc_name(const char *name, char *full_name, uint32_t len)
 {
     const char * dir = NULL;
     const char * slash = NULL;
@@ -42,7 +47,7 @@ bool ctx_gen_ipc_name(const char *name, char *full_name, uint32_t len)
     if (name == NULL)
     {
         uint64_t usec = tiny_current_microsecond();
-    #ifdef __MAC_OSX__
+    #ifdef __MACOS__
         tiny_snprintf(full_name, len, "%s%s%llu", dir, slash, usec);
     #else
         tiny_snprintf(full_name, len, "%s%s%lu", dir, slash, (unsigned long)usec);
@@ -113,8 +118,8 @@ TinyRet TinySemaphore_Construct(TinySemaphore *thiz)
         }
 #endif
 
-#ifdef __MAC_OSX__
-        ctx_gen_ipc_name(NULL, thiz->sem.name, PATH_MAX);
+#ifdef __MACOS__
+        gen_ipc_name(NULL, thiz->sem.name, PATH_MAX);
         thiz->sem.sem = sem_open(thiz->sem.name, O_CREAT, 0600, 0);
         if (thiz->sem.sem == SEM_FAILED)
         {
@@ -146,7 +151,7 @@ TinyRet TinySemaphore_Dispose(TinySemaphore *thiz)
     sem_destroy(&thiz->sem);
 #endif
 
-#ifdef __MAC_OSX__
+#ifdef __MACOS__
     if (thiz->sem.sem)
     {
         sem_close(thiz->sem.sem);
@@ -196,10 +201,9 @@ bool TinySemaphore_Wait(TinySemaphore *thiz)
     {
         result = true;
     }
-
 #endif
 
-#ifdef __MAC_OSX__
+#ifdef __MACOS__
     if (sem_wait(thiz->sem.sem) == 0)
     {
         result = true;
@@ -229,7 +233,7 @@ bool TinySemaphore_Post(TinySemaphore *thiz)
     }
 #endif
 
-#ifdef __MAC_OSX__
+#ifdef __MACOS__
     if (sem_post(thiz->sem.sem) == 0)
     {
         result = true;

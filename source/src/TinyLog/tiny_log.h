@@ -28,6 +28,8 @@
     #include "linux/tiny_log_impl.h"
 #elif defined(__WIN32__)
     #include "windows/tiny_log_impl.h"
+#elif defined(__MACOS__)
+    #include "macos/tiny_log_impl.h"
 #else
     error "tiny_log not implemented!!!"
 #endif

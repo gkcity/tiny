@@ -23,7 +23,7 @@ TINY_BEGIN_DECLS
 #include <semaphore.h>
 #endif
 
-#ifdef __MAC_OSX__
+#ifdef __MACOS__
 #include <semaphore.h>  
 #include <fcntl.h>
 #include <limits.h>
@@ -40,7 +40,7 @@ typedef HANDLE          tiny_sem_t;
 typedef sem_t           tiny_sem_t;
 #endif
 
-#ifdef __MAC_OSX__
+#ifdef __MACOS__
 typedef struct _tiny_sem_t
 {
     char                name[PATH_MAX + 1];

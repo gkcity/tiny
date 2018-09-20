@@ -15,9 +15,9 @@
 #include "JsonValue.h"
 #include "value/JsonString.h"
 #include "value/JsonNumber.h"
+#include "value/JsonBoolean.h"
 #include "JsonObject.h"
 #include "JsonArray.h"
-#include "value/JsonBoolean.h"
 
 #define TAG     "JsonValue"
 

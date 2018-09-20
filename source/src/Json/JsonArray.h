@@ -14,17 +14,10 @@
 #define __JSON_ARRAY_H__
 
 #include <tiny_base.h>
-#include <TinyList.h>
-#include "JsonValue.h"
+#include "JsonDefinitions.h"
 
 TINY_BEGIN_DECLS
 
-
-struct _JsonArray
-{
-    TinyList        values;
-    char          * string;
-};
 
 TINY_LOR
 TINY_API
