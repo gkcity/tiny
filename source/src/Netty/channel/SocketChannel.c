@@ -337,7 +337,7 @@ TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize
 TINY_LOR
 Channel * SocketChannel_New(void)
 {
-    return SocketChannel_NewCustomBufferSize(512, 0);
+    return SocketChannel_NewCustomBufferSize(1024, 0);
 }
 
 TINY_LOR

@@ -65,7 +65,7 @@ TinyRet ByteBuffer_Construct(ByteBuffer *thiz, uint32_t size)
             break;
         }
 
-        thiz->bytes = tiny_malloc(size);
+        thiz->bytes = tiny_malloc(size + 1);
         if (thiz->bytes == NULL)
         {
             LOG_E(TAG, "tiny_malloc FAILED: %d", size);
@@ -73,7 +73,7 @@ TinyRet ByteBuffer_Construct(ByteBuffer *thiz, uint32_t size)
             break;
         }
 
-        memset(thiz->bytes, 0, size);
+        memset(thiz->bytes, 0, size + 1);
         thiz->size = size;
     } while (false);
 

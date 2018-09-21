@@ -16,6 +16,16 @@
 TINY_LOR
 bool Bytes_GetLine(Bytes *thiz, Line *line)
 {
+//    uint32_t i = 0;
+//
+//    if (thiz->length - thiz->offset == 0)
+//    {
+//        line->value = thiz->value + thiz->offset;
+//        line->offset = 0;
+//        line->length = 0;
+//        return true;
+//    }
+
     for (uint32_t i = thiz->offset; i < (thiz->length - 1); ++i)
     {
         if (thiz->value[i] == '\r' && thiz->value[i+1] == '\n')
@@ -27,6 +37,15 @@ bool Bytes_GetLine(Bytes *thiz, Line *line)
             return true;
         }
     }
+
+//    if (thiz->value[i + 1] == '\0')
+//    {
+//        line->value = thiz->value + thiz->offset;
+//        line->offset = 0;
+//        line->length = i - thiz->offset;
+//        thiz->offset = i + 1;
+//        return true;
+//    }
 
     return false;
 }

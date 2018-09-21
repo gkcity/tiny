@@ -26,7 +26,7 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 {
     LOG_D(TAG, "_channelRead");
 
-//    printf("%s\n", (const char *)data);
+    //printf("%s\n", (const char *)data);
 
     do
     {
