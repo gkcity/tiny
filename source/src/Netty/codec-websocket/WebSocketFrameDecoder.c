@@ -122,5 +122,20 @@ WebSocketFrame * WebSocketFrameDecoder_Decode(ByteBuffer *buffer)
         ByteBuffer_Get(buffer, 0, NULL, headerSize + extendedPayloadLength + maskingKeyLength + (uint32_t) frame->length);
     } while (false);
 
+    if (frame != NULL)
+    {
+        if (frame->length > 0)
+        {
+            if (frame->mask)
+            {
+                for (uint32_t i = 0; i < frame->length; ++i)
+                {
+                    uint32_t j = i % 4;
+                    frame->data[i] = frame->data[i] ^ frame->maskingKey[j];
+                }
+            }
+        }
+    }
+
     return frame;
 }
