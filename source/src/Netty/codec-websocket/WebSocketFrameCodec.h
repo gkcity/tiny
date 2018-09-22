@@ -26,7 +26,7 @@ TINY_BEGIN_DECLS
 #define WebSocketFrameCodec_RECV_BUFFER_SIZE    1024
 #define WebSocketFrameCodec_SEND_BUFFER_SIZE    1024
 
-
+TINY_API
 TINY_LOR
 ChannelHandler * WebSocketFrameCodec(void);
 

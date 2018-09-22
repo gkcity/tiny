@@ -33,8 +33,8 @@ WebSocketFrame * WebSocketFrameFactory_NewTextFrame(bool final, const char *text
         thiz->data = tiny_malloc((uint32_t)(thiz->length + 1));
         if (thiz->data != NULL)
         {
-            memset(thiz->data, 0, thiz->length + 1);
-            memcpy(thiz->data, text, thiz->length);
+            memset(thiz->data, 0, (size_t) (thiz->length + 1));
+            memcpy(thiz->data, text, (size_t) (thiz->length));
         }
         else
         {
@@ -58,7 +58,7 @@ WebSocketFrame * WebSocketFrameFactory_NewBinaryFrame(bool final, const uint8_t 
         thiz->data = tiny_malloc((uint32_t)thiz->length);
         if (thiz->data != NULL)
         {
-            memcpy(thiz->data, binary, thiz->length);
+            memcpy(thiz->data, binary, (size_t) (thiz->length));
         }
         else
         {

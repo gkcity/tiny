@@ -81,7 +81,7 @@ static bool _ChannelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 TINY_LOR
 static void _Output (const uint8_t *data, uint64_t size, void *ctx)
 {
-    LOG_BINARY(TAG, data, size, true);
+    LOG_BINARY(TAG, data, (size_t)size, true);
 
     Channel *channel = (Channel *)ctx;
     SocketChannel_StartWrite(channel, DATA_RAW, data, (uint32_t)size);
