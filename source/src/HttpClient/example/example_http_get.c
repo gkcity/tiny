@@ -2,22 +2,7 @@
 #include <tiny_socket.h>
 #include "../HttpClient.h"
 
-#define FAN    "/dd/instance/urn:miot-spec-v2:device:switch:0000A003:geekcity-plc:1"
-
-/**
- * NO ACTION
- */
-#define ZHIMI_FAN "/dd/instance/urn:miot-spec:device:fan:00000A04:zhimi"
-
-/**
- * Contains Action without arguments
- */
-#define ROCK_SWEEPER "/dd/instance/urn:miot-spec:device:sweeper:00000A0A:rock"
-
-/**
- * Contains Action with arguments
- */
-#define CHUNMI_COOKER "/instance/urn:miot-spec:device:cooker:00000A08:chunmi"
+#define FAN    "/dd/instance/urn:homekit-spec:device:fan:00000000:geekcity-ds:1"
 
 void tiny_print_mem(const char *tag, const char *function)
 {

@@ -118,7 +118,7 @@ static void _channelActive(ChannelHandler *thiz, Channel *channel)
             break;
         }
 
-        HttpMessage_SetRequest(&request, "GET", "/dd/instance/urn:miot-spec-v2:device:switch:0000A003:geekcity-plc:1");
+        HttpMessage_SetRequest(&request, "GET", "/dd/instance/urn:homekit-spec:device:fan:00000000:geekcity-ds:1");
         HttpHeader_Set(&request.header, "Accept", "*/*");
         HttpHeader_SetHost(&request.header, "39.106.171.204", 80);
 

@@ -15,30 +15,12 @@
 
 #include "sample_http_get.h"
 
-#define URI "/homekit/instance/device?type=urn:homtkit-spec:device:lightbulb:00000000:arrizo-v1"
-
-/**
- * NO ACTION
- */
-#define ZHIMI_FAN "/instance/device?type=urn:miot-spec:device:fan:00000A04:zhimi"
-
-/**
- * Contains Action without arguments
- */
-#define ROCK_SWEEPER "/instance/device?type=urn:miot-spec:device:sweeper:00000A0A:rock"
-
-/**
- * Contains Action with arguments
- */
-#define CHUNMI_COOKER "/instance/device?type=urn:miot-spec:device:cooker:00000A08:chunmi"
-
-#define TEST_URI "/homekit/instance/devices"
+#define URI "/dd/instance/urn:xiot-spec:device:modbus-master:00000001:geekcity-hub:1"
 
 void sample_http_get(void *pvParameters)
 {
     HttpClient *client = HttpClient_New();
 
-    //HttpExchange *exchange = HttpExchange_New("47.93.60.147", 8080, "GET", CHUNMI_COOKER, 5, NULL, 0);
     HttpExchange *exchange = HttpExchange_New("10.0.1.9", 9000, "GET", URI, 30, NULL, 0);
 
     if (RET_SUCCEEDED(HttpClient_Send(client, exchange)))
