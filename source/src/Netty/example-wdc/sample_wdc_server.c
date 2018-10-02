@@ -122,12 +122,7 @@ int main()
         return 0;
     }
 
-    ret = Bootstrap_Shutdown(&sb);
-    if (RET_FAILED(ret))
-    {
-        printf("Bootstrap_Shutdown failed: %d\n", TINY_RET_CODE(ret));
-        return 0;
-    }
+    Bootstrap_Shutdown(&sb);
 
     Bootstrap_Dispose(&sb);
 

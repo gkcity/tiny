@@ -106,13 +106,11 @@ SET(Codec_websocket_Source
 #-----------------------
 SET(Bootstrap_Header
         bootstrap/Bootstrap.h
-        bootstrap/LoopbackChannelHandler.h
-    )
+        )
 
 SET(Bootstrap_Source
         bootstrap/Bootstrap.c
-        bootstrap/LoopbackChannelHandler.c
-    )
+        )
 
 #-----------------------
 # handler

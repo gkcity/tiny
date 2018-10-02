@@ -137,13 +137,7 @@ TinyRet TcpClient_Send(TcpClient *thiz, TcpExchange *exchange)
             break;
         }
 
-        ret = Bootstrap_Shutdown(&thiz->bootstrap);
-        if (RET_FAILED(ret))
-        {
-            LOG_E(TAG, "Bootstrap_Shutdown failed: %d", TINY_RET_CODE(ret));
-            break;
-        }
-
+        Bootstrap_Shutdown(&thiz->bootstrap);
     } while (false);
 
     return ret;

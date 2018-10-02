@@ -205,9 +205,8 @@ SET(Netty_Header
         ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameEncoder.h
         ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameDecoder.h
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.h
-        ${SOURCE_ROOT}/Netty/bootstrap/LoopbackChannelHandler.h
-	${SOURCE_ROOT}/Netty/handler/HttpRequestHandlers.h
-	${SOURCE_ROOT}/Netty/handler/HttpRequestHandlerContext.h
+        ${SOURCE_ROOT}/Netty/handler/HttpRequestHandlers.h
+        ${SOURCE_ROOT}/Netty/handler/HttpRequestHandlerContext.h
         )
 
 SET(Netty_Source
@@ -235,9 +234,8 @@ SET(Netty_Source
         ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameEncoder.c
         ${SOURCE_ROOT}/Netty/codec-websocket/WebSocketFrameDecoder.c
         ${SOURCE_ROOT}/Netty/bootstrap/Bootstrap.c
-        ${SOURCE_ROOT}/Netty/bootstrap/LoopbackChannelHandler.c
         ${SOURCE_ROOT}/Netty/handler/HttpRequestHandlers.c
-	${SOURCE_ROOT}/Netty/handler/HttpRequestHandlerContext.c
+        ${SOURCE_ROOT}/Netty/handler/HttpRequestHandlerContext.c
         )
 
 #---------------------------

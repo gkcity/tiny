@@ -168,7 +168,7 @@ TinyRet Selector_Loop(Selector *thiz)
 {
     thiz->running = true;
 
-    while (true)
+    while (thiz->running)
     {
         TinyRet ret = Selector_LoopOnce(thiz);
         if (RET_FAILED(ret))
@@ -177,7 +177,7 @@ TinyRet Selector_Loop(Selector *thiz)
         }
     }
 
-    thiz->running = false;
+//    thiz->running = false;
 
     LOG_I(TAG, "Selector_Loop Finished!");
 

@@ -44,4 +44,5 @@ ADD_DEFINITIONS(-std=c99)
 # DEBUG INFORMATION
 #
 #----------------------------------------------------------------------------
-#ADD_DEFINITIONS(-DTINY_DEBUG)
+ADD_DEFINITIONS(-DTINY_DEBUG)
+ADD_DEFINITIONS(-DTINY_STATIC)

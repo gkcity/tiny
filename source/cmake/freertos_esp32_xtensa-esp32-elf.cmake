@@ -49,12 +49,5 @@ ADD_DEFINITIONS(-std=gnu99)
 # DEBUG INFORMATION
 #
 #----------------------------------------------------------------------------
-#ADD_DEFINITIONS(-DTINY_DEBUG)
+ADD_DEFINITIONS(-DTINY_DEBUG)
 ADD_DEFINITIONS(-DTINY_STATIC)
-
-#----------------------------------------------------------------------------
-#
-# DISABLE NETTY SHUTDOWN
-#
-#----------------------------------------------------------------------------
-ADD_DEFINITIONS(-DNETTY_SHUTDOWN_DISABLED)

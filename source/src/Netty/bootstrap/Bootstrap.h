@@ -57,7 +57,7 @@ TinyRet Bootstrap_Sync(Bootstrap *thiz);
 
 TINY_API
 TINY_LOR
-TinyRet Bootstrap_Shutdown(Bootstrap *thiz);
+void Bootstrap_Shutdown(Bootstrap *thiz);
 
 
 TINY_END_DECLS

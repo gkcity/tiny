@@ -24,7 +24,7 @@ ADD_DEFINITIONS(-D__LINUX__)
 # DEBUG INFORMATION
 #
 #----------------------------------------------------------------------------
-ADD_DEFINITIONS(-DTINY_DEBUG)
+#ADD_DEFINITIONS(-DTINY_DEBUG)
 
 #----------------------------------------------------------------------------
 #
@@ -38,5 +38,5 @@ SET(TINY_THREAD_ENABLED 1)
 # Export library
 #
 #----------------------------------------------------------------------------
-SET(EXPORT_STATIC_LIBRARY 1)
+SET(EXPORT_STATIC_LIBRARY 0)
 SET(EXPORT_SHARED_LIBRARY 1)

@@ -78,11 +78,7 @@ int main()
         return 0;
     }
 
-    if (RET_FAILED(Bootstrap_Shutdown(&sb)))
-    {
-        LOG_D(TAG, "Bootstrap_Shutdown failed");
-        return 0;
-    }
+    Bootstrap_Shutdown(&sb);
 
     Bootstrap_Dispose(&sb);
 

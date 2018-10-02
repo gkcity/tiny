@@ -15,7 +15,6 @@
 #include <tiny_log.h>
 #include <channel/SocketChannel.h>
 #include "Bootstrap.h"
-#include "LoopbackChannelHandler.h"
 
 #define TAG     "Bootstrap"
 
@@ -30,31 +29,6 @@ static TinyRet PostSelect(Selector *selector, void *ctx);
 
 TINY_LOR
 static TinyRet OnSelectTimeout(Selector *selector, void *ctx);
-
-#ifndef NETTY_SHUTDOWN_DISABLED
-TINY_LOR
-TinyRet Bootstrap_InitializeLoopbackChannel(Bootstrap *thiz)
-{
-    Channel * loopback = NULL;
-
-    loopback = SocketChannel_New();
-    if (loopback == NULL)
-    {
-        return TINY_RET_E_NEW;
-    }
-
-    SocketChannel_Open(loopback, TYPE_UDP);
-    SocketChannel_Bind(loopback, 0, false);
-    SocketChannel_SetBlock(loopback, false);
-    SocketChannel_AddLast(loopback, LoopbackChannelHandler(&thiz->channels));
-
-    thiz->loopbackPort = loopback->local.socket.port;
-
-    LOG_D(TAG, "Bootstrap_InitializeLoopbackChannel, port = %d", thiz->loopbackPort);
-
-    return TinyList_AddTail(&thiz->channels, loopback);
-}
-#endif /* NETTY_SHUTDOWN_DISABLED */
 
 TINY_LOR
 TinyRet Bootstrap_Construct(Bootstrap *thiz)
@@ -87,16 +61,6 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
             break;
         }
         TinyList_SetDeleteListener(&thiz->channels, _OnChannelRemoved, NULL);
-
-    #ifndef NETTY_SHUTDOWN_DISABLED
-        ret = Bootstrap_InitializeLoopbackChannel(thiz);
-        if (RET_FAILED(ret))
-        {
-            LOG_E(TAG, "Bootstrap_InitializeLoopbackChannel FAILED");
-            break;
-        }
-    #endif /* NETTY_SHUTDOWN_DISABLED */
-
     } while (0);
 
     return ret;
@@ -154,39 +118,12 @@ TinyRet Bootstrap_Sync(Bootstrap *thiz)
 }
 
 TINY_LOR
-TinyRet Bootstrap_Shutdown(Bootstrap *thiz)
+void Bootstrap_Shutdown(Bootstrap *thiz)
 {
     if (thiz->selector.running)
     {
-#ifndef NETTY_SHUTDOWN_DISABLED
-        int ret = 0;
-        uint32_t length = (uint32_t) strlen(BOOTSTRAP_SHUTDOWN);
-
-        struct sockaddr_in to;
-        socklen_t to_len = sizeof(to);
-
-        Channel *channel = SocketChannel_New();
-        SocketChannel_Open(channel, TYPE_UDP);
-        SocketChannel_Bind(channel, 0, false);
-
-        memset(&to, 0, sizeof(to));
-        to.sin_family = AF_INET;
-        to.sin_addr.s_addr = inet_addr("127.0.0.1");
-        to.sin_port = htons(thiz->loopbackPort);
-        ret = (int) tiny_sendto(channel->fd, BOOTSTRAP_SHUTDOWN, length, 0, (struct sockaddr *) &to,
-                                (socklen_t) to_len);
-        LOG_D(TAG, "sendto: 127.0.0.0:%d %d", thiz->loopbackPort, ret);
-
-        channel->_close(channel);
-        channel->_onRemove(channel);
-
-        return (ret == length) ? TINY_RET_OK : TINY_RET_E_INTERNAL;
-#else
-        return TINY_RET_E_NOT_IMPLEMENTED;
-#endif
+        thiz->selector.running = false;
     }
-
-    return TINY_RET_OK;
 }
 
 TINY_LOR
@@ -215,26 +152,10 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
 
     LOG_I(TAG, "current channels: %d", thiz->channels.size);
 
-#ifndef NETTY_SHUTDOWN_DISABLED
-    if (thiz->channels.size == 1)
-    {
-        // BUG ???
-        LOG_E(TAG, "remove loopback channel");
-        Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, 0);
-        Channel_Close(channel);
-        TinyList_RemoveAt(&thiz->channels, 0);
-        return TINY_RET_E_NOT_FOUND;
-    }
-    else if (thiz->channels.size == 0)
-    {
-        return TINY_RET_E_NOT_FOUND;
-    }
-#else
     if (thiz->channels.size == 0)
     {
         return TINY_RET_E_NOT_FOUND;
     }
-#endif
 
     thiz->timer.valid = false;
 
