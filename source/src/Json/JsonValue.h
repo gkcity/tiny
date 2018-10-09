@@ -50,7 +50,7 @@ JsonValue * JsonValue_NewValue(JsonValueType type, void *value);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_Copy(JsonValue *other);
+JsonValue * JsonValue_NewFrom(JsonValue *other);
 
 TINY_LOR
 TINY_API

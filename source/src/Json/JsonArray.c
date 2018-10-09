@@ -302,7 +302,7 @@ TinyRet JsonArray_Copy(JsonArray *dst, JsonArray *src)
         for (uint32_t i = 0; i < src->values.size; ++i)
         {
             JsonValue *v = (JsonValue *) TinyList_GetAt(&src->values, i);
-            JsonValue *newValue = JsonValue_Copy(v);
+            JsonValue *newValue = JsonValue_NewFrom(v);
             if (newValue == NULL)
             {
                 LOG_D(TAG, "JsonValue_Copy failed");
