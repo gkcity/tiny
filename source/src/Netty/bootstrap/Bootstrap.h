@@ -24,7 +24,7 @@
 TINY_BEGIN_DECLS
 
 
-#define EVENT_LOOP_DEFAULT_TIMEOUT  (1000 * 1000 * 60)
+#define EVENT_LOOP_DEFAULT_TIMEOUT  (1000 * 1000 * 3)
 
 typedef struct _Bootstrap
 {
@@ -32,7 +32,6 @@ typedef struct _Bootstrap
     TinyList                    channels;
     ChannelTimer                timer;
     uint32_t                    loopTimeout;
-    uint16_t                    loopbackPort;
 } Bootstrap;
 
 TINY_API
