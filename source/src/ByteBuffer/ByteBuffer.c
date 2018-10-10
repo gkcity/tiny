@@ -98,6 +98,8 @@ void ByteBuffer_Clear(ByteBuffer *thiz)
 {
     thiz->offset = 0;
     thiz->available = 0;
+
+    memset(thiz->bytes, 0, thiz->size);
 }
 
 TINY_LOR
