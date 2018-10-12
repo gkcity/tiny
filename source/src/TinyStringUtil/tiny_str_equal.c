@@ -12,8 +12,8 @@
 *		set expandtab
 */
 
-#include "tiny_str_equal.h"
 #include <ctype.h>
+#include "tiny_str_equal.h"
 
 TINY_LOR
 bool str_equal(const char *dst, const char *src, bool ignore_case)
@@ -36,7 +36,7 @@ bool str_equal(const char *dst, const char *src, bool ignore_case)
 
         while (*dst)
         {
-            if (tolower(*dst++) != tolower(*src++))
+            if (tolower((int)(*dst++)) != tolower((int)(*src++)))
             {
                 ret = false;
                 break;

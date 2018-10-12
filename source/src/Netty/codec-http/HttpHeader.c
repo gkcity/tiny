@@ -120,7 +120,7 @@ TinyRet HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
 
         for (uint32_t i = 0; i < strlen(name); ++i)
         {
-            key[i] = (char)tolower(name[i]);
+            key[i] = (char)tolower((int)(name[i]));
         }
 
         vLength = (uint32_t) strlen(value);
@@ -187,7 +187,7 @@ const char * HttpHeader_GetValue(HttpHeader * thiz, const char *name)
 
     for (uint32_t i = 0; i < strlen(name); ++i)
     {
-        key[i] = (char) tolower(name[i]);
+        key[i] = (char) tolower((int)(name[i]));
     }
 
     return (const char *) TinyMap_GetValue(&thiz->values, key);

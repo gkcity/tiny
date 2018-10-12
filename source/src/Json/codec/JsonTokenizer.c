@@ -248,7 +248,7 @@ static TokenParseResult JsonTokenizer_ParseString(JsonTokenizer *thiz)
                 break;
             }
 
-            else if (isprint(c))
+            else if (isprint((int)c))
             {
                 thiz->current ++;
             }
@@ -315,7 +315,7 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
                 thiz->current ++;
                 c = *thiz->current;
 
-                while (isdigit(c))
+                while (isdigit((int)c))
                 {
                     thiz->current ++;
                     c = *thiz->current;
@@ -342,7 +342,7 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
                 break;
             }
 
-            while (isdigit(c))
+            while (isdigit((int)c))
             {
                 thiz->current ++;
                 c = *thiz->current;
@@ -359,7 +359,7 @@ static TokenParseResult JsonTokenizer_ParseNumber(JsonTokenizer *thiz)
 
                 if (c == '+' || c == '-')
                 {
-                    while (isdigit(c))
+                    while (isdigit((int)c))
                     {
                         thiz->current++;
                         c = *thiz->current;
