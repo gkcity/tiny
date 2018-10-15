@@ -26,7 +26,7 @@ typedef struct _ByteBuffer
 {
     uint32_t          size;
     uint32_t          offset;
-    int               available;
+	uint32_t          available;
     uint8_t         * bytes;
 } ByteBuffer;
 
