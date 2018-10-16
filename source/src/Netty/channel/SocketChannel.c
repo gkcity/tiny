@@ -109,7 +109,7 @@ void SocketChannel_OnActive(Channel *thiz)
     {
         ChannelHandler *handler = (ChannelHandler *) TinyList_GetAt(&thiz->handlers, i);
 
-        LOG_I(TAG, "ChannelHandler: %s", handler->name);
+        LOG_D(TAG, "ChannelHandler: %s", handler->name);
 
         if (handler->channelActive != NULL)
         {
@@ -192,17 +192,20 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
             break;
         }
 
-        buffer->available = (int) tiny_recv(thiz->fd, buffer->bytes, buffer->size, 0);
-        if (buffer->available > 0)
+        ssize_t size = tiny_recv(thiz->fd, buffer->bytes, buffer->size, 0);
+        if (size > 0)
         {
-            SocketChannel_StartRead(thiz, DATA_RAW, buffer->bytes, (uint32_t)buffer->available);
+            buffer->available = (uint32_t) size;
+            SocketChannel_StartRead(thiz, DATA_RAW, buffer->bytes, buffer->available);
         }
-        else if (buffer->available == 0)
+        else if (size == 0)
         {
+            LOG_D(TAG, "tiny_recv: 0");
             ret = TINY_RET_E_SOCKET_READ;
         }
         else
         {
+            LOG_D(TAG, "tiny_recv: %d", (int)size);
             if (tiny_socket_has_error(thiz->fd))
             {
                 ret = TINY_RET_E_SOCKET_READ;
@@ -227,10 +230,10 @@ static TinyRet SocketChannel_OnWrite(Channel *thiz)
     for (uint32_t i = 0; i < thiz->sendBuffers.size; ++i)
     {
         ByteBuffer *buffer = (ByteBuffer *)TinyList_GetAt(&thiz->sendBuffers, i);
-        int sent = (int) tiny_send(thiz->fd, buffer->bytes + buffer->offset, (uint32_t) buffer->available, 0);
+        ssize_t sent = tiny_send(thiz->fd, buffer->bytes + buffer->offset, (uint32_t) buffer->available, 0);
         if (sent != buffer->available)
         {
-            LOG_E(TAG, "tiny_send failed, data length: %d, sent:%d", buffer->available, sent);
+            LOG_E(TAG, "tiny_send failed, data length: %d, sent:%d", buffer->available, (int)sent);
             if (sent == -1)
             {
                 if (tiny_socket_has_error(thiz->fd))
@@ -241,7 +244,7 @@ static TinyRet SocketChannel_OnWrite(Channel *thiz)
             }
         }
 
-        LOG_I(TAG, "tiny_send: %d", sent);
+        LOG_I(TAG, "tiny_send: %d", (int)sent);
     }
 
     TinyList_RemoveAll(&thiz->sendBuffers);
@@ -399,14 +402,12 @@ TinyRet SocketChannel_Open(Channel *thiz, ChannelType type)
         {
             LOG_D(TAG, "SocketChannel_Open: UDP");
             socket_type = SOCK_DGRAM;
-//            socket_protocol = IPPROTO_UDP;
             socket_protocol = 0;
         }
         else if (type == TYPE_TCP_SERVER || type == TYPE_TCP_CONNECTION)
         {
             LOG_D(TAG, "SocketChannel_Open: TCP");
             socket_type = SOCK_STREAM;
-//            socket_protocol = IPPROTO_TCP;
             socket_protocol = 0;
         }
         else
