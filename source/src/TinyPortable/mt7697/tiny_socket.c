@@ -144,7 +144,7 @@ bool tiny_socket_has_error(int fd)
             break;
         }
 
-        LOG_E(TAG, "tiny_socket_has_error: %d", v);
+        LOG_I(TAG, "tiny_socket_has_error: %d (%d)", v, fd);
 
         if (v == EAGAIN)
         {
