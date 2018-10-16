@@ -74,13 +74,11 @@ TinyRet JsonObject_Construct(JsonObject *thiz)
         thiz->string = NULL;
         thiz->size = 0;
 
-        ret = TinyMap_Construct(&thiz->data);
+        ret = TinyMap_Construct(&thiz->data, _OnJsonValueDelete, thiz);
         if (RET_FAILED(ret))
         {
             break;
         }
-
-        TinyMap_SetDeleteListener(&thiz->data, _OnJsonValueDelete, thiz);
     } while (0);
 
     return ret;

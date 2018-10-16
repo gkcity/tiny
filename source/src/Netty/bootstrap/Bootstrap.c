@@ -54,13 +54,12 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
         thiz->selector.onSelectTimeout = OnSelectTimeout;
         thiz->selector.ctx = thiz;
 
-        ret = TinyList_Construct(&thiz->channels);
+        ret = TinyList_Construct(&thiz->channels, _OnChannelRemoved, NULL);
         if (RET_FAILED(ret))
         {
             LOG_E(TAG, "TinyList_Construct FAILED");
             break;
         }
-        TinyList_SetDeleteListener(&thiz->channels, _OnChannelRemoved, NULL);
     } while (0);
 
     return ret;

@@ -41,14 +41,11 @@ TinyRet HttpHeader_Construct(HttpHeader *thiz)
     {
         memset(thiz, 0, sizeof(HttpHeader));
         
-        ret = TinyMap_Construct(&thiz->values);
+        ret = TinyMap_Construct(&thiz->values, data_delete_listener, NULL);
         if (RET_FAILED(ret))
         {
             break;
         }
-
-        TinyMap_SetDeleteListener(&thiz->values, data_delete_listener, NULL);
-
     } while (0);
 
     return ret;

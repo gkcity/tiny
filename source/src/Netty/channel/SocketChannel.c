@@ -302,13 +302,11 @@ TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize
     {
         memset(thiz, 0, sizeof(Channel));
 
-        ret = TinyList_Construct(&thiz->handlers);
+        ret = TinyList_Construct(&thiz->handlers, _OnHandlerRemoved, NULL);
         if (RET_FAILED(ret))
         {
             break;
         }
-
-        TinyList_SetDeleteListener(&thiz->handlers, _OnHandlerRemoved, NULL);
 
         thiz->fd = -1;
         thiz->inBufferSize = inSize;
@@ -323,12 +321,11 @@ TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize
         thiz->_close = SocketChannel_Close;
 
 
-        ret = TinyList_Construct(&thiz->sendBuffers);
+        ret = TinyList_Construct(&thiz->sendBuffers, _OnBufferRemoved, NULL);
         if (RET_FAILED(ret))
         {
             break;
         }
-        TinyList_SetDeleteListener(&thiz->sendBuffers, _OnBufferRemoved, NULL);
     } while (0);
 
     return ret;

@@ -39,19 +39,19 @@ void tiny_free(void *p)
 #else
 
 TINY_LOR
-void * tiny_malloc(uint32_t size)
+void * tiny_malloc(size_t size)
 {
     return malloc(size);
 }
 
 TINY_LOR
-void * tiny_calloc(uint32_t n, size_t size)
+void * tiny_calloc(size_t n, size_t size)
 {
     return calloc(n, size);
 }
 
 TINY_LOR
-void * tiny_realloc(void *p, uint32_t size)
+void * tiny_realloc(void *p, size_t size)
 {
     return realloc(p, size);
 }

@@ -35,23 +35,19 @@ typedef struct _TinyMap
 
 TINY_API
 TINY_LOR
-TinyRet TinyMap_Construct(TinyMap *thiz);
+TinyRet TinyMap_Construct(TinyMap *thiz, TinyContainerItemDeleteListener listener, void *ctx);
 
 TINY_API
 TINY_LOR
 TinyRet TinyMap_Dispose(TinyMap *thiz);
 
-//TINY_API
-//TINY_LOR
-//TinyMap * TinyMap_New(void);
-//
-//TINY_API
-//TINY_LOR
-//void TinyMap_Delete(TinyMap *thiz);
+TINY_API
+TINY_LOR
+TinyMap * TinyMap_New(TinyContainerItemDeleteListener listener, void *ctx);
 
 TINY_API
 TINY_LOR
-void TinyMap_SetDeleteListener(TinyMap * thiz, TinyContainerItemDeleteListener listener, void *ctx);
+void TinyMap_Delete(TinyMap *thiz);
 
 TINY_API
 TINY_LOR

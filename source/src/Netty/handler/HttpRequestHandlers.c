@@ -27,13 +27,7 @@ static void _OnItemRemoved (void * data, void *ctx)
 TINY_LOR
 HttpRequestHandlers * HttpRequestHandlers_New(void)
 {
-    HttpRequestHandlers *thiz = TinyList_New();
-    if (thiz != NULL)
-    {
-        TinyList_SetDeleteListener(thiz, _OnItemRemoved, NULL);
-    }
-
-    return thiz;
+    return TinyList_New(_OnItemRemoved, NULL);
 }
 
 TINY_LOR

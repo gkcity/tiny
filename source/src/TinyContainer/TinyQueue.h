@@ -29,15 +29,11 @@ typedef TinyList TinyQueue;
 
 TINY_API
 TINY_LOR
-TinyRet TinyQueue_Construct(TinyQueue *thiz);
+TinyRet TinyQueue_Construct(TinyQueue *thiz, TinyContainerItemDeleteListener listener, void *ctx);
 
 TINY_API
 TINY_LOR
 TinyRet TinyQueue_Dispose(TinyQueue *thiz);
-
-TINY_API
-TINY_LOR
-void TinyQueue_SetDeleteListener(TinyList * thiz, TinyContainerItemDeleteListener listener, void *ctx);
 
 TINY_API
 TINY_LOR

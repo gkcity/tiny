@@ -36,13 +36,11 @@ TinyRet JsonArray_Construct(JsonArray *thiz)
         memset(thiz, 0, sizeof(JsonArray));
         thiz->string = NULL;
 
-        ret = TinyList_Construct(&thiz->values);
+        ret = TinyList_Construct(&thiz->values, _OnJsonValueDelete, thiz);
         if (RET_FAILED(ret))
         {
             break;
         }
-
-        TinyList_SetDeleteListener(&thiz->values, _OnJsonValueDelete, thiz);
     } while (false);
 
     return ret;

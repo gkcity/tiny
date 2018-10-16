@@ -26,15 +26,7 @@ static void _OnTokenDelete (void * data, void *ctx)
 TINY_LOR
 TinyRet JsonTokenizer_Construct(JsonTokenizer * thiz)
 {
-    TinyRet ret = TINY_RET_OK;
-
-    ret = TinyQueue_Construct(&thiz->queue);
-    if (RET_SUCCEEDED(ret))
-    {
-        TinyQueue_SetDeleteListener(&thiz->queue, _OnTokenDelete, thiz);
-    }
-
-    return ret;
+    return TinyQueue_Construct(&thiz->queue, _OnTokenDelete, thiz);
 }
 
 TINY_LOR

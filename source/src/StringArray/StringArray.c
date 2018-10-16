@@ -79,14 +79,12 @@ static TinyRet StringArray_Construct(StringArray *thiz, const char *string, cons
     do
     {
         memset(thiz, 0, sizeof(StringArray));
-        ret = TinyList_Construct(&thiz->values);
+        ret = TinyList_Construct(&thiz->values, onValueDelete, NULL);
         if (RET_FAILED(ret))
         {
             LOG_E(TAG, "TinyList_Construct FAILED");
             break;
         }
-
-        TinyList_SetDeleteListener(&thiz->values, onValueDelete, NULL);
 
         if (string != NULL && separator != NULL)
         {

@@ -18,21 +18,15 @@
 #include "TinyQueue.h"
 
 TINY_LOR
-TinyRet TinyQueue_Construct(TinyQueue *thiz)
+TinyRet TinyQueue_Construct(TinyQueue *thiz, TinyContainerItemDeleteListener listener, void *ctx)
 {
-    return TinyList_Construct(thiz);
+    return TinyList_Construct(thiz, listener, ctx);
 }
 
 TINY_LOR
 TinyRet TinyQueue_Dispose(TinyQueue *thiz)
 {
     return TinyList_Dispose(thiz);
-}
-
-TINY_LOR
-void TinyQueue_SetDeleteListener(TinyList * thiz, TinyContainerItemDeleteListener listener, void *ctx)
-{
-    TinyList_SetDeleteListener(thiz, listener, ctx);
 }
 
 TINY_LOR

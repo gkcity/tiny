@@ -42,7 +42,7 @@ static void on_item_delete_listener(void * data, void *ctx);
 *
 *-----------------------------------------------------------------------------*/
 TINY_LOR
-TinyRet TinyMap_Construct(TinyMap *thiz)
+TinyRet TinyMap_Construct(TinyMap *thiz, TinyContainerItemDeleteListener listener, void *ctx)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -52,13 +52,14 @@ TinyRet TinyMap_Construct(TinyMap *thiz)
     {
         memset(thiz, 0, sizeof(TinyMap));
 
-        ret = TinyList_Construct(&thiz->list);
+        ret = TinyList_Construct(&thiz->list, on_item_delete_listener, thiz);
         if (RET_FAILED(ret))
         {
             break;
         }
 
-        TinyList_SetDeleteListener(&thiz->list, on_item_delete_listener, thiz);
+        thiz->data_delete_listener = listener;
+        thiz->data_delete_listener_ctx = ctx;
     } while (0);
 
     return ret;
@@ -74,51 +75,41 @@ TinyRet TinyMap_Dispose(TinyMap *thiz)
     return TINY_RET_OK;
 }
 
-//TINY_LOR
-//TinyMap * TinyMap_New(void)
-//{
-//    TinyMap *thiz = NULL;
-//
-//    do
-//    {
-//        TinyRet ret = TINY_RET_OK;
-//
-//        thiz = (TinyMap *)tiny_malloc(sizeof(TinyMap));
-//        if (thiz == NULL)
-//        {
-//            break;
-//        }
-//
-//        ret = TinyMap_Construct(thiz);
-//        if (RET_FAILED(ret))
-//        {
-//            TinyMap_Delete(thiz);
-//            thiz = NULL;
-//            break;
-//        }
-//
-//    } while (0);
-//
-//    return thiz;
-//}
-//
-//TINY_LOR
-//void TinyMap_Delete(TinyMap *thiz)
-//{
-//    RETURN_IF_FAIL(thiz);
-//
-//    TinyMap_Dispose(thiz);
-//    tiny_free(thiz);
-//}
+TINY_LOR
+TinyMap * TinyMap_New(TinyContainerItemDeleteListener listener, void *ctx)
+{
+    TinyMap *thiz = NULL;
+
+    do
+    {
+        TinyRet ret = TINY_RET_OK;
+
+        thiz = (TinyMap *)tiny_malloc(sizeof(TinyMap));
+        if (thiz == NULL)
+        {
+            break;
+        }
+
+        ret = TinyMap_Construct(thiz, listener, ctx);
+        if (RET_FAILED(ret))
+        {
+            TinyMap_Delete(thiz);
+            thiz = NULL;
+            break;
+        }
+
+    } while (0);
+
+    return thiz;
+}
 
 TINY_LOR
-void TinyMap_SetDeleteListener(TinyMap * thiz, TinyContainerItemDeleteListener listener, void *ctx)
+void TinyMap_Delete(TinyMap *thiz)
 {
     RETURN_IF_FAIL(thiz);
-    RETURN_IF_FAIL(listener);
 
-    thiz->data_delete_listener = listener;
-    thiz->data_delete_listener_ctx = ctx;
+    TinyMap_Dispose(thiz);
+    tiny_free(thiz);
 }
 
 TINY_LOR

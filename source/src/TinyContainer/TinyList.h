@@ -39,7 +39,7 @@ typedef struct _TinyList
 
 TINY_API
 TINY_LOR
-TinyRet TinyList_Construct(TinyList *thiz);
+TinyRet TinyList_Construct(TinyList *thiz, TinyContainerItemDeleteListener listener, void *ctx);
 
 TINY_API
 TINY_LOR
@@ -47,31 +47,15 @@ TinyRet TinyList_Dispose(TinyList *thiz);
 
 TINY_API
 TINY_LOR
-TinyList * TinyList_New(void);
+TinyList * TinyList_New(TinyContainerItemDeleteListener listener, void *ctx);
 
 TINY_API
 TINY_LOR
 void TinyList_Delete(TinyList *thiz);
 
-//TINY_API
-//TINY_LOR
-//TinyRet TinyList_AddRef(TinyList *thiz);
-//
-//TINY_API
-//TINY_LOR
-//TinyRet TinyList_Release(TinyList *thiz);
-//
-//TINY_API
-//TINY_LOR
-//TinyList * TinyList_Clone(TinyList *other);
-
 TINY_API
 TINY_LOR
 int TinyList_Foreach(TinyList * thiz, TinyContainerItemVisit visit, void * ctx);
-
-TINY_API
-TINY_LOR
-void TinyList_SetDeleteListener(TinyList * thiz, TinyContainerItemDeleteListener listener, void *ctx);
 
 TINY_API
 TINY_LOR
@@ -101,21 +85,21 @@ TINY_API
 TINY_LOR
 TinyRet TinyList_RemoveTail(TinyList * thiz);
 
-//TINY_API
-//TINY_LOR
-//int TinyList_GetHeadPosition(TinyList * thiz);
-//
-//TINY_API
-//TINY_LOR
-//int TinyList_GetTailPosition(TinyList * thiz);
-//
-//TINY_API
-//TINY_LOR
-//void * TinyList_GetNext(TinyList * thiz, int pos);
-//
-//TINY_API
-//TINY_LOR
-//void * TinyList_GetPrev(TinyList * thiz, int pos);
+TINY_API
+TINY_LOR
+int TinyList_GetHeadPosition(TinyList * thiz);
+
+TINY_API
+TINY_LOR
+int TinyList_GetTailPosition(TinyList * thiz);
+
+TINY_API
+TINY_LOR
+void * TinyList_GetNext(TinyList * thiz, int pos);
+
+TINY_API
+TINY_LOR
+void * TinyList_GetPrev(TinyList * thiz, int pos);
 
 TINY_API
 TINY_LOR
@@ -125,9 +109,9 @@ TINY_API
 TINY_LOR
 TinyRet TinyList_RemoveAt(TinyList * thiz, int pos);
 
-//TINY_API
-//TINY_LOR
-//TinyRet TinyList_SetAt(TinyList * thiz, int pos, void * data);
+TINY_API
+TINY_LOR
+TinyRet TinyList_SetAt(TinyList * thiz, int pos, void * data);
 
 TINY_API
 TINY_LOR
@@ -137,24 +121,7 @@ TINY_API
 TINY_LOR
 TinyRet TinyList_InsertBefore(TinyList * thiz, int pos, void * data);
 
-//TINY_API
-//TINY_LOR
-//void * TinyList_FindIndex(TinyList * thiz, int index);
-
-//TINY_API
-//TINY_LOR
-//int TinyList_GetCount(TinyList * thiz);
-//
-//TINY_API
-//TINY_LOR
-//int TinyList_GetSize(TinyList * thiz);
-
-//TINY_API
-//TINY_LOR
-//bool TinyList_IsEmpty(TinyList * thiz);
-
 
 TINY_END_DECLS
-
 
 #endif /* __TINY_LIST_H__ */

@@ -24,13 +24,13 @@ TINY_BEGIN_DECLS
 
 
 TINY_LOR
-void * tiny_malloc(uint32_t size);
+void * tiny_malloc(size_t size);
 
 TINY_LOR
-void * tiny_calloc(uint32_t n, size_t size);
+void * tiny_calloc(size_t n, size_t size);
 
 TINY_LOR
-void * tiny_realloc(void *p, uint32_t size);
+void * tiny_realloc(void *p, size_t size);
 
 TINY_LOR
 void tiny_free(void *p);

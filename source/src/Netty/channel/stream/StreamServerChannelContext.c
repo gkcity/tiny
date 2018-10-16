@@ -29,13 +29,13 @@ static TinyRet StreamServerChannelContext_Construct(StreamServerChannelContext *
 
     do
     {
-        ret = TinyList_Construct(&thiz->channels);
+        memset(thiz, 0, sizeof(StreamServerChannelContext));
+
+        ret = TinyList_Construct(&thiz->channels, _OnChannelRemoved, NULL);
         if (RET_FAILED(ret))
         {
             break;
         }
-
-        TinyList_SetDeleteListener(&thiz->channels, _OnChannelRemoved, NULL);
     } while (0);
 
     return ret;
