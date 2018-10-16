@@ -139,7 +139,7 @@ bool tiny_socket_has_error(int fd)
             break;
         }
 
-        LOG_D(TAG, "socket error: %d", v);
+        LOG_I(TAG, "tiny_socket_has_error: %d (%d)", v, fd);
 
         if (v == 0)
         {

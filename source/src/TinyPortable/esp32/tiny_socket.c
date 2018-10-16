@@ -134,17 +134,17 @@ bool tiny_socket_has_error(int fd)
 
         if (tiny_getsockopt(fd, SOL_SOCKET, SO_ERROR, &v, &len) < 0)
         {
-            LOG_I(TAG, "tiny_socket_has_error -> tiny_getsockopt failed.");
+            LOG_E(TAG, "tiny_socket_has_error -> tiny_getsockopt failed.");
             error = true;
             break;
         }
+
+        LOG_I(TAG, "tiny_socket_has_error: %d (%d)", v, fd);
 
         if (v == 0)
         {
             break;
         }
-
-        LOG_I(TAG, "tiny_socket_has_error: %d (%d)", v, fd);
 
         if (v == EAGAIN)
         {

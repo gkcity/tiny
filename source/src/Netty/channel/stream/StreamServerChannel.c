@@ -255,7 +255,7 @@ static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "StreamServerChannel_Construct");
+    LOG_D(TAG, "StreamServerChannel_Construct, maxConnections: %d", maxConnections);
 
     do
     {
