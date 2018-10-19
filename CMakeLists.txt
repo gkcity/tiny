@@ -84,15 +84,6 @@ SET(TinyPortable_Source
         )
 
 #---------------------------
-# TinyPorting
-#---------------------------
-
-SET(TinyPorting_Header
-        ${SOURCE_ROOT}/TinyPorting/tiny_sleep.h
-        ${SOURCE_ROOT}/TinyPorting/tiny_print_mem.h
-        )
-
-#---------------------------
 # TinyContainer
 #---------------------------
 
@@ -132,7 +123,6 @@ SET(TinyLog_Source
 SET(TinyStringUtil_Header
         ${SOURCE_ROOT}/TinyStringUtil/tiny_char_util.h
         ${SOURCE_ROOT}/TinyStringUtil/tiny_str_equal.h
-        ${SOURCE_ROOT}/TinyStringUtil/tiny_str_get_value.h
         ${SOURCE_ROOT}/TinyStringUtil/tiny_str_split.h
         ${SOURCE_ROOT}/TinyStringUtil/tiny_url_split.h
         ${SOURCE_ROOT}/TinyStringUtil/tiny_buffer_append.h
@@ -142,7 +132,6 @@ SET(TinyStringUtil_Header
 SET(TinyStringUtil_Source
         ${SOURCE_ROOT}/TinyStringUtil/tiny_char_util.c
         ${SOURCE_ROOT}/TinyStringUtil/tiny_str_equal.c
-        ${SOURCE_ROOT}/TinyStringUtil/tiny_str_get_value.c
         ${SOURCE_ROOT}/TinyStringUtil/tiny_str_split.c
         ${SOURCE_ROOT}/TinyStringUtil/tiny_url_split.c
         ${SOURCE_ROOT}/TinyStringUtil/tiny_buffer_append.c
@@ -364,7 +353,6 @@ IF (TINY_THREAD_ENABLED EQUAL 1)
             ${TinyBase_Source}
             ${TinyPortable_Header}
             ${TinyPortable_Source}
-            ${TinyPorting_Header}
             ${TinyContainer_Header}
             ${TinyContainer_Source}
             ${TinyLog_Header}
@@ -395,7 +383,6 @@ ELSE ()
             ${TinyBase_Source}
             ${TinyPortable_Header}
             ${TinyPortable_Source}
-            ${TinyPorting_Header}
             ${TinyContainer_Header}
             ${TinyContainer_Source}
             ${TinyLog_Header}

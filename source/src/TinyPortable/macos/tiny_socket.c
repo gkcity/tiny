@@ -148,7 +148,6 @@ bool tiny_socket_has_error(int fd)
         if (v == EAGAIN)
         {
             LOG_I(TAG, "ignore error: %d (EAGAIN)", v);
-            //tiny_sleep(10 * 3);
             break;
         }
 

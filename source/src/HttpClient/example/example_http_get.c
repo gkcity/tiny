@@ -4,15 +4,6 @@
 
 #define FAN    "/dd/instance/urn:homekit-spec:device:fan:00000000:geekcity-ds:1"
 
-void tiny_print_mem(const char *tag, const char *function)
-{
-}
-
-void tiny_sleep(int ms)
-{
-    printf("tiny_sleep: %d\n", ms);
-}
-
 int main(void)
 {
     tiny_socket_initialize();

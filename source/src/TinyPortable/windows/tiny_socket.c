@@ -15,7 +15,6 @@
 #include "tiny_socket.h"
 #include "tiny_log.h"
 #include "tiny_debug.h"
-#include "../../TinyPorting/tiny_sleep.h"
 
 #define TAG		"tiny_socket"
 
@@ -219,7 +218,6 @@ bool tiny_socket_has_error(int fd)
         if (e == EAGAIN)
         {
             LOG_I(TAG, "ignore error: %d (EAGAIN)", e);
-            //tiny_sleep(10 * 3);
             break;
         }
 

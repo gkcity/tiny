@@ -2,15 +2,6 @@
 #include <tiny_socket.h>
 #include "../TcpClient.h"
 
-void tiny_print_mem(const char *tag, const char *function)
-{
-}
-
-void tiny_sleep(int ms)
-{
-    printf("tiny_sleep: %d\n", ms);
-}
-
 static void _printHex(const uint8_t *data, uint32_t length)
 {
     for (uint32_t  i = 0; i < length; ++i)
