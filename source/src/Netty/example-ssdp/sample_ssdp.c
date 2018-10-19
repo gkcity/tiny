@@ -58,7 +58,7 @@ int main()
 //    timer = Timer_New("mytimer", 3 * 1000000, ssdp, timeout);
 
     // Bootstrap
-    if (RET_FAILED(Bootstrap_Construct(&sb)))
+    if (RET_FAILED(Bootstrap_Construct(&sb, NULL, NULL)))
     {
         LOG_D(TAG, "Bootstrap_Construct failed");
         return 0;

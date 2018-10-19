@@ -39,7 +39,7 @@ static TinyRet TcpClient_Construct(TcpClient *thiz)
             break;
         }
 
-        ret = Bootstrap_Construct(&thiz->bootstrap);
+        ret = Bootstrap_Construct(&thiz->bootstrap, NULL, NULL);
         if (RET_FAILED(ret))
         {
             LOG_E(TAG, "Bootstrap_Construct failed: %d", TINY_RET_CODE(ret));

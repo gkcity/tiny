@@ -332,8 +332,7 @@ int main(int argc, char *argv[])
 {
     TinyList list;
 
-    TinyList_Construct(&list);
-    TinyList_SetDeleteListener(&list, on_delete, NULL);
+    TinyList_Construct(&list, on_delete, NULL);
 
     test1(&list);
 

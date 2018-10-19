@@ -31,7 +31,7 @@ TINY_LOR
 static TinyRet OnSelectTimeout(Selector *selector, void *ctx);
 
 TINY_LOR
-TinyRet Bootstrap_Construct(Bootstrap *thiz)
+TinyRet Bootstrap_Construct(Bootstrap *thiz, BootstrapLoopHook preloop, void *ctx)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -42,6 +42,8 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz)
         memset(thiz, 0, sizeof(Bootstrap));
 
         thiz->loopTimeout = EVENT_LOOP_DEFAULT_TIMEOUT;
+        thiz->preloop = preloop;
+        thiz->preloopCtx = ctx;
 
         ret = Selector_Construct(&thiz->selector);
         if (RET_FAILED(ret))
@@ -136,6 +138,11 @@ TINY_LOR
 static TinyRet PreSelect(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
+
+    if (thiz->preloop != NULL)
+    {
+        thiz->preloop(thiz, thiz->preloopCtx);
+    }
 
     LOG_I(TAG, "PreSelect, channels: %d", thiz->channels.size);
 

@@ -55,7 +55,7 @@ int main()
     }
 
     // Starting Bootstrap
-    ret = Bootstrap_Construct(&sb);
+    ret = Bootstrap_Construct(&sb, NULL, NULL);
     if (RET_FAILED(ret))
     {
         printf("Bootstrap_Construct failed: %d\n", TINY_RET_CODE(ret));
