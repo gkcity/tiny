@@ -81,14 +81,16 @@ static void _OutputTXT (const uint8_t *data, uint32_t size, void *ctx)
     SocketChannel_StartWrite(channel, DATA_RAW, data, size);
 }
 
+#if 0
 static void _OutputBINARY (const uint8_t *data, uint32_t size, void *ctx)
 {
-//    LOG_D(TAG, "_Output (%d):", size);
-//    LOG_BINARY(TAG, data, size, true);
+    LOG_D(TAG, "_Output (%d):", size);
+    LOG_BINARY(TAG, data, size, true);
 
     Channel *channel = (Channel *)ctx;
     SocketChannel_StartWrite(channel, DATA_RAW, data, size);
 }
+#endif
 
 static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
