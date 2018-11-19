@@ -21,7 +21,7 @@ TINY_BEGIN_DECLS
 
 
 #define HttpMessageCodec_Name           "HttpMessageCodec"
-#define HttpMessageCodec_BUFFER_SIZE    1024
+#define HttpMessageCodec_BUFFER_SIZE    2048
 
 
 TINY_API

@@ -709,29 +709,36 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
     while (true)
     {
         ChannelHandler *handler = TinyList_GetAt(&thiz->handlers, thiz->currentWriter--);
-        if (handler == NULL || type == DATA_RAW)
+        if (handler == NULL)
         {
-            LOG_D(TAG, "add buffer(%d) to sendBuffers", len);
-
-            ByteBuffer *buffer = ByteBuffer_New(len);
-            if (buffer == NULL)
+            if (type == DATA_RAW)
             {
-                LOG_E(TAG, "ByteBuffer_New FAILED: %d", len);
-                break;
+                LOG_D(TAG, "add buffer(%d) to sendBuffers", len);
+
+                ByteBuffer *buffer = ByteBuffer_New(len);
+                if (buffer == NULL)
+                {
+                    LOG_E(TAG, "ByteBuffer_New FAILED: %d", len);
+                    break;
+                }
+
+                if (! ByteBuffer_Put(buffer, (uint8_t *) data, len))
+                {
+                    LOG_E(TAG, "ByteBuffer_Put FAILED");
+                    ByteBuffer_Delete(buffer);
+                    break;
+                }
+
+                if (RET_FAILED(TinyList_AddTail(&thiz->sendBuffers, buffer)))
+                {
+                    LOG_E(TAG, "TinyList_AddTail FAILED");
+                    ByteBuffer_Delete(buffer);
+                    break;
+                }
             }
-
-            if (! ByteBuffer_Put(buffer, (uint8_t *) data, len))
+            else
             {
-                LOG_E(TAG, "ByteBuffer_Put FAILED");
-                ByteBuffer_Delete(buffer);
-                break;
-            }
-
-            if (RET_FAILED(TinyList_AddTail(&thiz->sendBuffers, buffer)))
-            {
-                LOG_E(TAG, "TinyList_AddTail FAILED");
-                ByteBuffer_Delete(buffer);
-                break;
+                LOG_E(TAG, "handler not found, but data type is: %d", type);
             }
 
             break;

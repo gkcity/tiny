@@ -15,6 +15,7 @@
 #include <channel/SocketChannel.h>
 #include <tiny_log.h>
 #include <tiny_malloc.h>
+#include <tiny_print_binary.h>
 #include "HttpMessageCodec.h"
 #include "HttpMessage.h"
 #include "HttpMessageEncoder.h"
@@ -73,9 +74,18 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
     return true;
 }
 
-static void _Output (const uint8_t *data, uint32_t size, void *ctx)
+static void _OutputTXT (const uint8_t *data, uint32_t size, void *ctx)
 {
-    LOG_E(TAG, "_Output (%d): %s", size, (const char *)data);
+    LOG_D(TAG, "_Output (%d):\n%s\n", size, (const char *)data);
+
+    Channel *channel = (Channel *)ctx;
+    SocketChannel_StartWrite(channel, DATA_RAW, data, size);
+}
+
+static void _OutputBINARY (const uint8_t *data, uint32_t size, void *ctx)
+{
+    LOG_D(TAG, "_Output (%d):", size);
+    LOG_BINARY(TAG, data, size, true);
 
     Channel *channel = (Channel *)ctx;
     SocketChannel_StartWrite(channel, DATA_RAW, data, size);
@@ -84,6 +94,7 @@ static void _Output (const uint8_t *data, uint32_t size, void *ctx)
 static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
     HttpMessage *message = (HttpMessage *) data;
+    const char *contentType = NULL;
 
     LOG_D(TAG, "_ChannelWrite");
 
@@ -117,7 +128,26 @@ static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
             break;
         }
 
-        HttpMessageEncoder_Encode(&encoder, buffer, _Output, channel);
+        contentType = (const char *)TinyMap_GetValue(&message->header.values, "Content-Type");
+        if (contentType == NULL)
+        {
+            HttpMessageEncoder_Encode(&encoder, buffer, _OutputTXT, channel);
+        }
+        else
+        {
+            if (strstr(contentType, "txt") != NULL)
+            {
+                HttpMessageEncoder_Encode(&encoder, buffer, _OutputTXT, channel);
+            }
+            else if (strstr(contentType, "json") != NULL)
+            {
+                HttpMessageEncoder_Encode(&encoder, buffer, _OutputTXT, channel);
+            }
+            else
+            {
+                HttpMessageEncoder_Encode(&encoder, buffer, _OutputBINARY, channel);
+            }
+        };
 
         ByteBuffer_Delete(buffer);
         HttpMessageEncoder_Dispose(&encoder);
