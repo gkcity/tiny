@@ -76,16 +76,15 @@ static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType
 
 static void _OutputTXT (const uint8_t *data, uint32_t size, void *ctx)
 {
-    LOG_D(TAG, "_Output (%d):\n%s\n", size, (const char *)data);
-
+    LOG_D(TAG, "_Output (%d)", size);
     Channel *channel = (Channel *)ctx;
     SocketChannel_StartWrite(channel, DATA_RAW, data, size);
 }
 
 static void _OutputBINARY (const uint8_t *data, uint32_t size, void *ctx)
 {
-    LOG_D(TAG, "_Output (%d):", size);
-    LOG_BINARY(TAG, data, size, true);
+//    LOG_D(TAG, "_Output (%d):", size);
+//    LOG_BINARY(TAG, data, size, true);
 
     Channel *channel = (Channel *)ctx;
     SocketChannel_StartWrite(channel, DATA_RAW, data, size);
@@ -94,7 +93,6 @@ static void _OutputBINARY (const uint8_t *data, uint32_t size, void *ctx)
 static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
     HttpMessage *message = (HttpMessage *) data;
-    const char *contentType = NULL;
 
     LOG_D(TAG, "_ChannelWrite");
 
@@ -128,7 +126,10 @@ static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
             break;
         }
 
-        contentType = (const char *)TinyMap_GetValue(&message->header.values, "Content-Type");
+        HttpMessageEncoder_Encode(&encoder, buffer, _OutputTXT, channel);
+
+#if 0
+        const char *contentType = (const char *)TinyMap_GetValue(&message->header.values, "Content-Type");
         if (contentType == NULL)
         {
             HttpMessageEncoder_Encode(&encoder, buffer, _OutputTXT, channel);
@@ -148,6 +149,7 @@ static bool _ChannelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
                 HttpMessageEncoder_Encode(&encoder, buffer, _OutputBINARY, channel);
             }
         };
+#endif
 
         ByteBuffer_Delete(buffer);
         HttpMessageEncoder_Dispose(&encoder);
