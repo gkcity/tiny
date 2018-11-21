@@ -78,7 +78,7 @@ static long int _random()
 TINY_LOR
 static void _srandom(int seed)
 {
-    LOG_D(TAG, "_srandom: %d", seed);
+//    LOG_D(TAG, "_srandom: %d", seed);
 
     _state[0] = seed;
     register long int i;

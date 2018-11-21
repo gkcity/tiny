@@ -53,7 +53,7 @@ TinyRet SocketChannel_Dispose(Channel *thiz)
 {
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_D(TAG, "SocketChannel_Dispose: %s", thiz->id);
+//    LOG_D(TAG, "SocketChannel_Dispose: %s", thiz->id);
 
     TinyList_Dispose(&thiz->handlers);
     TinyList_Dispose(&thiz->sendBuffers);
@@ -140,7 +140,7 @@ void SocketChannel_OnEventTriggered(Channel *thiz, ChannelTimer *timer)
 {
     RETURN_IF_FAIL(thiz);
 
-    LOG_D(TAG, "SocketChannel_OnEventTriggered");
+//    LOG_D(TAG, "SocketChannel_OnEventTriggered");
 
     if (thiz->fd == timer->fd)
     {
@@ -180,7 +180,7 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_I(TAG, "SocketChannel_OnRead: %s", thiz->id);
+//    LOG_I(TAG, "SocketChannel_OnRead: %s", thiz->id);
 
     do
     {
@@ -200,12 +200,12 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
         }
         else if (size == 0)
         {
-            LOG_D(TAG, "tiny_recv: 0");
+//            LOG_D(TAG, "tiny_recv: 0");
             ret = TINY_RET_E_SOCKET_READ;
         }
         else
         {
-            LOG_D(TAG, "tiny_recv: %d", (int)size);
+//            LOG_D(TAG, "tiny_recv: %d", (int)size);
             if (tiny_socket_has_error(thiz->fd))
             {
                 ret = TINY_RET_E_SOCKET_READ;
@@ -225,7 +225,7 @@ static TinyRet SocketChannel_OnWrite(Channel *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-    LOG_I(TAG, "SocketChannel_OnWrite: %s", thiz->id);
+//    LOG_I(TAG, "SocketChannel_OnWrite: %s", thiz->id);
 
     for (uint32_t i = 0; i < thiz->sendBuffers.size; ++i)
     {
@@ -244,7 +244,7 @@ static TinyRet SocketChannel_OnWrite(Channel *thiz)
             }
         }
 
-        LOG_I(TAG, "tiny_send: %d", (int)sent);
+        LOG_D(TAG, "tiny_send: %d", (int)sent);
     }
 
     TinyList_RemoveAll(&thiz->sendBuffers);
@@ -260,7 +260,7 @@ TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
 
-    LOG_I(TAG, "SocketChannel_OnAccess: %s", thiz->id);
+//    LOG_I(TAG, "SocketChannel_OnAccess: %s", thiz->id);
 
     do
     {
@@ -651,7 +651,7 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
 
-    LOG_I(TAG, "SocketChannel_NextRead");
+//    LOG_I(TAG, "SocketChannel_NextRead");
 
     while (true)
     {
@@ -667,17 +667,17 @@ void SocketChannel_NextRead(Channel *thiz, ChannelDataType type, const void *dat
             continue;
         }
 
-        LOG_D(TAG, "ChannelHandler: %s", handler->name);
+//        LOG_D(TAG, "ChannelHandler: %s", handler->name);
 
         if (handler->inType != type)
         {
-            LOG_E(TAG, "ChannelDataType not matched: %d, but expect is %d", type, handler->inType);
+            LOG_E(TAG, "ChannelHandler: %s, ChannelDataType not matched: %d, but expect is %d", handler->name, type, handler->inType);
             break;
         }
 
         if (handler->channelRead == NULL)
         {
-            LOG_D(TAG, "%s.channelRead not implemented", handler->name);
+//            LOG_D(TAG, "%s.channelRead not implemented", handler->name);
             continue;
         }
 
@@ -704,7 +704,7 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(data);
 
-    LOG_I(TAG, "SocketChannel_NextWrite");
+//    LOG_I(TAG, "SocketChannel_NextWrite");
 
     while (true)
     {
@@ -713,7 +713,7 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
         {
             if (type == DATA_RAW)
             {
-                LOG_D(TAG, "add buffer(%d) to sendBuffers", len);
+//                LOG_D(TAG, "add buffer(%d) to sendBuffers", len);
 
                 ByteBuffer *buffer = ByteBuffer_New(len);
                 if (buffer == NULL)
@@ -758,11 +758,11 @@ void SocketChannel_NextWrite(Channel *thiz, ChannelDataType type, const void *da
 
         if (handler->outType != type)
         {
-            LOG_E(TAG, "ChannelDataType not matched: %d, but expect is %d", type, handler->outType);
+            LOG_D(TAG, "ChannelHandler: %s, ChannelDataType not matched: %d, but expect is %d", handler->name, type, handler->outType);
             continue;
         }
 
-        LOG_D(TAG, "%s.channelWrite, outType: %d", handler->name, handler->outType);
+//        LOG_D(TAG, "%s.channelWrite, outType: %d", handler->name, handler->outType);
 
         if (handler->channelWrite(handler, thiz, handler->outType, data, len))
         {

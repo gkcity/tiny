@@ -18,6 +18,7 @@
 #include <tiny_snprintf.h>
 #include <tiny_malloc.h>
 #include <TinyMapItem.h>
+#include <tiny_str_equal.h>
 
 #define TAG     "HttpHeader"
 
@@ -109,15 +110,47 @@ TinyRet HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
 
     do 
     {
-        char key[HTTP_MAX_NAME_LEN];
+//        char key[HTTP_MAX_NAME_LEN];
+//        char *v = NULL;
+//        uint32_t vLength = 0;
+//
+//        memset(key, 0, HTTP_MAX_NAME_LEN);
+//
+//        for (uint32_t i = 0; i < strlen(name); ++i)
+//        {
+//            key[i] = (char)tolower((int)(name[i]));
+//        }
+//
+//        vLength = (uint32_t) strlen(value);
+//        v = tiny_malloc(vLength + 1);
+//        if (v == NULL)
+//        {
+//            ret = TINY_RET_E_NEW;
+//            break;
+//        }
+//
+//        memset(v, 0, vLength + 1);
+//        strncpy(v, value, vLength);
+//
+//        TinyMap_Erase(&thiz->values, key);
+//
+//        ret = TinyMap_Insert(&thiz->values, key, (void *)v);
+//        if (RET_FAILED(ret))
+//        {
+//            tiny_free(v);
+//        }
+
         char *v = NULL;
         uint32_t vLength = 0;
 
-        memset(key, 0, HTTP_MAX_NAME_LEN);
-
-        for (uint32_t i = 0; i < strlen(name); ++i)
+        for (int i = 0; i < thiz->values.list.size; ++i)
         {
-            key[i] = (char)tolower((int)(name[i]));
+            TinyMapItem *item = TinyList_GetAt(&thiz->values.list, i);
+            if (str_equal(name, item->key, true))
+            {
+                TinyMap_Erase(&thiz->values, item->key);
+                break;
+            }
         }
 
         vLength = (uint32_t) strlen(value);
@@ -127,14 +160,11 @@ TinyRet HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
             ret = TINY_RET_E_NEW;
             break;
         }
-
         memset(v, 0, vLength + 1);
         strncpy(v, value, vLength);
 
-        TinyMap_Erase(&thiz->values, key);
-
-        ret = TinyMap_Insert(&thiz->values, key, (void *)v);
-        if (RET_FAILED(ret)) 
+        ret = TinyMap_Insert(&thiz->values, name, (void *)v);
+        if (RET_FAILED(ret))
         {
             tiny_free(v);
         }
@@ -175,19 +205,30 @@ TinyRet HttpHeader_SetHost(HttpHeader * thiz, const char *ip, uint16_t port)
 TINY_LOR
 const char * HttpHeader_GetValue(HttpHeader * thiz, const char *name)
 {
-    char key[HTTP_MAX_NAME_LEN];
+//    char key[HTTP_MAX_NAME_LEN];
 
     RETURN_VAL_IF_FAIL(thiz, NULL);
     RETURN_VAL_IF_FAIL(name, NULL);
 
-    memset(key, 0, HTTP_MAX_NAME_LEN);
+//    memset(key, 0, HTTP_MAX_NAME_LEN);
+//
+//    for (uint32_t i = 0; i < strlen(name); ++i)
+//    {
+//        key[i] = (char) tolower((int)(name[i]));
+//    }
+//
+//    return (const char *) TinyMap_GetValue(&thiz->values, key);
 
-    for (uint32_t i = 0; i < strlen(name); ++i)
+    for (int i = 0; i < thiz->values.list.size; ++i)
     {
-        key[i] = (char) tolower((int)(name[i]));
+        TinyMapItem *item = TinyList_GetAt(&thiz->values.list, i);
+        if (str_equal(name, item->key, true))
+        {
+            return item->value;
+        }
     }
 
-    return (const char *) TinyMap_GetValue(&thiz->values, key);
+    return NULL;
 }
 
 TINY_LOR

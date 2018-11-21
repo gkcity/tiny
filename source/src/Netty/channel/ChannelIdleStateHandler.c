@@ -102,7 +102,8 @@ static TinyRet ChannelIdleStateHandler_Dispose(ChannelHandler *thiz)
 TINY_LOR
 static bool _channelRead(ChannelHandler *thiz, Channel *channel, ChannelDataType type, const void *data, uint32_t len)
 {
-    LOG_D(TAG, "_channelRead: %d bytes from %s", len, channel->id);
+//    LOG_D(TAG, "_channelRead: %d bytes from %s", len, channel->id);
+    LOG_D(TAG, "_channelRead");
 
     ChannelIdles_OnRead(&thiz->idles);
 
@@ -122,7 +123,7 @@ static bool _channelWrite(ChannelHandler *thiz, Channel *channel, ChannelDataTyp
 TINY_LOR
 static TinyRet _channelGetTimeout(Channel *channel, ChannelTimer *timer, void *ctx)
 {
-    LOG_D(TAG, "_channelGetNextTimeout, channelId: %s", channel->id);
+//    LOG_D(TAG, "_channelGetNextTimeout, channelId: %s", channel->id);
 
     return ChannelIdles_GetTimeout(&((ChannelHandler *)ctx)->idles, timer);
 }
@@ -130,7 +131,7 @@ static TinyRet _channelGetTimeout(Channel *channel, ChannelTimer *timer, void *c
 TINY_LOR
 static void _channelEvent(ChannelHandler *thiz, Channel *channel, ChannelTimer *timer)
 {
-    LOG_D(TAG, "_channelEvent, channelId: %s", channel->id);
+//    LOG_D(TAG, "_channelEvent, channelId: %s", channel->id);
 
     ChannelIdles_OnEvent(&thiz->idles, timer);
 }

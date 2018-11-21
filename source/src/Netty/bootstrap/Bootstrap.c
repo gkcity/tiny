@@ -144,7 +144,7 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
         thiz->preloop(thiz, thiz->preloopCtx);
     }
 
-    LOG_I(TAG, "PreSelect, channels: %d", thiz->channels.size);
+    //LOG_I(TAG, "PreSelect, channels: %d", thiz->channels.size);
 
     for (int i = (thiz->channels.size - 1); i >= 0; --i)
     {
@@ -156,7 +156,7 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
         }
     }
 
-    LOG_I(TAG, "current channels: %d", thiz->channels.size);
+    //LOG_I(TAG, "current channels: %d", thiz->channels.size);
 
     if (thiz->channels.size == 0)
     {
@@ -196,7 +196,7 @@ static TinyRet PostSelect(Selector *selector, void *ctx)
 {
     Bootstrap *thiz = (Bootstrap *)ctx;
 
-    LOG_I(TAG, "PostSelect");
+    //LOG_I(TAG, "PostSelect");
 
     for (uint32_t i = 0; i < thiz->channels.size; ++i)
     {
@@ -204,7 +204,7 @@ static TinyRet PostSelect(Selector *selector, void *ctx)
 
         if (Channel_IsActive(channel))
         {
-            LOG_I(TAG, "Channel: [%s] IsActive", channel->id);
+            //LOG_I(TAG, "Channel: [%s] IsActive", channel->id);
 
             if (RET_FAILED(channel->_onAccess(channel, selector)))
             {

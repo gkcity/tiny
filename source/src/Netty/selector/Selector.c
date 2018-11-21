@@ -41,16 +41,12 @@ static TinyRet Selector_Select(Selector *thiz, int64_t us)
         ret = tiny_select(thiz->max_fd, &thiz->read_set, &thiz->write_set, NULL, &tv);
     }
 
-    LOG_D(TAG, "select: %d", ret);
-
     if (ret == 0)
     {
-        LOG_D(TAG, "select timeout");
         result = TINY_RET_TIMEOUT;
     }
     else if (ret < 0)
     {
-        LOG_D(TAG, "select failed");
         result = TINY_RET_E_INTERNAL;
     }
     else
@@ -65,8 +61,6 @@ TINY_LOR
 static TinyRet Selector_LoopOnce(Selector *thiz)
 {
     TinyRet ret = TINY_RET_OK;
-
-    LOG_I(TAG, "Selector_LoopOnce");
 
     /**
      * Reset
@@ -124,7 +118,7 @@ void Selector_Register(Selector *thiz, int fd, SelectorOperation op)
 {
     RETURN_IF_FAIL(thiz);
 
-    LOG_I(TAG, "Selector_Register: %d, Operation: 0x%x", fd, op);
+//    LOG_D(TAG, "Selector_Register: %d, Operation: 0x%x", fd, op);
 
     if ((op & SELECTOR_OP_READ) != 0)
     {
@@ -176,8 +170,6 @@ TinyRet Selector_Loop(Selector *thiz)
             break;
         }
     }
-
-//    thiz->running = false;
 
     LOG_I(TAG, "Selector_Loop Finished!");
 

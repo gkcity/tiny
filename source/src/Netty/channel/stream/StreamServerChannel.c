@@ -141,12 +141,8 @@ static void StreamServerChannel_OnConnectionAccess(Channel *thiz, Selector *sele
     {
         Channel *channel = (Channel *) TinyList_GetAt(&ctx->channels, i);
 
-        LOG_D(TAG, "Channel: [%s]", channel->id);
-
         if (Channel_IsActive(channel))
         {
-            LOG_D(TAG, "Channel: [%s] IsActive", channel->id);
-
             if (RET_FAILED(channel->_onAccess(channel, selector)))
             {
                 LOG_D(TAG, "close connection: %d#%s#%d", channel->fd, channel->local.socket.ip, channel->local.socket.port);
@@ -181,7 +177,7 @@ static TinyRet StreamServerChannel_OnAccess(Channel *thiz, Selector *selector)
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL(selector, TINY_RET_E_ARG_NULL);
 
-    LOG_I(TAG, "StreamServerChannel_OnAccess: %s", thiz->id);
+//    LOG_I(TAG, "StreamServerChannel_OnAccess: %s", thiz->id);
 
     ret = StreamServerChannel_OnAccept(thiz, selector);
     if (RET_SUCCEEDED(ret))
@@ -217,7 +213,7 @@ static void StreamServerChannel_OnEventTriggered(Channel *thiz, ChannelTimer *ti
 
     RETURN_IF_FAIL(thiz);
 
-    LOG_D(TAG, "StreamServerChannel_OnEventTriggered");
+//    LOG_D(TAG, "StreamServerChannel_OnEventTriggered");
 
     for (uint32_t i = 0; i < ctx->channels.size; ++i)
     {
