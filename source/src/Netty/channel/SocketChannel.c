@@ -225,7 +225,7 @@ static TinyRet SocketChannel_OnWrite(Channel *thiz)
 
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
-//    LOG_I(TAG, "SocketChannel_OnWrite: %s", thiz->id);
+    LOG_I(TAG, "SocketChannel_OnWrite, channel.id: %s, buffers: %d", thiz->id, thiz->sendBuffers.size);
 
     for (uint32_t i = 0; i < thiz->sendBuffers.size; ++i)
     {
@@ -244,7 +244,7 @@ static TinyRet SocketChannel_OnWrite(Channel *thiz)
             }
         }
 
-        LOG_D(TAG, "tiny_send: %d", (int)sent);
+//        LOG_D(TAG, "tiny_send: %d", (int)sent);
     }
 
     TinyList_RemoveAll(&thiz->sendBuffers);
