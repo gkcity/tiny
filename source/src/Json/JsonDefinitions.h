@@ -89,6 +89,11 @@ typedef struct _JsonValue
 } JsonValue;
 
 
+TINY_LOR
+TINY_API
+const char * JsonValueType_ToString(JsonValueType type);
+
+
 TINY_END_DECLS
 
 #endif /* __JSON_DEFINITIONS_H__ */

@@ -247,6 +247,7 @@ SET(Json_Source
         ${SOURCE_ROOT}/Json/JsonObject.c
         ${SOURCE_ROOT}/Json/JsonArray.c
         ${SOURCE_ROOT}/Json/JsonValue.c
+        ${SOURCE_ROOT}/Json/JsonDefinitions.c
         ${SOURCE_ROOT}/Json/codec/JsonDecoder.c
         ${SOURCE_ROOT}/Json/codec/JsonEncoder.c
         ${SOURCE_ROOT}/Json/codec/JsonToken.c

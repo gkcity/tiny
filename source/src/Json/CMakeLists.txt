@@ -22,6 +22,7 @@ SET(Json_Source
         JsonValue.c
         JsonArray.c
         JsonObject.c
+        JsonDefinitions.c
         codec/JsonToken.c
         codec/JsonTokenizer.c
         codec/JsonDecoder.c
