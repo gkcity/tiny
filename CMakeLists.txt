@@ -234,6 +234,7 @@ SET(Json_Header
         ${SOURCE_ROOT}/Json/JsonObject.h
         ${SOURCE_ROOT}/Json/JsonArray.h
         ${SOURCE_ROOT}/Json/JsonValue.h
+        ${SOURCE_ROOT}/Json/JsonDefinitions.h
         ${SOURCE_ROOT}/Json/codec/JsonDecoder.h
         ${SOURCE_ROOT}/Json/codec/JsonEncoder.h
         ${SOURCE_ROOT}/Json/codec/JsonToken.h
