@@ -17,7 +17,7 @@
 #define __TINY_MALLOC_ESP8266_H__
 
 #include "tiny_base.h"
-#include <espressif/esp_libc.h>
+//#include <espressif/esp_libc.h>
 
 
 #define tiny_malloc             malloc

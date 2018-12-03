@@ -16,7 +16,7 @@
 #define __TINY_SNPRINTF_ESP8266_H__
 
 #include <sys/types.h>
-#include <espressif/esp_libc.h>
+//#include <espressif/esp_libc.h>
 
 #define tiny_snprintf            snprintf
 
