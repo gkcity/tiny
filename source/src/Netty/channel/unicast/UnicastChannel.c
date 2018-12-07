@@ -4,7 +4,7 @@
  * @author jxfengzi@gmail.com
  * @date   2013-11-19
  *
- * @file   MulticastChannel.c
+ * @file   UnicastChannel.c
  *
  * @remark
  *      set tabstop=4
@@ -17,20 +17,20 @@
 #include <tiny_inet.h>
 #include <tiny_socket.h>
 #include <channel/SocketChannel.h>
-#include "MulticastChannel.h"
-#include "MulticastChannelContext.h"
+#include "UnicastChannel.h"
+#include "UnicastChannelContext.h"
 
 
-#define TAG             "MulticastChannel"
+#define TAG             "UnicastChannel"
 
 TINY_LOR
-static void MulticastChannel_Dispose(Channel *thiz)
+static void UnicastChannel_Dispose(Channel *thiz)
 {
     SocketChannel_LeaveGroup(thiz);
 
     if (thiz->context != NULL)
     {
-        MulticastChannelContext_Delete((MulticastChannelContext *)thiz->context);
+        UnicastChannelContext_Delete((UnicastChannelContext *)thiz->context);
         thiz->context = NULL;
     }
 
@@ -38,44 +38,22 @@ static void MulticastChannel_Dispose(Channel *thiz)
 }
 
 TINY_LOR
-static void MulticastChannel_Delete(Channel *thiz)
+static void UnicastChannel_Delete(Channel *thiz)
 {
-    MulticastChannel_Dispose(thiz);
+    UnicastChannel_Dispose(thiz);
     tiny_free(thiz);
 }
 
-//TINY_LOR
-//static void MulticastChannel_OnRegister(Channel *thiz, Selector *selector, ChannelTimer *timer)
-//{
-//    if (Channel_IsActive(thiz))
-//    {
-//        Selector_Register(selector, thiz->fd, SELECTOR_OP_READ);
-//
-//        if (thiz->sendBuffers.size > 0)
-//        {
-//            Selector_Register(selector, thiz->fd, SELECTOR_OP_WRITE);
-//        }
-//
-//        if (thiz->_getTimeout != NULL)
-//        {
-//            if (RET_SUCCEEDED(thiz->_getTimeout(thiz, timer, NULL)))
-//            {
-//                timer->fd = thiz->fd;
-//            }
-//        }
-//    }
-//}
-
 TINY_LOR
-static void MulticastChannel_OnRemove(Channel *thiz)
+static void UnicastChannel_OnRemove(Channel *thiz)
 {
-    LOG_D(TAG, "MulticastChannel_OnRemove");
+    LOG_D(TAG, "UnicastChannel_OnRemove");
 
-    MulticastChannel_Delete(thiz);
+    UnicastChannel_Delete(thiz);
 }
 
 TINY_LOR
-static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
+static TinyRet UnicastChannel_OnAccess(Channel *thiz, Selector *selector)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -90,8 +68,6 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
         {
             break;
         }
-
-//        LOG_I(TAG, "MulticastChannel_OnAccess");
 
         buffer = ByteBuffer_New(thiz->inBufferSize);
         if (buffer == NULL)
@@ -126,7 +102,7 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
 }
 
 TINY_LOR
-static TinyRet MulticastChannel_Construct(Channel *thiz)
+static TinyRet UnicastChannel_Construct(Channel *thiz)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -134,16 +110,16 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
 
     do
     {
-        strncpy(thiz->id, "MulticastChannel", CHANNEL_ID_LEN);
+        strncpy(thiz->id, "UnicastChannel", CHANNEL_ID_LEN);
 
-//        thiz->_onRegister = MulticastChannel_OnRegister;
-        thiz->_onRemove = MulticastChannel_OnRemove;
-        thiz->_onAccess = MulticastChannel_OnAccess;
+//        thiz->_onRegister = UnicastChannel_OnRegister;
+        thiz->_onRemove = UnicastChannel_OnRemove;
+        thiz->_onAccess = UnicastChannel_OnAccess;
 
         thiz->_onActive = SocketChannel_OnActive;
         thiz->_onInactive = SocketChannel_OnInactive;
 
-        thiz->context = MulticastChannelContext_New();
+        thiz->context = UnicastChannelContext_New();
         if (thiz->context == NULL)
         {
             ret = TINY_RET_E_OUT_OF_MEMORY;
@@ -155,7 +131,7 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
 }
 
 TINY_LOR
-Channel * MulticastChannel_New(void)
+Channel * UnicastChannel_New(void)
 {
     Channel * thiz = NULL;
 
@@ -167,9 +143,9 @@ Channel * MulticastChannel_New(void)
             break;
         }
 
-        if (RET_FAILED(MulticastChannel_Construct(thiz)))
+        if (RET_FAILED(UnicastChannel_Construct(thiz)))
         {
-            MulticastChannel_Delete(thiz);
+            UnicastChannel_Delete(thiz);
             thiz = NULL;
             break;
         }
@@ -179,7 +155,7 @@ Channel * MulticastChannel_New(void)
 }
 
 TINY_LOR
-void MulticastChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx)
+void UnicastChannel_Initialize(Channel *thiz, ChannelInitializer initializer, void *ctx)
 {
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(initializer);
@@ -188,15 +164,15 @@ void MulticastChannel_Initialize(Channel *thiz, ChannelInitializer initializer, 
 }
 
 TINY_LOR
-TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, uint16_t port, bool reuse)
+TinyRet UnicastChannel_Open(Channel *thiz, const char *ip, uint16_t port, bool reuse)
 {
     TinyRet ret = TINY_RET_OK;
 
-    LOG_I(TAG, "MulticastChannel_Join: %s %s:%d", ip, group, port);
+    LOG_I(TAG, "UnicastChannel_Open: %s：%d", ip, port);
 
     do
     {
-        MulticastChannelContext *ctx = (MulticastChannelContext *)thiz->context;
+        UnicastChannelContext *ctx = (UnicastChannelContext *)thiz->context;
 
         ret = SocketChannel_Open(thiz, TYPE_UDP);
         if (RET_FAILED(ret))
@@ -212,13 +188,6 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
             break;
         }
 
-        ret = SocketChannel_JoinGroup(thiz, ip, group);
-        if (RET_FAILED(ret))
-        {
-            LOG_D(TAG, "SocketChannel_JoinGroup failed: %d", TINY_RET_CODE(ret));
-            break;
-        }
-
         ret = SocketChannel_SetBlock(thiz, false);
         if (RET_FAILED(ret))
         {
@@ -226,7 +195,6 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
             break;
         }
 
-        strncpy(ctx->group, group, TINY_IP_LEN);
         ctx->port = port;
 
         thiz->_onActive(thiz);
@@ -236,14 +204,7 @@ TinyRet MulticastChannel_Join(Channel *thiz, const char *ip, const char *group, 
 }
 
 TINY_LOR
-TinyRet MulticastChannel_Write(Channel *thiz, const void *data, uint32_t len)
-{
-    MulticastChannelContext *ctx = (MulticastChannelContext *)thiz->context;
-    return MulticastChannel_WriteTo(thiz, data, len, inet_addr(ctx->group), ctx->port);
-}
-
-TINY_LOR
-TinyRet MulticastChannel_WriteTo(Channel *thiz, const void *data, uint32_t len, uint32_t ip, uint16_t port)
+TinyRet UnicastChannel_WriteTo(Channel *thiz, const void *data, uint32_t len, uint32_t ip, uint16_t port)
 {
     int ret = 0;
     struct sockaddr_in to;

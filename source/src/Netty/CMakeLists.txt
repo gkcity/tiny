@@ -33,6 +33,8 @@ SET(Channel_Header
         channel/stream/StreamClientChannelContext.h
         channel/multicast/MulticastChannel.h
         channel/multicast/MulticastChannelContext.h
+        channel/unicast/UnicastChannel.h
+        channel/unicast/UnicastChannelContext.h
         )
 
 SET(Channel_Source
@@ -47,6 +49,8 @@ SET(Channel_Source
         channel/stream/StreamClientChannelContext.c
         channel/multicast/MulticastChannel.c
         channel/multicast/MulticastChannelContext.c
+        channel/unicast/UnicastChannel.c
+        channel/unicast/UnicastChannelContext.c
     )
 
 #-----------------------
