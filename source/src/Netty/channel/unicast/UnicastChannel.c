@@ -164,11 +164,11 @@ void UnicastChannel_Initialize(Channel *thiz, ChannelInitializer initializer, vo
 }
 
 TINY_LOR
-TinyRet UnicastChannel_Open(Channel *thiz, const char *ip, uint16_t port, bool reuse)
+TinyRet UnicastChannel_Open(Channel *thiz, uint16_t port, bool reuse)
 {
     TinyRet ret = TINY_RET_OK;
 
-    LOG_I(TAG, "UnicastChannel_Open: %s：%d", ip, port);
+    LOG_I(TAG, "UnicastChannel_Open: %d", port);
 
     do
     {

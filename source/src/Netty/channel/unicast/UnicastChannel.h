@@ -34,7 +34,7 @@ void UnicastChannel_Initialize(Channel *thiz, ChannelInitializer initializer, vo
 
 TINY_API
 TINY_LOR
-TinyRet UnicastChannel_Open(Channel *thiz, const char *ip, uint16_t port, bool reuse);
+TinyRet UnicastChannel_Open(Channel *thiz, uint16_t port, bool reuse);
 
 TINY_API
 TINY_LOR
