@@ -42,11 +42,6 @@ bool str_equal(const char *dst, const char *src, bool ignore_case)
                 break;
             }
         }
-
-        if (*dst != *src)
-        {
-            ret = false;
-        }
     } while (0);
 
     return ret;

@@ -67,9 +67,9 @@ int tiny_getstrtime(char buf[], size_t len)
     memset(&tv, 0, sizeof(struct timeval));
     tiny_gettimeofday(&tv, NULL);
     sec = tv.tv_sec;
-    usec = tv.tv_usec;
+    usec = (int) (tv.tv_usec);
     sec = sec + (60 * 60)*BEIJINGTIME;
-    ad = sec / DAY;
+    ad = (int) (sec / DAY);
     ad = ad - YEARSTART;
     y400 = ad / YEAR400;
     y100 = (ad - y400*YEAR400) / YEAR100;
@@ -94,7 +94,7 @@ int tiny_getstrtime(char buf[], size_t len)
         }
     }
 
-    for (i = 1; i <= 12; i++)
+    for (i = 1; i < 12; i++)
     {
         if (dd - m[i] < 0)
         {
