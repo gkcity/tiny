@@ -145,6 +145,14 @@ HttpMessage * HttpMessage_New(void);
 
 TINY_API
 TINY_LOR
+HttpMessage * HttpMessage_NewHttpGet(const char *uri);
+
+TINY_API
+TINY_LOR
+HttpMessage * HttpMessage_NewHttpResponse(int code, const char *status, const char *type, const uint8_t *content, uint32_t length);
+
+TINY_API
+TINY_LOR
 TinyRet HttpMessage_Construct(HttpMessage *thiz);
 
 TINY_API

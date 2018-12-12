@@ -72,12 +72,23 @@ TinyRet HttpRequestHandlers_Put(HttpRequestHandlers *thiz, const char *method, c
 }
 
 TINY_LOR
+TinyRet HttpRequestHandlers_PutDefaultHandler(HttpRequestHandlers *thiz, HttpRequestHandler handler, void *ctx)
+{
+    return HttpRequestHandlers_Put(thiz, "*", "*", handler, ctx);
+}
+
+TINY_LOR
 static bool uriMatched(const char *pattern, const char *uri)
 {
     bool ret = true;
 
     do
     {
+        if (STR_EQUAL(pattern, uri) == 0)
+        {
+            break;
+        }
+
         StringArray *p = StringArray_NewString(pattern, "/");
         StringArray *u = StringArray_NewString(uri, "/");
 
@@ -115,6 +126,55 @@ static bool uriMatched(const char *pattern, const char *uri)
 }
 
 TINY_LOR
+static HttpMessage * handleRequest(HttpRequestHandlers * thiz, HttpMessage *request)
+{
+    HttpRequestHandlerContext *c = HttpRequestHandlers_Get(thiz, request->request_line.method, request->request_line.uri);
+    if (c == NULL)
+    {
+        return NULL;
+    }
+
+    return c->handler(request, c->ctx);
+}
+
+TINY_LOR
+static HttpMessage * handleNotFound(HttpRequestHandlers * thiz, HttpMessage *request)
+{
+    HttpRequestHandlerContext *c = HttpRequestHandlers_Get(thiz, "*", "*");
+    if (c == NULL)
+    {
+        return NULL;
+    }
+
+    return c->handler(request, c->ctx);
+}
+
+TINY_LOR
+HttpMessage *HttpRequestHandlers_HandleRequest(HttpRequestHandlers *thiz, HttpMessage *request)
+{
+    HttpMessage * response = NULL;
+
+    do
+    {
+        response = handleRequest(thiz, request);
+        if (response != NULL)
+        {
+            break;
+        }
+
+        response = handleNotFound(thiz, request);
+        if (response != NULL)
+        {
+            break;
+        }
+
+        response = HttpMessage_NewHttpResponse(404, "NOT FOUND", NULL, NULL, 0);
+    } while (false);
+
+    return response;
+}
+
+TINY_LOR
 HttpRequestHandlerContext * HttpRequestHandlers_Get(HttpRequestHandlers *thiz, const char *method, const char *uri)
 {
     RETURN_VAL_IF_FAIL(thiz, NULL);
@@ -124,6 +184,7 @@ HttpRequestHandlerContext * HttpRequestHandlers_Get(HttpRequestHandlers *thiz, c
     for (uint32_t i = 0; i < thiz->size; ++i)
     {
         HttpRequestHandlerContext *item = (HttpRequestHandlerContext *) TinyList_GetAt(thiz, i);
+
         if (str_equal(item->method, method, true) && uriMatched(item->uri, uri))
         {
             return item;

@@ -36,7 +36,16 @@ TinyRet HttpRequestHandlers_Put(HttpRequestHandlers *thiz, const char *method, c
 
 TINY_API
 TINY_LOR
+TinyRet HttpRequestHandlers_PutDefaultHandler(HttpRequestHandlers *thiz, HttpRequestHandler handler, void *ctx);
+
+TINY_API
+TINY_LOR
+HttpMessage *HttpRequestHandlers_HandleRequest(HttpRequestHandlers *thiz, HttpMessage *request);
+
+TINY_API
+TINY_LOR
 HttpRequestHandlerContext * HttpRequestHandlers_Get(HttpRequestHandlers *thiz, const char *method, const char *uri);
+
 
 
 TINY_END_DECLS

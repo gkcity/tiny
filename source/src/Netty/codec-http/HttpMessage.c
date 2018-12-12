@@ -57,6 +57,52 @@ HttpMessage * HttpMessage_New(void)
 }
 
 TINY_LOR
+HttpMessage * HttpMessage_NewHttpGet(const char *uri)
+{
+    HttpMessage *thiz = NULL;
+
+    do
+    {
+        thiz = HttpMessage_New();
+        if (thiz == NULL)
+        {
+            break;
+        }
+
+        HttpMessage_SetMethod(thiz, "GET");
+        HttpMessage_SetVersion(thiz, 1, 1);
+        HttpMessage_SetUri(thiz, uri);
+    } while (false);
+
+    return thiz;
+}
+
+TINY_LOR
+HttpMessage * HttpMessage_NewHttpResponse(int code, const char *status, const char *type, const uint8_t *content, uint32_t length)
+{
+    HttpMessage *thiz = NULL;
+
+    do
+    {
+        thiz = HttpMessage_New();
+        if (thiz == NULL)
+        {
+            break;
+        }
+
+        HttpMessage_SetResponse(thiz, code, status);
+        HttpMessage_SetVersion(thiz, 1, 1);
+
+        if (type != NULL && content != NULL && length > 0)
+        {
+            HttpMessage_SetContent(thiz, type, length, content);
+        }
+    } while (false);
+
+    return thiz;
+}
+
+TINY_LOR
 TinyRet HttpMessage_Construct(HttpMessage *thiz)
 {
     TinyRet ret = TINY_RET_OK;
@@ -205,6 +251,7 @@ void HttpMessage_SetMethod(HttpMessage *thiz, const char * method)
     RETURN_IF_FAIL(thiz);
     RETURN_IF_FAIL(method);
 
+    thiz->type = HTTP_REQUEST;
     strncpy(thiz->request_line.method, method, HTTP_METHOD_LEN);
 }
 
