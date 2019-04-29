@@ -501,6 +501,8 @@ TinyRet SocketChannel_SetBlock(Channel *thiz, bool block)
 TINY_LOR
 TinyRet SocketChannel_Listen(Channel *thiz, int maxConnections)
 {
+    LOG_I(TAG, "SocketChannel_Listen, maxConnections: %d", maxConnections);
+
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
     RETURN_VAL_IF_FAIL((maxConnections > 0), TINY_RET_E_ARG_NULL);
 
