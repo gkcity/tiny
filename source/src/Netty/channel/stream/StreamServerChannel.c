@@ -100,7 +100,7 @@ static TinyRet StreamServerChannel_OnAccept(Channel *thiz, Selector *selector)
 
         memset(&addr, 0, sizeof(struct sockaddr_in));
 
-        fd = tiny_accept(thiz->fd, (struct sockaddr *)&addr, &len);
+        fd = (int) tiny_accept(thiz->fd, (struct sockaddr *)&addr, &len);
         if (fd < 0)
         {
             LOG_E(TAG, "tiny_accept: %d", fd);

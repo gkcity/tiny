@@ -34,7 +34,7 @@ static TinyRet TinyMapItem_Construct(TinyMapItem *thiz, const char *key, void *v
 
         memset(thiz, 0, sizeof(TinyMapItem));
 
-        thiz->key = (char *) tiny_malloc(keyLength);
+        thiz->key = (char *) tiny_malloc((uint32_t)keyLength);
         if (thiz->key == NULL)
         {
             ret = TINY_RET_E_NEW;

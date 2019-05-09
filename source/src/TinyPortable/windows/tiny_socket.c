@@ -82,13 +82,13 @@ int tiny_recv(int fd, void *mem, size_t len, int flags)
 //            }
 //    }
 
-    return (int) recv(fd, (char *)mem, len, flags);
+    return (int) recv(fd, (char *)mem, (int) len, flags);
 }
 
 TINY_LOR
 int tiny_send(int fd, const void *data, size_t size, int flags)
 {
-    return send(fd, data, size, 0);
+    return (int) send(fd, data, (int)size, 0);
 }
 
 TINY_LOR
@@ -213,7 +213,7 @@ bool tiny_socket_has_error(int fd)
             break;
         }
 
-        LOG_I(TAG, "tiny_socket_has_error: %d (%d)", v, fd);
+        LOG_I(TAG, "tiny_socket_has_error: %d (%d)", e, fd);
 
         if (e == EAGAIN)
         {

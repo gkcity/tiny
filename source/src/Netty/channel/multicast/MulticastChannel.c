@@ -84,7 +84,7 @@ static TinyRet MulticastChannel_OnAccess(Channel *thiz, Selector *selector)
         ByteBuffer *buffer = NULL;
         struct sockaddr_in from;
         socklen_t socklen = (socklen_t) sizeof(from);
-        ssize_t received = 0;
+        int received = 0;
 
         if (! Selector_IsReadable(selector, thiz->fd))
         {

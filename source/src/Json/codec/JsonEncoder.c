@@ -208,7 +208,7 @@ TINY_LOR
 static void _Count (const char *string, void *ctx)
 {
     JsonEncoder *thiz = (JsonEncoder *)ctx;
-    thiz->size += strlen(string);
+    thiz->size += (uint32_t) strlen(string);
 }
 
 TINY_LOR

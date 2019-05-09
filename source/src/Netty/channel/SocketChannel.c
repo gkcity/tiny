@@ -192,7 +192,7 @@ static TinyRet SocketChannel_OnRead(Channel *thiz)
             break;
         }
 
-        ssize_t size = tiny_recv(thiz->fd, buffer->bytes, buffer->size, 0);
+        int size = tiny_recv(thiz->fd, buffer->bytes, buffer->size, 0);
         if (size > 0)
         {
             buffer->available = (uint32_t) size;
@@ -230,7 +230,7 @@ static TinyRet SocketChannel_OnWrite(Channel *thiz)
     for (uint32_t i = 0; i < thiz->sendBuffers.size; ++i)
     {
         ByteBuffer *buffer = (ByteBuffer *)TinyList_GetAt(&thiz->sendBuffers, i);
-        ssize_t sent = tiny_send(thiz->fd, buffer->bytes + buffer->offset, (uint32_t) buffer->available, 0);
+        int sent = tiny_send(thiz->fd, buffer->bytes + buffer->offset, (uint32_t) buffer->available, 0);
         if (sent != buffer->available)
         {
             LOG_E(TAG, "tiny_send failed, data length: %d, sent:%d", buffer->available, (int)sent);
@@ -417,7 +417,7 @@ TinyRet SocketChannel_Open(Channel *thiz, ChannelType type)
             break;
         }
 
-        thiz->fd = tiny_socket(AF_INET, socket_type, socket_protocol);
+        thiz->fd = (int) tiny_socket(AF_INET, socket_type, socket_protocol);
         if (thiz->fd < 0)
         {
             LOG_E(TAG, "socket failed");

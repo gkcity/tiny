@@ -143,7 +143,7 @@ TinyRet HttpHeader_Set(HttpHeader * thiz, const char *name, const char *value)
         char *v = NULL;
         uint32_t vLength = 0;
 
-        for (int i = 0; i < thiz->values.list.size; ++i)
+        for (uint32_t i = 0; i < thiz->values.list.size; ++i)
         {
             TinyMapItem *item = TinyList_GetAt(&thiz->values.list, i);
             if (str_equal(name, item->key, true))
@@ -219,7 +219,7 @@ const char * HttpHeader_GetValue(HttpHeader * thiz, const char *name)
 //
 //    return (const char *) TinyMap_GetValue(&thiz->values, key);
 
-    for (int i = 0; i < thiz->values.list.size; ++i)
+    for (uint32_t i = 0; i < thiz->values.list.size; ++i)
     {
         TinyMapItem *item = TinyList_GetAt(&thiz->values.list, i);
         if (str_equal(name, item->key, true))
@@ -241,7 +241,7 @@ uint32_t HttpHeader_GetSize(HttpHeader * thiz)
         TinyMapItem *item = (TinyMapItem *) TinyList_GetAt(&thiz->values.list, i);
 
         // <key> + ': ' + <value> + '\r\n'
-        size += strlen(item->key) + 2 + strlen((const char *)item->value) + 2;
+        size += (uint32_t) (strlen(item->key) + 2 + strlen((const char *)item->value) + 2);
     }
 
     size += 2;
