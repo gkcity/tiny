@@ -26,19 +26,19 @@ JsonValue * JsonValue_New(void);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewString(const char *value);
+JsonValue * JsonValue_NewString(_IN_ const char *value);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewInteger(long value);
+JsonValue * JsonValue_NewInteger(_IN_ long value);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewFloat(float value);
+JsonValue * JsonValue_NewFloat(_IN_ float value);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewBoolean(bool value);
+JsonValue * JsonValue_NewBoolean(_IN_ bool value);
 
 TINY_LOR
 TINY_API
@@ -46,15 +46,15 @@ JsonValue * JsonValue_NewNull(void);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewValue(JsonValueType type, void *value);
+JsonValue * JsonValue_NewValue(_IN_ JsonValueType type, _IN_ void *value);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonValue_NewFrom(JsonValue *other);
+JsonValue * JsonValue_NewFrom(_IN_ JsonValue *other);
 
 TINY_LOR
 TINY_API
-void JsonValue_Delete(JsonValue *thiz);
+void JsonValue_Delete(_IN_ JsonValue *thiz);
 
 
 TINY_END_DECLS

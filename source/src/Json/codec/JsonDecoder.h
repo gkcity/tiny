@@ -35,15 +35,15 @@ typedef enum _JsonDecoderMode
 
 TINY_LOR
 TINY_API
-TinyRet JsonDecoder_Construct(JsonDecoder *thiz);
+TinyRet JsonDecoder_Construct(_IN_ JsonDecoder *thiz);
 
 TINY_LOR
 TINY_API
-void JsonDecoder_Dispose(JsonDecoder *thiz);
+void JsonDecoder_Dispose(_IN_ JsonDecoder *thiz);
 
 TINY_LOR
 TINY_API
-JsonObject * JsonDecoder_Parse(JsonDecoder *thiz, const char *string, JsonDecoderMode mode);
+JsonObject * JsonDecoder_Parse(_IN_ JsonDecoder *thiz, _IN_ const char *string, _IN_ JsonDecoderMode mode);
 
 
 TINY_END_DECLS

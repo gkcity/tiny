@@ -25,7 +25,7 @@ TINY_BEGIN_DECLS
 
 TINY_API
 TINY_LOR
-ChannelHandler * HttpClientHandler(HttpExchange *context);
+ChannelHandler * HttpClientHandler(_IN_ HttpExchange *context);
 
 
 TINY_END_DECLS

@@ -20,10 +20,10 @@ TINY_BEGIN_DECLS
 
 
 TINY_LOR
-JsonBoolean * JsonBoolean_New(bool value);
+JsonBoolean * JsonBoolean_New(_IN_ bool value);
 
 TINY_LOR
-void JsonBoolean_Delete(JsonBoolean *thiz);
+void JsonBoolean_Delete(_IN_ JsonBoolean *thiz);
 
 
 TINY_END_DECLS

@@ -36,17 +36,17 @@ typedef struct _HttpExchange
 
 TINY_API
 TINY_LOR
-HttpExchange * HttpExchange_New(const char *ip,
-                                uint16_t port,
-                                const char *method,
-                                const char *uri,
-                                uint32_t timeout,
-                                const uint8_t *content,
-                                uint32_t length);
+HttpExchange * HttpExchange_New(_IN_ const char *ip,
+                                _IN_ uint16_t port,
+                                _IN_ const char *method,
+                                _IN_ const char *uri,
+                                _IN_ uint32_t timeout,
+                                _IN_ const uint8_t *content,
+                                _IN_ uint32_t length);
 
 TINY_API
 TINY_LOR
-void HttpExchange_Delete(HttpExchange *thiz);
+void HttpExchange_Delete(_IN_ HttpExchange *thiz);
 
 
 TINY_END_DECLS

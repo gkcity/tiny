@@ -26,31 +26,31 @@ JsonObject * JsonObject_New(void);
 
 TINY_LOR
 TINY_API
-JsonObject * JsonObject_NewStringFast(const char *string);
+JsonObject * JsonObject_NewStringFast(_IN_ const char *string);
 
 TINY_LOR
 TINY_API
-JsonObject * JsonObject_NewString(const char *string);
+JsonObject * JsonObject_NewString(_IN_ const char *string);
 
 TINY_LOR
 TINY_API
-void JsonObject_Delete(JsonObject *thiz);
+void JsonObject_Delete(_IN_ JsonObject *thiz);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_Construct(JsonObject *thiz);
+TinyRet JsonObject_Construct(_IN_ JsonObject *thiz);
 
 TINY_LOR
 TINY_API
-void JsonObject_Dispose(JsonObject *thiz);
+void JsonObject_Dispose(_IN_ JsonObject *thiz);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_Encode(JsonObject *thiz, bool pretty);
+TinyRet JsonObject_Encode(_IN_ JsonObject *thiz, _IN_ bool pretty);
 
 TINY_LOR
 TINY_API
-bool JsonObject_ContainsKey(JsonObject *thiz, const char *key);
+bool JsonObject_ContainsKey(_IN_ JsonObject *thiz, _IN_ const char *key);
 
 /**
  * Getter
@@ -58,27 +58,27 @@ bool JsonObject_ContainsKey(JsonObject *thiz, const char *key);
 
 TINY_LOR
 TINY_API
-JsonValue * JsonObject_GetValue(JsonObject *thiz, const char *key);
+JsonValue * JsonObject_GetValue(_IN_ JsonObject *thiz, _IN_ const char *key);
 
 TINY_LOR
 TINY_API
-JsonObject * JsonObject_GetObject(JsonObject *thiz, const char *key);
+JsonObject * JsonObject_GetObject(_IN_ JsonObject *thiz, _IN_ const char *key);
 
 TINY_LOR
 TINY_API
-JsonNumber * JsonObject_GetNumber(JsonObject *thiz, const char *key);
+JsonNumber * JsonObject_GetNumber(_IN_ JsonObject *thiz, _IN_ const char *key);
 
 TINY_LOR
 TINY_API
-JsonArray * JsonObject_GetArray(JsonObject *thiz, const char *key);
+JsonArray * JsonObject_GetArray(_IN_ JsonObject *thiz, _IN_ const char *key);
 
 TINY_LOR
 TINY_API
-JsonString * JsonObject_GetString(JsonObject *thiz, const char *key);
+JsonString * JsonObject_GetString(_IN_ JsonObject *thiz, _IN_ const char *key);
 
 TINY_LOR
 TINY_API
-JsonBoolean * JsonObject_GetBoolean(JsonObject *thiz, const char *key);
+JsonBoolean * JsonObject_GetBoolean(_IN_ JsonObject *thiz, _IN_ const char *key);
 
 /**
  * Setter: value
@@ -86,23 +86,23 @@ JsonBoolean * JsonObject_GetBoolean(JsonObject *thiz, const char *key);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutString(JsonObject *thiz, const char *key, const char *value);
+TinyRet JsonObject_PutString(_IN_ JsonObject *thiz, _IN_ const char *key, _IN_ const char *value);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutInteger(JsonObject *thiz, const char *key, int value);
+TinyRet JsonObject_PutInteger(_IN_ JsonObject *thiz, _IN_ const char *key, _IN_ int value);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutFloat(JsonObject *thiz, const char *key, float value);
+TinyRet JsonObject_PutFloat(_IN_ JsonObject *thiz, _IN_ const char *key, _IN_ float value);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutBoolean(JsonObject *thiz, const char *key, bool value);
+TinyRet JsonObject_PutBoolean(_IN_ JsonObject *thiz, _IN_ const char *key, _IN_ bool value);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutNull(JsonObject *thiz, const char *key);
+TinyRet JsonObject_PutNull(_IN_ JsonObject *thiz, _IN_ const char *key);
 
 /**
  * Setter: Object
@@ -110,19 +110,19 @@ TinyRet JsonObject_PutNull(JsonObject *thiz, const char *key);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutObject(JsonObject *thiz, const char *key, JsonObject *value);
+TinyRet JsonObject_PutObject(_IN_ JsonObject *thiz, _IN_ const char *key, _IN_ JsonObject *value);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutArray(JsonObject *thiz, const char *key, JsonArray *value);
+TinyRet JsonObject_PutArray(_IN_ JsonObject *thiz, _IN_ const char *key, _IN_ JsonArray *value);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutNumber(JsonObject *thiz, const char *key, JsonNumber *value);
+TinyRet JsonObject_PutNumber(_IN_ JsonObject *thiz, _IN_ const char *key, _IN_ JsonNumber *value);
 
 TINY_LOR
 TINY_API
-TinyRet JsonObject_PutValue(JsonObject *thiz, const char *key, JsonValue *value);
+TinyRet JsonObject_PutValue(_IN_ JsonObject *thiz, _IN_ const char *key, _IN_ JsonValue *value);
 
 
 TINY_END_DECLS

@@ -20,10 +20,10 @@ TINY_BEGIN_DECLS
 
 
 TINY_LOR
-JsonString * JsonString_New(const char *value);
+JsonString * JsonString_New(_IN_ const char *value);
 
 TINY_LOR
-void JsonString_Delete(JsonString *thiz);
+void JsonString_Delete(_IN_ JsonString *thiz);
 
 
 TINY_END_DECLS

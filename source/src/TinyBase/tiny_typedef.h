@@ -35,7 +35,8 @@
 #endif
 
 #define DIM(a) (sizeof(a)/sizeof(a[0]))
-
+#define _IN_                                /* indicate that this is an input parameter */
+#define _OU_                                /* indicate that this is an output parameter */
 
 
 #endif /* __TINY_TYPEDEF_H__ */

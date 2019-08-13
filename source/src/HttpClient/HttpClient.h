@@ -32,11 +32,11 @@ HttpClient * HttpClient_New(void);
 
 TINY_API
 TINY_LOR
-void HttpClient_Delete(HttpClient *thiz);
+void HttpClient_Delete(_IN_ HttpClient *thiz);
 
 TINY_API
 TINY_LOR
-TinyRet HttpClient_Send(HttpClient *thiz, HttpExchange *exchange);
+TinyRet HttpClient_Send(_IN_ HttpClient *thiz, _IN_ HttpExchange *exchange);
 
 
 TINY_END_DECLS

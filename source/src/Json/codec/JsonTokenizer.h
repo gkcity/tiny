@@ -29,19 +29,19 @@ typedef struct _JsonTokenizer
 } JsonTokenizer;
 
 TINY_LOR
-TinyRet JsonTokenizer_Construct(JsonTokenizer * thiz);
+TinyRet JsonTokenizer_Construct(_IN_ JsonTokenizer * thiz);
 
 TINY_LOR
-void JsonTokenizer_Dispose(JsonTokenizer * thiz);
+void JsonTokenizer_Dispose(_IN_ JsonTokenizer * thiz);
 
 TINY_LOR
-TinyRet JsonTokenizer_Parse(JsonTokenizer * thiz, const char *string, bool parseOnce);
+TinyRet JsonTokenizer_Parse(_IN_ JsonTokenizer * thiz, _IN_ const char *string, _IN_ bool parseOnce);
 
 TINY_LOR
-JsonToken * JsonTokenizer_Head(JsonTokenizer * thiz);
+JsonToken * JsonTokenizer_Head(_IN_ JsonTokenizer * thiz);
 
 TINY_LOR
-void JsonTokenizer_Pop(JsonTokenizer * thiz);
+void JsonTokenizer_Pop(_IN_ JsonTokenizer * thiz);
 
 
 TINY_END_DECLS

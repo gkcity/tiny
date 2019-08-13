@@ -20,13 +20,13 @@ TINY_BEGIN_DECLS
 
 
 TINY_LOR
-JsonNumber * JsonNumber_NewInteger(long value);
+JsonNumber * JsonNumber_NewInteger(_IN_ long value);
 
 TINY_LOR
-JsonNumber * JsonNumber_NewFloat(float value);
+JsonNumber * JsonNumber_NewFloat(_IN_ float value);
 
 TINY_LOR
-void JsonNumber_Delete(JsonNumber *thiz);
+void JsonNumber_Delete(_IN_ JsonNumber *thiz);
 
 
 TINY_END_DECLS

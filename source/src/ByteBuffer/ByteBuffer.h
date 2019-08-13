@@ -21,7 +21,6 @@
 TINY_BEGIN_DECLS
 
 
-
 typedef struct _ByteBuffer
 {
     uint32_t          size;
@@ -33,47 +32,47 @@ typedef struct _ByteBuffer
 
 TINY_API
 TINY_LOR
-ByteBuffer * ByteBuffer_New(uint32_t size);
+ByteBuffer * ByteBuffer_New(_IN_ uint32_t size);
 
 TINY_API
 TINY_LOR
-TinyRet ByteBuffer_Construct(ByteBuffer *thiz, uint32_t size);
+TinyRet ByteBuffer_Construct(_IN_ ByteBuffer *thiz, _IN_ uint32_t size);
 
 TINY_API
 TINY_LOR
-TinyRet ByteBuffer_Dispose(ByteBuffer *thiz);
+TinyRet ByteBuffer_Dispose(_IN_ ByteBuffer *thiz);
 
 TINY_API
 TINY_LOR
-void ByteBuffer_Delete(ByteBuffer *thiz);
+void ByteBuffer_Delete(_IN_ ByteBuffer *thiz);
 
 TINY_API
 TINY_LOR
-void ByteBuffer_Clear(ByteBuffer *thiz);
+void ByteBuffer_Clear(_IN_ ByteBuffer *thiz);
 
 TINY_API
 TINY_LOR
-bool ByteBuffer_Available(ByteBuffer *thiz);
+bool ByteBuffer_Available(_IN_ ByteBuffer *thiz);
 
 TINY_API
 TINY_LOR
-bool ByteBuffer_Put(ByteBuffer *thiz, uint8_t *data, uint32_t length);
+bool ByteBuffer_Put(_IN_ ByteBuffer *thiz, _IN_ uint8_t *data, _IN_ uint32_t length);
 
 TINY_API
 TINY_LOR
-uint32_t ByteBuffer_Add(ByteBuffer *thiz, const uint8_t *data, uint32_t offset, uint32_t size);
+uint32_t ByteBuffer_Add(_IN_ ByteBuffer *thiz, _IN_ const uint8_t *data, _IN_ uint32_t offset, _IN_ uint32_t size);
 
 TINY_API
 TINY_LOR
-bool ByteBuffer_Get(ByteBuffer *thiz, uint32_t skipped, uint8_t bytes[], uint32_t length);
+bool ByteBuffer_Get(_IN_ ByteBuffer *thiz, _IN_ uint32_t skipped, _OU_ uint8_t bytes[], _IN_ uint32_t length);
 
 TINY_API
 TINY_LOR
-bool ByteBuffer_Pick(ByteBuffer *thiz, uint32_t skipped, uint8_t bytes[], uint32_t length);
+bool ByteBuffer_Pick(_IN_ ByteBuffer *thiz, _IN_ uint32_t skipped, _OU_ uint8_t bytes[], _IN_ uint32_t length);
 
 TINY_API
 TINY_LOR
-bool ByteBuffer_IsFull(ByteBuffer *thiz);
+bool ByteBuffer_IsFull(_IN_ ByteBuffer *thiz);
 
 
 TINY_END_DECLS
