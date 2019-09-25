@@ -131,13 +131,13 @@ static TinyRet UnicastChannel_Construct(Channel *thiz)
 }
 
 TINY_LOR
-Channel * UnicastChannel_New(void)
+Channel * UnicastChannel_New(ChannelLoopHook loopHook, void *ctx)
 {
     Channel * thiz = NULL;
 
     do
     {
-        thiz = SocketChannel_New();
+        thiz = SocketChannel_New(loopHook, ctx);
         if (thiz == NULL)
         {
             break;

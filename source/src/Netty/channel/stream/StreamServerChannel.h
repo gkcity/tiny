@@ -26,7 +26,7 @@ TINY_BEGIN_DECLS
 
 TINY_API
 TINY_LOR
-Channel * StreamServerChannel_New(int maxConnections);
+Channel * StreamServerChannel_New(int maxConnections, ChannelLoopHook loopHook, void *ctx);
 
 TINY_API
 TINY_LOR

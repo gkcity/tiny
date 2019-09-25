@@ -155,13 +155,13 @@ static TinyRet MulticastChannel_Construct(Channel *thiz)
 }
 
 TINY_LOR
-Channel * MulticastChannel_New(void)
+Channel * MulticastChannel_New(ChannelLoopHook loopHook, void *ctx)
 {
     Channel * thiz = NULL;
 
     do
     {
-        thiz = SocketChannel_New();
+        thiz = SocketChannel_New(loopHook, ctx);
         if (thiz == NULL)
         {
             break;

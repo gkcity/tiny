@@ -287,13 +287,21 @@ TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
                 }
             }
         }
+
+        if (Channel_IsActive(thiz))
+        {
+            if (thiz->_loopHook != NULL)
+            {
+                thiz->_loopHook(thiz, thiz->_loopHookContext);
+            }
+        }
     } while (false);
 
     return ret;
 }
 
 TINY_LOR
-TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize)
+TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize, ChannelLoopHook loopHook, void *ctx)
 {
     TinyRet ret = TINY_RET_OK;
 
@@ -322,7 +330,8 @@ TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize
         thiz->_onEventTriggered = SocketChannel_OnEventTriggered;
         thiz->_getTimeout = SocketChannel_GetTimeout;
         thiz->_close = SocketChannel_Close;
-
+        thiz->_loopHook = loopHook;
+        thiz->_loopHookContext = ctx;
 
         ret = TinyList_Construct(&thiz->sendBuffers, _OnBufferRemoved, NULL);
         if (RET_FAILED(ret))
@@ -335,13 +344,13 @@ TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize
 }
 
 TINY_LOR
-Channel * SocketChannel_New(void)
+Channel * SocketChannel_New(ChannelLoopHook loopHook, void *ctx)
 {
-    return SocketChannel_NewCustomBufferSize(1024, 0);
+    return SocketChannel_NewCustomBufferSize(1024, 0, loopHook, ctx);
 }
 
 TINY_LOR
-Channel * SocketChannel_NewCustomBufferSize(uint32_t inSize, uint32_t outSize)
+Channel * SocketChannel_NewCustomBufferSize(uint32_t inSize, uint32_t outSize, ChannelLoopHook loopHook, void *ctx)
 {
     Channel *thiz = NULL;
 
@@ -353,7 +362,7 @@ Channel * SocketChannel_NewCustomBufferSize(uint32_t inSize, uint32_t outSize)
             break;
         }
 
-        if (RET_FAILED(SocketChannel_Construct(thiz, inSize, outSize)))
+        if (RET_FAILED(SocketChannel_Construct(thiz, inSize, outSize, loopHook, ctx)))
         {
             SocketChannel_Delete(thiz);
             thiz = NULL;

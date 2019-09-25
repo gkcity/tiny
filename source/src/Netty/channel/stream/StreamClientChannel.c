@@ -145,13 +145,13 @@ TinyRet StreamClientChannel_Construct(Channel *thiz)
 }
 
 TINY_LOR
-Channel *StreamClientChannel_New()
+Channel *StreamClientChannel_New(ChannelLoopHook loopHook, void *ctx)
 {
     Channel *thiz = NULL;
 
     do
     {
-        thiz = SocketChannel_New();
+        thiz = SocketChannel_New(loopHook, ctx);
         if (thiz == NULL)
         {
             break;

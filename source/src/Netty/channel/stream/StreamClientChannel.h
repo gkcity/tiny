@@ -25,7 +25,7 @@ TINY_BEGIN_DECLS
 
 TINY_API
 TINY_LOR
-Channel * StreamClientChannel_New(void);
+Channel * StreamClientChannel_New(ChannelLoopHook loopHook, void *ctx);
 
 TINY_API
 TINY_LOR

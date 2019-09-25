@@ -115,7 +115,7 @@ static TinyRet StreamServerChannel_OnAccept(Channel *thiz, Selector *selector)
         LOG_I(TAG, "Accept a new connection: %d#%s:%d", fd, ip, port);
 
 //        newChannel = SocketChannel_NewCustomBufferSize(thiz->inBufferSize, thiz->outBufferSize);
-        newChannel = SocketChannel_NewCustomBufferSize(thiz->inBufferSize, 0);
+        newChannel = SocketChannel_NewCustomBufferSize(thiz->inBufferSize, 0, NULL, NULL);
         if (newChannel == NULL)
         {
             LOG_E(TAG, "SocketChannel_New NULL");
@@ -276,13 +276,13 @@ static TinyRet StreamServerChannel_Construct(Channel *thiz, int maxConnections)
 }
 
 TINY_LOR
-Channel * StreamServerChannel_New(int maxConnections)
+Channel * StreamServerChannel_New(int maxConnections, ChannelLoopHook loopHook, void *ctx)
 {
     Channel * thiz = NULL;
 
     do
     {
-        thiz = SocketChannel_New();
+        thiz = SocketChannel_New(loopHook, ctx);
         if (thiz == NULL)
         {
             break;

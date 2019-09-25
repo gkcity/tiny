@@ -26,11 +26,11 @@ TINY_BEGIN_DECLS
 
 TINY_API
 TINY_LOR
-Channel * SocketChannel_New(void);
+Channel * SocketChannel_New(ChannelLoopHook loopHook, void *ctx);
 
 TINY_API
 TINY_LOR
-Channel * SocketChannel_NewCustomBufferSize(uint32_t inSize, uint32_t outSize);
+Channel * SocketChannel_NewCustomBufferSize(uint32_t inSize, uint32_t outSize, ChannelLoopHook loopHook, void *ctx);
 
 TINY_API
 TINY_LOR
@@ -38,7 +38,7 @@ void SocketChannel_Delete(Channel *thiz);
 
 TINY_API
 TINY_LOR
-TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize);
+TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize, ChannelLoopHook loopHook, void *ctx);
 
 TINY_API
 TINY_LOR

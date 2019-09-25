@@ -51,6 +51,7 @@ TinyRet Bootstrap_Construct(Bootstrap *thiz, BootstrapLoopHook preloop, void *ct
             LOG_E(TAG, "Selector_Construct FAILED");
             break;
         }
+
         thiz->selector.onPreSelect = PreSelect;
         thiz->selector.onPostSelect = PostSelect;
         thiz->selector.onSelectTimeout = OnSelectTimeout;

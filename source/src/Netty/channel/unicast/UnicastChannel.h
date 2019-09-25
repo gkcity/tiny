@@ -26,7 +26,7 @@ TINY_BEGIN_DECLS
 
 TINY_API
 TINY_LOR
-Channel * UnicastChannel_New(void);
+Channel * UnicastChannel_New(ChannelLoopHook loopHook, void *ctx);
 
 TINY_API
 TINY_LOR

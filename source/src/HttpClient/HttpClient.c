@@ -32,7 +32,7 @@ static TinyRet HttpClient_Construct(HttpClient *thiz)
     {
         memset(thiz, 0, sizeof(HttpClient));
 
-        thiz->client = StreamClientChannel_New();
+        thiz->client = StreamClientChannel_New(NULL, NULL);
         if (thiz->client == NULL)
         {
             LOG_E(TAG, "StreamClientChannel_New FAILED!");
