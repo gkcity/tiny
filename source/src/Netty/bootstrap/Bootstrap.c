@@ -153,7 +153,7 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
 
     //LOG_I(TAG, "PreSelect, channels: %d", thiz->channels.size);
 
-    for (uint32_t i = (thiz->channels.size - 1); i >= 0; --i)
+    for (int i = (int) (thiz->channels.size - 1); i >= 0; --i)
     {
         Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
         if (Channel_IsClosed(channel))
