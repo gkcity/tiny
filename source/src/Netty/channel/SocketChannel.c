@@ -300,6 +300,7 @@ TinyRet SocketChannel_Construct(Channel *thiz, uint32_t inSize, uint32_t outSize
     RETURN_VAL_IF_FAIL(thiz, TINY_RET_E_ARG_NULL);
 
     LOG_D(TAG, "Channel_Construct");
+    LOG_E(TAG, "ChannelLoopHook: %s",  loopHook == NULL ? "null" : "not null" );
 
     do
     {
