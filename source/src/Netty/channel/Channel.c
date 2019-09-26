@@ -33,15 +33,17 @@ TINY_API
 TINY_LOR
 void Channel_PreLoop(Channel *thiz)
 {
+    LOG_E(TAG, "ChannelLoopHook: %s => %s",  thiz->_loopHook == NULL ? "null" : "not null", thiz->id);
+
     if (Channel_IsActive(thiz))
     {
         if (thiz->_loopHook != NULL)
         {
             thiz->_loopHook(thiz, thiz->_loopHookContext);
         }
-    }
-    else
-    {
-        LOG_D(TAG, "Channel.loopHook is null: %s", thiz->id);
+        else
+        {
+            LOG_E(TAG, "Channel.loopHook is null: %s", thiz->id);
+        }
     }
 }

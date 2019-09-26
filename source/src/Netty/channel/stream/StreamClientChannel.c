@@ -216,6 +216,8 @@ TinyRet StreamClientChannel_Connect(Channel *thiz, const char *ip, uint16_t port
             break;
         }
 
+        LOG_E(TAG, "ChannelLoopHook: %s => %s",  thiz->_loopHook == NULL ? "null" : "not null", thiz->id);
+
         if (TINY_RET_CODE(ret) == CODE_PENDING)
         {
             LOG_D(TAG, "connecting is pending");
