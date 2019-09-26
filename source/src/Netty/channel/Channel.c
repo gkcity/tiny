@@ -28,3 +28,16 @@ void Channel_Close(Channel *thiz)
         thiz->fd = -1;
     }
 }
+
+TINY_API
+TINY_LOR
+void Channel_PreLoop(Channel *thiz)
+{
+    if (Channel_IsActive(thiz))
+    {
+        if (thiz->_loopHook != NULL)
+        {
+            thiz->_loopHook(thiz, thiz->_loopHookContext);
+        }
+    }
+}

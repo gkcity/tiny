@@ -75,6 +75,10 @@ TINY_API
 TINY_LOR
 void Channel_Close(Channel *thiz);
 
+TINY_API
+TINY_LOR
+void Channel_PreLoop(Channel *thiz);
+
 
 TINY_END_DECLS
 

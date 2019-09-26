@@ -145,6 +145,12 @@ static TinyRet PreSelect(Selector *selector, void *ctx)
         thiz->preloop(thiz, thiz->preloopCtx);
     }
 
+    for (uint32_t i = 0; i < thiz->channels.size; ++i)
+    {
+        Channel *channel = (Channel *)TinyList_GetAt(&thiz->channels, i);
+        Channel_PreLoop(channel);
+    }
+
     //LOG_I(TAG, "PreSelect, channels: %d", thiz->channels.size);
 
     for (int i = (thiz->channels.size - 1); i >= 0; --i)

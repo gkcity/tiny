@@ -287,14 +287,6 @@ TinyRet SocketChannel_OnAccess(Channel *thiz, Selector *selector)
                 }
             }
         }
-
-        if (Channel_IsActive(thiz))
-        {
-            if (thiz->_loopHook != NULL)
-            {
-                thiz->_loopHook(thiz, thiz->_loopHookContext);
-            }
-        }
     } while (false);
 
     return ret;
