@@ -39,5 +39,9 @@ void Channel_PreLoop(Channel *thiz)
         {
             thiz->_loopHook(thiz, thiz->_loopHookContext);
         }
+	else
+        {
+            LOG_D(TAG, "Channel.loopHook is null: %s", thiz->id);
+	}
     }
 }
