@@ -37,12 +37,7 @@ void Channel_PreLoop(Channel *thiz)
     {
         if (thiz->_loopHook != NULL)
         {
-            LOG_E(TAG, "call -> Channel.loopHook: %s", thiz->id);
             thiz->_loopHook(thiz, thiz->_loopHookContext);
-        }
-        else
-        {
-            LOG_E(TAG, "Channel.loopHook is null: %s", thiz->id);
         }
     }
 }
